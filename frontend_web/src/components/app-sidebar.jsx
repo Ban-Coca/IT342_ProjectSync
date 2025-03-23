@@ -41,16 +41,18 @@ const items = [
   
   export default function AppSidebar() {
     return (
-      <Sidebar>
+      <Sidebar collapsible="icon">
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupLabel class="text-xl p-4 font-bold">ProjectSync</SidebarGroupLabel>
+            <SidebarGroupLabel className="text-2xl text-black p-4 font-bold mt-5">
+              ProjectSync
+            </SidebarGroupLabel>
             <SidebarGroupContent>
-              <SidebarMenu>
+              <SidebarMenu className="mt-6">
                 {items.map((item) => (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <a href={item.url}>
+                    <SidebarMenuButton className="text-base h-12 hover:bg-gray-300"asChild>
+                      <a href={item.url} className="gap-4">
                         <item.icon />
                         <span>{item.title}</span>
                       </a>
