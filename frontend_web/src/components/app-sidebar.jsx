@@ -1,8 +1,9 @@
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react"
+import { Calendar, Home, Inbox, Search, Settings, LayoutDashboard  } from "lucide-react"
 
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -31,6 +32,11 @@ const items = [
       title: "Search",
       url: "#",
       icon: Search,
+    },
+    {
+      title: "Dashboard",
+      url: "#",
+      icon: LayoutDashboard,
     },
     {
       title: "Settings",
@@ -63,6 +69,9 @@ const items = [
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
+        <SidebarFooter>
+          <button className="w-full h-12 text-base">Logout</button>
+        </SidebarFooter>
       </Sidebar>
     )
   }
