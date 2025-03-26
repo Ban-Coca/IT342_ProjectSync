@@ -29,6 +29,9 @@ public class UserEntity {
 
     @Column(nullable = false)
     private String password;
+    
+    @Column(nullable = false)
+    private String provider; // e.g., "email", "facebook", "google"
 
     // Getters and Setters
     public Long getId() {
@@ -77,5 +80,13 @@ public class UserEntity {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getProvider() {
+        return provider;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
     }
 }

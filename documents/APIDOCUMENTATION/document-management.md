@@ -16,7 +16,13 @@ The Document Management API provides endpoints for managing project-related docu
     ```json
     {
       "id": "document_id",
-      "name": "Document Name",
+      "fileName": "Document Name",
+      "fileType": "Document Type",
+      "fileSize": "File Size in Bytes",
+      "filePath": "Path to the File",
+      "uploadedAt": "YYYY-MM-DDTHH:mm:ss",
+      "uploadedBy": "Uploader's Username or ID",
+      "projectId": "Associated Project ID",
       "message": "Document uploaded successfully."
     }
     ```
@@ -37,11 +43,13 @@ The Document Management API provides endpoints for managing project-related docu
     ```json
     {
       "id": "document_id",
-      "name": "Document Name",
-      "url": "https://example.com/documents/document_id",
-      "uploaded_at": "YYYY-MM-DDTHH:mm:ss",
-      "uploaded_by": "user_id",
-      "project_id": "project_id"
+      "fileName": "Document Name",
+      "fileType": "Document Type",
+      "fileSize": "File Size in Bytes",
+      "filePath": "Path to the File",
+      "uploadedAt": "YYYY-MM-DDTHH:mm:ss",
+      "uploadedBy": "Uploader's Username or ID",
+      "projectId": "Associated Project ID"
     }
     ```
   - **404 Not Found**
@@ -64,11 +72,24 @@ The Document Management API provides endpoints for managing project-related docu
       "documents": [
         {
           "id": "document_id",
-          "name": "Document Name",
-          "uploaded_at": "YYYY-MM-DDTHH:mm:ss",
-          "project_id": "project_id"
+          "fileName": "Document Name",
+          "fileType": "Document Type",
+          "fileSize": "File Size in Bytes",
+          "filePath": "Path to the File",
+          "uploadedAt": "YYYY-MM-DDTHH:mm:ss",
+          "uploadedBy": "Uploader's Username or ID",
+          "projectId": "Associated Project ID"
         },
-        ...
+        {
+          "id": "document_id",
+          "fileName": "Another Document Name",
+          "fileType": "Document Type",
+          "fileSize": "File Size in Bytes",
+          "filePath": "Path to the File",
+          "uploadedAt": "YYYY-MM-DDTHH:mm:ss",
+          "uploadedBy": "Uploader's Username or ID",
+          "projectId": "Associated Project ID"
+        }
       ]
     }
     ```
@@ -128,8 +149,14 @@ Content-Type: multipart/form-data
 Successful upload response:
 ```json
 {
-  "id": "789",
-  "name": "Project Plan.pdf",
+  "id": 789,
+  "fileName": "Project Plan.pdf",
+  "fileType": "application/pdf",
+  "fileSize": 102400,
+  "filePath": "/uploads/documents/Project_Plan.pdf",
+  "uploadedAt": "2025-03-26T14:30:00",
+  "uploadedBy": "john_doe",
+  "projectId": 123,
   "message": "Document uploaded successfully."
 }
 ```
