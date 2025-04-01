@@ -3,6 +3,14 @@
 ## Overview
 The Real-Time Collaboration API enables team members to work together seamlessly within the project management web app. This API provides functionalities for notifications, simultaneous editing, and chat features, ensuring that all team members are updated and can collaborate effectively.
 
+## Common Error Responses
+- **500 Internal Server Error**: This error occurs when the server encounters an unexpected condition that prevents it from fulfilling the request.
+  ```json
+  {
+    "error": "An unexpected error occurred. Please try again later."
+  }
+  ```
+  
 ## Endpoints
 
 ### 1. Notifications

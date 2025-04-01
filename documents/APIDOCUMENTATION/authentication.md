@@ -1,12 +1,20 @@
 # Authentication API Documentation
 
 ## Overview
-This document outlines the API endpoints related to user authentication features in the Project Management web app. It includes functionalities for creating user accounts, logging in, and resetting passwords.
+This document outlines the API endpoints related to user authentication features in the Project Management web app. It includes functionalities for creating user accounts, logging in, resetting passwords, and changing passwords.
 
+## Common Error Responses
+- **500 Internal Server Error**: This error occurs when the server encounters an unexpected condition that prevents it from fulfilling the request.
+  ```json
+  {
+    "error": "An unexpected error occurred. Please try again later."
+  }
+  ```
+  
 ## Endpoints
 
 ### 1. Create User Account
-- **Endpoint:** `/auth/register`
+- **Endpoint:** `/api/user/postuserrecord`
 - **Method:** `POST`
 - **Description:** Creates a new user account.
 - **Request Body:**
@@ -14,52 +22,50 @@ This document outlines the API endpoints related to user authentication features
   {
     "username": "string",
     "email": "string",
-    "first_name": "string",
-    "last_name": "string",
+    "firstName": "string",
+    "lastName": "string",
     "password": "string"
   }
   ```
 - **Response:**
-  - **201 Created**
+  - **200 OK**
     ```json
     {
-      "user_id": "string",
-      "username": "string",
-      "email": "string",
-      "first_name": "string",
-      "last_name": "string"
+      "user": {
+        "userId": "integer",
+        "username": "string",
+        "email": "string",
+        "firstName": "string",
+        "lastName": "string",
+        "isActive": "boolean",
+        "createdAt": "string",
+        "lastLogin": "string"
+      },
+      "token": "string"
     }
     ```
   - **400 Bad Request**
     ```json
     {
-      "error": "string"
+      "error": "Invalid input data."
+    }
+    ```
+  - **500 Internal Server Error**
+    ```json
+    {
+      "error": "An unexpected error occurred. Please try again later."
     }
     ```
 
 ### 2. User Login
 - **Endpoint:** `/auth/login`
 - **Method:** `POST`
-- **Description:** Authenticates a user and returns a token. Supports login through email/password, Facebook, or Google.
-- **Request Body (Email/Password Login):**
+- **Description:** Authenticates a user and returns a token.
+- **Request Body:**
   ```json
   {
     "email": "string",
     "password": "string"
-  }
-  ```
-- **Request Body (Facebook Login):**
-  ```json
-  {
-    "provider": "facebook",
-    "access_token": "string"
-  }
-  ```
-- **Request Body (Google Login):**
-  ```json
-  {
-    "provider": "google",
-    "access_token": "string"
   }
   ```
 - **Response:**
@@ -68,7 +74,7 @@ This document outlines the API endpoints related to user authentication features
     {
       "token": "string",
       "user": {
-        "id": "integer",
+        "userId": "integer",
         "username": "string",
         "email": "string"
       }
@@ -77,9 +83,15 @@ This document outlines the API endpoints related to user authentication features
   - **401 Unauthorized**
     ```json
     {
-      "error": "Invalid credentials or access token."
+      "error": "Invalid credentials."
     }
     ```
+  - **500 Internal Server Error**
+    ```json
+    {
+      "error": "An unexpected error occurred. Please try again later."
+    }
+    ```  
 
 ### 3. Reset Password
 - **Endpoint:** `/auth/reset-password`
@@ -112,8 +124,8 @@ This document outlines the API endpoints related to user authentication features
 - **Request Body:**
   ```json
   {
-    "old_password": "string",
-    "new_password": "string"
+    "oldPassword": "string",
+    "newPassword": "string"
   }
   ```
 - **Response:**
@@ -129,12 +141,22 @@ This document outlines the API endpoints related to user authentication features
       "error": "string"
     }
     ```
+    
 
 ## Authentication
-All endpoints require a valid authentication token in the request header:
+All endpoints that require authentication must include a valid token in the request header:
 ```
 Authorization: Bearer <token>
 ```
 
 ## Error Handling
-All error responses will include an error message detailing the issue.
+All error responses will include an error message detailing the issue. Example:
+```json
+{
+  "error": "string"
+}
+```
+
+## Notes
+- Ensure that the `/auth/login`, `/auth/reset-password`, and `/auth/change-password` endpoints are implemented in your backend if they are not already.
+- Replace placeholder values like `<token>` and `string` with actual values when testing.

@@ -3,6 +3,14 @@
 ## Overview
 The Document Management API provides endpoints for managing project-related documents and files. This includes functionalities for uploading, retrieving, searching, sharing, and deleting documents associated with projects.
 
+## Common Error Responses
+- **500 Internal Server Error**: This error occurs when the server encounters an unexpected condition that prevents it from fulfilling the request.
+  ```json
+  {
+    "error": "An unexpected error occurred. Please try again later."
+  }
+  ```
+
 ## Endpoints
 
 ### 1. Upload Document

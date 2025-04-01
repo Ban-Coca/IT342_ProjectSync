@@ -140,7 +140,6 @@ public class UserController {
     private Map<String, Object> getUserResponseMap(UserEntity user) {
         Map<String, Object> userMap = new HashMap<>();
         userMap.put("userId", user.getUserId());
-        userMap.put("username", user.getUsername());
         userMap.put("email", user.getEmail());
         userMap.put("firstName", user.getFirstName());
         userMap.put("lastName", user.getLastName());
@@ -162,5 +161,4 @@ public class UserController {
                 .signWith(SignatureAlgorithm.HS256, jwtSecret)
                 .compact();
     }
-    
 }

@@ -3,6 +3,14 @@
 ## Overview
 The Reporting API provides endpoints for tracking time spent on tasks and viewing project dashboards. This allows users to generate insights into project performance and team productivity.
 
+## Common Error Responses
+- **500 Internal Server Error**: This error occurs when the server encounters an unexpected condition that prevents it from fulfilling the request.
+  ```json
+  {
+    "error": "An unexpected error occurred. Please try again later."
+  }
+  ```
+  
 ## Endpoints
 
 ### 1. Get Project Dashboard
