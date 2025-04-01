@@ -3,7 +3,14 @@
 ## Overview
 This document outlines the API endpoints related to project planning and scheduling within the Project Management web application. It covers functionalities for creating project timelines, defining goals, adding team members, and visualizing timelines with Gantt charts.
 
-
+## Common Error Responses
+- **500 Internal Server Error**: This error occurs when the server encounters an unexpected condition that prevents it from fulfilling the request.
+  ```json
+  {
+    "error": "An unexpected error occurred. Please try again later."
+  }
+  ```
+  
 ## Endpoints
 
 ### 1. Create a Project

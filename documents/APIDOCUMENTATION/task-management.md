@@ -3,6 +3,14 @@
 ## Overview
 The Task Management API provides endpoints for managing tasks within a project management application. It allows users to create, update, and track tasks efficiently, ensuring that project goals are met on time.
 
+## Common Error Responses
+- **500 Internal Server Error**: This error occurs when the server encounters an unexpected condition that prevents it from fulfilling the request.
+  ```json
+  {
+    "error": "An unexpected error occurred. Please try again later."
+  }
+  ```
+  
 ## Endpoints
 
 ### 1. Create a Task
