@@ -1,14 +1,11 @@
 package edu.cit.projectsync.Entity;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 
 @Entity
@@ -17,45 +14,41 @@ public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int userId;
 
-    @Column(nullable = false, unique = true)
     private String username;
-
-    @Column(nullable = false, unique = true)
     private String email;
-
-    @Column(name = "first_name", nullable = false)
     private String firstName;
-
-    @Column(name = "last_name", nullable = false)
     private String lastName;
-
-    @Column(nullable = false)
     private String password;
-
-    @Column(nullable = false)
     private String provider; // e.g., "email", "facebook", "google"
+    private boolean isActive = true;
+    private Date createdAt;
+    private Date lastLogin;
+    private Date updatedAt;
 
-    @Column(name = "is_active", nullable = false)
-    private boolean isActive = true; // Account status
-
-    @Column(name = "token", unique = true)
-    private String token; // Optional: Store token for session management
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
-    // Getters and Setters
-    public Long getId() {
-        return id;
+    public UserEntity() {
+        // Default constructor
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public UserEntity(String username, String email, String firstName, String lastName, String password, String provider, Date createdAt, Date lastLogin, Date updatedAt) {
+        this.username = username;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.password = password;
+        this.provider = provider;
+        this.createdAt = createdAt;
+        this.lastLogin = lastLogin;
+        this.updatedAt = updatedAt;
+    }
+    // Getters and Setters
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public String getUsername() {
@@ -106,46 +99,35 @@ public class UserEntity {
         this.provider = provider;
     }
 
-    public boolean isActive() {
+    public boolean IsActive() {
         return isActive;
     }
 
-    public void setActive(boolean active) {
+    public void setIsActive(boolean active) {
         isActive = active;
     }
 
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public LocalDateTime getCreatedAt() {
+    public Date getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
 
-    public LocalDateTime getUpdatedAt() {
+    public Date getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
+    public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
 
-    // Lifecycle Callbacks
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
+    public Date getLastLogin() {
+        return lastLogin;
     }
 
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
+    public void setLastLogin(Date lastLogin) {
+        this.lastLogin = lastLogin;
     }
 }
