@@ -95,9 +95,4 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
-    public Optional<UserEntity> findByUsername(String username) {
-        return userRepository.findByUsername(username);
-    }
-
-    
 }
