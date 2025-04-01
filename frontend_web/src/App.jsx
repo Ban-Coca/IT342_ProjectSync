@@ -6,17 +6,22 @@ import Homepage from './pages/Homepage'
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom'
 import LoginPage from './pages/AuthenticationPages/Login'
 import SignupPage from './pages/AuthenticationPages/Signup'
+import TaskPage from './pages/TaskPage'
+import LandingPage from './pages/LandingPage'
 
 function App() {
   
   return (
     <Router>
       <Routes>
+        
         <Route
           path="/"
-          element={
-            <LoginPage/>
-          }
+          element={<LandingPage/>}
+        />
+        <Route
+          path="/login"
+          element={<LoginPage/>}
         />
         <Route
           path="/signup"
@@ -27,6 +32,11 @@ function App() {
           path="/home"
           element={
             <Homepage/>
+          }/>
+        <Route
+          path="/tasks"
+          element={
+            <TaskPage/>
           }/>
       </Routes>
     </Router>

@@ -11,21 +11,22 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { useNavigate, useLocation } from "react-router-dom";
 
 const items = [
     {
       title: "Home",
-      url: "#",
+      url: "/home",
       icon: Home,
     },
     {
       title: "Inbox",
-      url: "#",
+      url: "/inbox",
       icon: Inbox,
     },
     {
       title: "Calendar",
-      url: "#",
+      url: "/calendar",
       icon: Calendar,
     },
     {
@@ -34,18 +35,37 @@ const items = [
       icon: Search,
     },
     {
+      title: "Tasks",
+      url: "/tasks",
+      icon: Search,
+    },
+    {
       title: "Dashboard",
-      url: "#",
+      url: "/dashboard",
       icon: LayoutDashboard,
     },
     {
       title: "Settings",
-      url: "#",
+      url: "/settings",
       icon: Settings,
     },
   ]
   
   export default function AppSidebar() {
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    const isActive = (path) => {
+      if (path === "/" && location.pathname === "/") {
+        return true
+      }
+  
+      if (path !== "/" && location.pathname.startsWith(path)) {
+        return true
+      }
+  
+      return false
+    }
     return (
       <Sidebar collapsible="icon">
         <SidebarContent>
@@ -57,7 +77,7 @@ const items = [
               <SidebarMenu className="mt-6">
                 {items.map((item) => (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton className="text-base h-12 hover:bg-gray-300"asChild>
+                    <SidebarMenuButton className="text-base h-12 hover:bg-gray-300" isActive={isActive(item.url)}asChild>
                       <a href={item.url} className="gap-4">
                         <item.icon />
                         <span>{item.title}</span>
