@@ -29,7 +29,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 
 
 @RestController
-@RequestMapping("api/user")
+@RequestMapping("/api/user")
 @CrossOrigin(origins = "http://localhost:5173")
 public class UserController {
 
@@ -150,6 +150,47 @@ public class UserController {
         userMap.put("provider", user.getProvider());
 
         return userMap;
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Map<String, String> loginRequest) {
+        try {
+            String email = loginRequest.get("email");
+            String password = loginRequest.get("password");
+
+            logger.info("Login attempt for email: {}", email);
+
+            // Find user by email
+            UserEntity user = userv.findByEmail(email);
+            if (user == null) {
+                logger.warn("No user found with email: {}", email);
+                return ResponseEntity.status(401)
+                        .body(Map.of("error", "Invalid email or password"));
+            }
+
+            // Check password
+            if (!passwordEncoder.matches(password, user.getPassword())) {
+                logger.warn("Invalid password for email: {}", email);
+                return ResponseEntity.status(401)
+                        .body(Map.of("error", "Invalid email or password"));
+            }
+
+            // Generate JWT token
+            String token = generateToken(user);
+            logger.info("Successfully generated token for user: {}", email);
+
+            // Create response
+            Map<String, Object> response = new HashMap<>();
+            response.put("token", token);
+            response.put("user", getUserResponseMap(user));
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            logger.error("Login error: ", e);
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Login failed: " + e.getMessage()));
+        }
     }
 
     private String generateToken(UserEntity user) {
