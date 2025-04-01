@@ -9,7 +9,8 @@
         android:id="@+id/logoImage"
         android:layout_width="1in"
         android:layout_height="1in"
-        android:src="@drawable/logo_withName"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/logoname"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -24,9 +25,9 @@
         android:textColor="@color/black"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@+id/logoImage"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/logoImage" />
 
     <!-- Login Subtitle -->
     <TextView
@@ -45,9 +46,10 @@
 
     <EditText
         android:id="@+id/fNameInput"
-        android:layout_width="2.1in"
+        android:layout_width="1.9in"
         android:layout_height="48dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="25dp"
+        android:fontFamily="@font/inter"
         android:background="@drawable/edit_text_border"
         android:hint="First Name"
         android:inputType="text"
@@ -60,12 +62,13 @@
 
     <EditText
         android:id="@+id/lnameInput"
-        android:layout_width="2.1in"
+        android:layout_width="1.9in"
         android:layout_height="48dp"
         android:layout_marginTop="20dp"
+        android:fontFamily="@font/inter"
         android:background="@drawable/edit_text_border"
-        android:hint="me@example.com"
-        android:inputType="textEmailAddress"
+        android:hint="Last Name"
+        android:inputType="text"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
         android:textSize="14sp"
@@ -75,28 +78,29 @@
 
     <EditText
         android:id="@+id/emailRegisterInput"
-        android:layout_width="2.1in"
+        android:layout_width="1.9in"
         android:layout_height="48dp"
+        android:fontFamily="@font/inter"
         android:layout_marginTop="20dp"
         android:background="@drawable/edit_text_border"
-        android:hint="me@example.com"
+        android:hint="Email Address"
         android:inputType="textEmailAddress"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
         android:textSize="14sp"
         app:layout_constraintTop_toBottomOf="@+id/lnameInput"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/lnameInput"/>
-
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <EditText
         android:id="@+id/passwordInput"
-        android:layout_width="2.1in"
+        android:layout_width="1.9in"
         android:layout_height="48dp"
         android:layout_marginTop="20dp"
+        android:fontFamily="@font/inter"
         android:background="@drawable/edit_text_border"
-        android:hint="me@example.com"
-        android:inputType="textEmailAddress"
+        android:hint="Password"
+        android:inputType="textPassword"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
         android:textSize="14sp"
@@ -104,19 +108,82 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
+
     <EditText
         android:id="@+id/confirmPasswordInput"
-        android:layout_width="2.1in"
+        android:layout_width="1.9in"
         android:layout_height="48dp"
         android:layout_marginTop="20dp"
+        android:fontFamily="@font/inter"
         android:background="@drawable/edit_text_border"
-        android:hint="me@example.com"
-        android:inputType="textEmailAddress"
+        android:hint="Confirm Password"
+        android:inputType="textPassword"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
         android:textSize="14sp"
-        app:layout_constraintTop_toBottomOf="@+id/passwordInput"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.505"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@+id/passwordInput" />
 
+    <CheckBox
+        android:id="@+id/AgreeBox"
+        android:layout_width="30dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.15"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/confirmPasswordInput" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:fontFamily="@font/inter"
+        android:text="I agree with the terms and conditions"
+        android:textSize="12dp"
+        app:layout_constraintBottom_toBottomOf="@+id/AgreeBox"
+        app:layout_constraintStart_toEndOf="@+id/AgreeBox"
+        app:layout_constraintTop_toTopOf="@+id/AgreeBox" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/registerButton"
+        android:layout_width="1.5in"
+        android:layout_height="52dp"
+        android:text="Register"
+        android:textAllCaps="false"
+        android:fontFamily="@font/inter_bold"
+        android:textColor="@color/white"
+        app:backgroundTint="@android:color/black"
+        app:cornerRadius="10dp"
+        app:layout_constraintVertical_bias="0.3"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Already have an account?"
+        android:fontFamily="@font/inter"
+        app:layout_constraintHorizontal_bias="0.3"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/registerButton" />
+
+    <TextView
+        android:id="@+id/loginButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sign in here"
+        android:fontFamily="@font/inter_bold"
+        android:textStyle="bold"
+        android:layout_marginLeft="5dp"
+        app:layout_constraintStart_toEndOf="@+id/textView2"
+        app:layout_constraintTop_toTopOf="@+id/textView2" />
 </androidx.constraintlayout.widget.ConstraintLayout>
