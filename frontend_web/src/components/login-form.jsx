@@ -2,13 +2,68 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-
+import { loginUser } from "@/service/AuthenticationService/authenticationService"
+import { useAuth } from "@/contexts/authentication-context"
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 export function LoginForm({
   className,
   ...props
 }) {
+  const navigate = useNavigate()
+  const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const { login } = useAuth();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  })
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const email = formData.email;
+    const password = formData.password;
+
+    // Input validation
+    if (!email) {
+      setError("Email is required.");
+      return;
+    }
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+    if (!password) {
+      setError("Password is required.");
+      return;
+    }
+
+    const credential = { email, password };
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await loginUser(credential);
+      const {user, token} = response;
+      login(user, token);
+      // navigate("/home");
+      console.log(response);
+    } catch (error) {
+      setError("Login failed. Please check your credentials and try again.");
+      console.error("Login failed:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+  
   return (
-    (<form className={cn("flex flex-col gap-6", className)} {...props}>
+    (<form onSubmit={handleSubmit} className={cn("flex flex-col gap-6", className)} {...props}>
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Login to your account</h1>
         <p className="text-balance text-sm text-muted-foreground">
@@ -16,9 +71,17 @@ export function LoginForm({
         </p>
       </div>
       <div className="grid gap-6">
+        {error && <p className="text-red-500 text-sm">{error}</p>}
         <div className="grid gap-2">
           <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" placeholder="m@example.com" required />
+          <Input 
+            id="email" 
+            name="email"
+            type="email" 
+            placeholder="m@example.com"
+            value={formData.email}
+            onChange={handleInputChange}
+            required />
         </div>
         <div className="grid gap-2">
           <div className="flex items-center">
@@ -27,10 +90,16 @@ export function LoginForm({
               Forgot your password?
             </a>
           </div>
-          <Input id="password" type="password" required />
+          <Input 
+            id="password"
+            name="password"
+            type="password" 
+            value={formData.password}
+            onChange={handleInputChange}
+            required />
         </div>
-        <Button type="submit" className="w-full">
-          Login
+        <Button type="submit" className="w-full" disabled={loading}>
+          {loading ? "Logging in..." : "Login"}
         </Button>
         <div
           className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
@@ -48,9 +117,10 @@ export function LoginForm({
           Login with Google
         </Button>
       </div>
+
       <div className="text-center text-sm">
         Don&apos;t have an account?{" "}
-        <a href="#" className="underline underline-offset-4">
+        <a href="/signup" className="underline underline-offset-4">
           Sign up
         </a>
       </div>

@@ -2,13 +2,50 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-
+import { signUpUser } from "@/service/AuthenticationService/authenticationService";
+import { useAuth } from "@/contexts/authentication-context";
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 export function SignupForm({
   className,
   ...props
 }) {
+  const { login } = useAuth();
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({ ...prev, [id]: value }));
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
+
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await signUpUser(formData);
+      login(response.user, response.token); // Automatically log in the user after signup
+    } catch (err) {
+      setError(err.response?.data?.message || "An error occurred during signup.");
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
-    (<form className={cn("flex flex-col gap-6", className)} {...props}>
+    (<form onSubmit={handleSubmit} className={cn("flex flex-col gap-6", className)} {...props}>
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Sign up to ProjectSync</h1>
         <p className="text-balance text-sm text-muted-foreground">
@@ -19,20 +56,57 @@ export function SignupForm({
         <div className="grid grid-cols-2 gap-2">
           <div>
             <Label htmlFor="firstName">First Name</Label>
-            <Input id="firstName" type="text" placeholder="John" required />
+            <Input 
+              name="firstName" 
+              id="firstName" 
+              type="text" 
+              placeholder="John"
+              value={formData.firstName}
+              onChange={handleChange}
+              required />
           </div>
           <div>
             <Label htmlFor="lastName">Last Name</Label>
-            <Input id="lastName" type="text" placeholder="Doe" required />
+            <Input 
+              name="lastName" 
+              id="lastName" 
+              type="text"
+              value={formData.lastName}
+              onChange={handleChange}
+              placeholder="Doe" 
+              required />
           </div>
         </div>
         <div className="grid gap-2">
           <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" placeholder="johndoe@email.com" required />
+          <Input 
+            name="email" 
+            id="email" 
+            type="email" 
+            placeholder="johndoe@email.com"
+            value={formData.email}
+            onChange={handleChange}
+            required />
         </div>
         <div className="grid gap-2">
           <Label htmlFor="password">Password</Label>
-          <Input id="password" type="password" required />
+          <Input 
+            name="password" 
+            id="password" 
+            type="password"
+            value={formData.password}
+            onChange={handleChange} 
+            required />
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="confirmPassword">Confirm Password</Label>
+          <Input 
+            name="confirmPassword" 
+            id="confirmPassword" 
+            type="password"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            required />
         </div>
         <Button type="submit" className="w-full">
           Sign Up

@@ -12,7 +12,8 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { useNavigate, useLocation } from "react-router-dom";
-
+import { useAuth } from "@/contexts/authentication-context";
+import { Button } from "@/components/ui/button"
 const items = [
     {
       title: "Home",
@@ -54,7 +55,7 @@ const items = [
   export default function AppSidebar() {
     const location = useLocation();
     const navigate = useNavigate();
-
+    const { logout } = useAuth();
     const isActive = (path) => {
       if (path === "/" && location.pathname === "/") {
         return true
@@ -66,6 +67,10 @@ const items = [
   
       return false
     }
+    const handleLogout = () => {
+      logout(); // Call the logout function
+      navigate("/login"); // Redirect to the login page
+    };
     return (
       <Sidebar collapsible="icon">
         <SidebarContent>
@@ -90,7 +95,7 @@ const items = [
           </SidebarGroup>
         </SidebarContent>
         <SidebarFooter>
-          <button className="w-full h-12 text-base">Logout</button>
+          <Button onClick={handleLogout} className="w-full h-12 text-base">Logout</Button>
         </SidebarFooter>
       </Sidebar>
     )
