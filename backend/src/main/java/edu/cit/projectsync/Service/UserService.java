@@ -91,7 +91,7 @@ public class UserService {
         }
     }
 
-    public Optional<UserEntity> findByEmail(String email) {
+    public UserEntity findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
