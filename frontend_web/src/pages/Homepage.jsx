@@ -2,7 +2,7 @@ import { useState } from "react";
 import MainLayout from "@/components/main-layout";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useIsMobile } from "@/hooks/use-mobile";
-
+import { useAuth } from "@/contexts/authentication-context";
 const mockProjects = [
     { id: 1, name: "Project Alpha", description: "Description for Project Alpha" },
     { id: 2, name: "Project Beta", description: "Description for Project Beta" },
@@ -17,11 +17,12 @@ const mockTasks = [
 
 function Homepage() {
     const isMobile = useIsMobile();
+    const { currentUser } = useAuth();
     return (
         <MainLayout>
             <div className="mb-8">
                 <div className="mb-6">
-                    <h1 className="text-4xl font-bold">Welcome back, User!</h1>
+                    <h1 className="text-4xl font-bold">Welcome back, {currentUser?.firstName}</h1>
                 </div>
                 
                 <div className="mb-4">
