@@ -6,7 +6,7 @@ const MainLayout = ({ children }) => {
     <SidebarProvider>
       <AppSidebar className="bg-sidebar" />
       <SidebarInset>
-        <header className="sticky top-0 z-10 flex h-16 items-center bg-background ">
+        <header className="sticky top-0 z-10 flex h-16 items-center bg-background border-b border-border ">
           <SidebarTrigger />
         </header>
         <div className="flex-1 px-4 overflow-auto">

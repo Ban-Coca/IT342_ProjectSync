@@ -18,6 +18,10 @@ export function LoginForm({
     email: "",
     password: "",
   })
+  const [fieldErrors, setFieldErrors] = useState({
+    email: false,
+    password: false
+  });
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prevState => ({
@@ -28,20 +32,21 @@ export function LoginForm({
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setFieldErrors({ email: false, password: false });
     const email = formData.email;
     const password = formData.password;
-
+    
     // Input validation
     if (!email) {
-      setError("Email is required.");
+      setFieldErrors(prev => ({ ...prev, email: true }));
       return;
     }
     if (!/\S+@\S+\.\S+/.test(email)) {
-      setError("Please enter a valid email address.");
+      setFieldErrors(prev => ({ ...prev, email: true }));
       return;
     }
     if (!password) {
-      setError("Password is required.");
+      setFieldErrors(prev => ({ ...prev, password: true }));
       return;
     }
 
@@ -80,8 +85,16 @@ export function LoginForm({
             type="email" 
             placeholder="m@example.com"
             value={formData.email}
-            onChange={handleInputChange}
-            required />
+            onChange={(e) => {
+              handleInputChange(e);
+              if(fieldErrors.email) {
+                setFieldErrors(prev => ({ ...prev, email: false }));
+                setError(null);
+              }
+            }}
+            className={fieldErrors.email ? "border-red-500" : ""}
+             />
+            {fieldErrors.email && <p className="text-xs text-red-500">Please enter a valid email address</p>}
         </div>
         <div className="grid gap-2">
           <div className="flex items-center">
@@ -95,8 +108,16 @@ export function LoginForm({
             name="password"
             type="password" 
             value={formData.password}
-            onChange={handleInputChange}
-            required />
+            onChange={(e) => {
+              handleInputChange(e);
+              if (fieldErrors.password) {
+                setFieldErrors(prev => ({ ...prev, password: false }));
+                setError(null);
+              }
+            }}
+            className={fieldErrors.password ? "border-red-500" : ""}
+          />
+          {fieldErrors.password && <p className="text-xs text-red-500">Password is required</p>}
         </div>
         <Button type="submit" className="w-full" disabled={loading}>
           {loading ? "Logging in..." : "Login"}

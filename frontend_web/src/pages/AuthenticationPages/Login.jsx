@@ -1,6 +1,8 @@
 import { GalleryVerticalEnd } from 'lucide-react'
 import { LoginForm } from '@/components/login-form'
 import logo from '@/assets/light-logo.svg';
+import graphic from '@/assets/WIP-graphic.svg'
+import { Separator } from '@/components/ui/separator';
 export default function LoginPage() {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
@@ -19,9 +21,10 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-      <div className="relative hidden bg-muted lg:block">
+      
+      <div className="relative bg-[#80808033] border border-solid shadow-lg lg:block">
         <img
-          src="/placeholder.svg"
+          src={graphic}
           alt="Image"
           className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
         />
