@@ -18,6 +18,8 @@ import derrick from "@/assets/image.png"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
+import emailjs from "@emailjs/browser"
+import { toast, Toaster } from "sonner"
 const navlinks = [
   { name: "Home", url: "#home" },
   { name: "Features", url: "#features" },
@@ -71,6 +73,12 @@ export default function LandingPage() {
     const isInView = useInView(featuresRef, { once: true })
     const [scope, animate] = useAnimate()
     const scopeInView  = useInView(scope)
+    const [formData, setFormData] = useState({
+        name: "",
+        email: "",
+        phone: "",
+        message: "",
+    })
     useEffect(() => {
         const lenis = new Lenis();
         function raf(time){
@@ -83,79 +91,111 @@ export default function LandingPage() {
             animate(scope.current, { opacity: 1 }, { duration: 0.5, delay: 0.3 })
         }
     }, [scopeInView, animate])
+    function handleChange(event){
+        setFormData({ ...formData, [event.target.name]: event.target.value })
+    }
+    function handleSubmit(event){
+        event.preventDefault()
+        const form = event.target
+        
+        emailjs.sendForm(
+            import.meta.env.VITE_EMAILJS_SERVICE_ID,
+            import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+            form,
+            import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+        ).then(
+            (response) => {
+                console.log("SUCCESS!", response.status, response.text)
+                toast.success("Message sent successfully!")
+                setFormData({
+                    name: "",
+                    email: "",
+                    phone: "",
+                    message: "",
+                })
+                form.reset()
+            },
+            (error)=> {
+                console.log("FAILED...", error)
+                toast.error("Message failed to send. Please try again later.")
+            }
+        )
+
+    }
     return (
         <div className="bg-background min-h-screen">
-        <header className="flex justify-between items-center p-4 md:px-8 lg:px-12">
-            {/* Logo */}
-            <img src="/logo.svg" alt="ProjectSync Logo" className="h-10 w-10 md:h-12 md:w-12 lg:h-16 lg:w-16" />
+            <Toaster richColors/>
+            <header className="flex justify-between items-center p-4 md:px-8 lg:px-12">
+                {/* Logo */}
+                <img src="/logo.svg" alt="ProjectSync Logo" className="h-10 w-10 md:h-12 md:w-12 lg:h-16 lg:w-16" />
 
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex gap-6 lg:gap-10 font-bold">
-            {navlinks.map((link, index) => (
-                <a
-                key={index}
-                href={link.url}
-                className="text-base px-4 py-1 rounded-sm hover:bg-primary hover:text-white transition-colors"
-                >
-                {link.name}
-                </a>
-            ))}
-            </div>
-
-            {/* Desktop Buttons */}
-            <div className="hidden md:flex gap-2">
-            <Button variant="outline" onClick={() => navigate("/login")} className="font-medium">
-                Login
-            </Button>
-            <Button onClick={() => navigate("/signup")} className="font-medium">
-                Signup
-            </Button>
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button className="md:hidden p-2" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle menu">
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-        </header>
-
-        {/* Mobile Menu */}
-        {mobileMenuOpen && (
-            <div className="md:hidden fixed inset-0 top-[68px] bg-background z-50 p-4">
-            <div className="flex flex-col gap-4">
+                {/* Desktop Navigation */}
+                <div className="hidden md:flex gap-6 lg:gap-10 font-bold">
                 {navlinks.map((link, index) => (
-                <a
+                    <a
                     key={index}
                     href={link.url}
-                    className="text-lg font-medium px-4 py-2 rounded-sm hover:bg-primary hover:text-white"
-                    onClick={() => setMobileMenuOpen(false)}
-                >
+                    className="text-base px-4 py-1 rounded-sm hover:bg-primary hover:text-white transition-colors"
+                    >
                     {link.name}
-                </a>
+                    </a>
                 ))}
-                <div className="flex gap-2 mt-4">
-                <Button
-                    variant="outline"
-                    onClick={() => {
-                    navigate("/login")
-                    setMobileMenuOpen(false)
-                    }}
-                    className="flex-1 font-medium"
-                >
+                </div>
+
+                {/* Desktop Buttons */}
+                <div className="hidden md:flex gap-2">
+                <Button variant="outline" onClick={() => navigate("/login")} className="font-medium">
                     Login
                 </Button>
-                <Button
-                    onClick={() => {
-                    navigate("/signup")
-                    setMobileMenuOpen(false)
-                    }}
-                    className="flex-1 font-medium"
-                >
+                <Button onClick={() => navigate("/signup")} className="font-medium">
                     Signup
                 </Button>
                 </div>
-            </div>
-            </div>
-        )}
+
+                {/* Mobile Menu Button */}
+                <button className="md:hidden p-2" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle menu">
+                {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                </button>
+            </header>
+
+            {/* Mobile Menu */}
+            {mobileMenuOpen && (
+                <div className="md:hidden fixed inset-0 top-[68px] bg-background z-50 p-4">
+                    <div className="flex flex-col gap-4">
+                        {navlinks.map((link, index) => (
+                            <a
+                                key={index}
+                                href={link.url}
+                                className="text-lg font-medium px-4 py-2 rounded-sm hover:bg-primary hover:text-white"
+                                onClick={() => setMobileMenuOpen(false)}
+                            >
+                                {link.name}
+                            </a>
+                        ))}
+                        <div className="flex gap-2 mt-4">
+                            <Button
+                                variant="outline"
+                                onClick={() => {
+                                navigate("/login")
+                                setMobileMenuOpen(false)
+                                }}
+                                className="flex-1 font-medium"
+                            >
+                                Login
+                            </Button>
+                            <Button
+                                onClick={() => {
+                                navigate("/signup")
+                                setMobileMenuOpen(false)
+                                }}
+                                className="flex-1 font-medium"
+                            >
+                                Signup
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
         
         <section className="px-4 md:px-8 lg:px-12 py-8 md:py-12 lg:h-[calc(100vh-6rem)] flex flex-col justify-center">
@@ -240,7 +280,7 @@ export default function LandingPage() {
             </div>
         </section>
 
-        <section id="contact" className="flex flex-col md:grid md:grid-cols-2 h-screen p-4 md:p-8 lg:p-12">
+        <section id="contact" className="flex flex-col md:grid md:grid-cols-2 min-h-[600px] h-screen p-4 md:p-8 lg:p-12">
             <div className="flex flex-col justify-center">
                 <h2 className="text-2xl md:text-4xl font-bold">Get in Touch</h2>
                 <p className="text-base md:text-lg text-muted-foreground mt-4 md:mt-2">
@@ -260,25 +300,56 @@ export default function LandingPage() {
                 </div>
             </div>
             <div className="flex flex-col relativ justify-center mt-8 md:mt-0">
-                <form className="flex flex-col gap-4">
+                <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                     <div className="flex flex-col gap-2">
                         <Label htmlFor="name" className="text-md font-medium">Name</Label>
                         <div className="flex gap-4">
-                            <Input id="name" type="text" placeholder="First Name" required/>
-                            <Input id="name" type="text" placeholder="Last Name" required/>
+                        <Input
+                            name="firstName"
+                            id="firstName"
+                            type="text"
+                            placeholder="First Name"
+                            onChange={(e) =>
+                                setFormData((prev) => ({
+                                ...prev,
+                                name: `${e.target.value} ${formData.lastName || ""}`.trim(),
+                                }))
+                            }
+                            required
+                            />
+                        <Input
+                            name="lastName"
+                            id="lastName"
+                            type="text"
+                            placeholder="Last Name"
+                            onChange={(e) =>
+                                setFormData((prev) => ({
+                                ...prev,
+                                name: `${formData.firstName || ""} ${e.target.value}`.trim(),
+                                }))
+                            }
+                            required
+                            />
                         </div>
                     </div>
                     <div className="flex flex-col gap-2">
                         <Label htmlFor="email" className="text-md font-medium">Email</Label>
-                        <Input id="email" type="email" placeholder="example@email.com" required/>
+                        <Input name="email" id="email" value={formData.email} onChange={handleChange} type="email" placeholder="example@email.com" required/>
                     </div>
                     <div className="flex flex-col gap-2">
                         <Label htmlFor="number" className="text-md font-medium">Phone Number</Label>
-                        <Input id="number" type="text" placeholder="XXXXXXXXXXX" />
+                        <Input name="phone" id="number" value={formData.phone} onChange={handleChange} type="text" placeholder="XXXXXXXXXXX" />
                     </div>
                     <div className="flex flex-col gap-2">
                         <Label htmlFor="message" className="text-mg font-medium">Message</Label>
-                        <Textarea id="message" placeholder="Type your message here..." required/>
+                        <Textarea 
+                            name="message" 
+                            id="message" 
+                            value={formData.message} 
+                            onChange={handleChange}
+                            placeholder="Type your message here..."
+                            className="max-h-40 overflow-y-auto"
+                            required/>
                     </div>
                     <Button type="submit" className="w-full mt-4 font-medium">
                         Send Message
@@ -287,11 +358,112 @@ export default function LandingPage() {
             </div>
         </section>
         
-        <footer className="p-4 md:p-8 lg:p-12 bg-muted">
-            <p className="text-center text-muted-foreground">
-                © {new Date().getFullYear()} ProjectSync. All rights reserved.
-            </p>
+        <footer className="bg-black text-white">
+            {/* Footer Content */}
+            <div className="p-8 md:p-12 grid grid-cols-1 md:flex md:justify-between gap-8">
+                {/* Column 1 - Brand */}
+                <div>
+                    <h2 className="text-3xl font-bold mb-2">
+                    Sync. Plan. Execute.
+                    <br />
+                    Simplify Project Management with ProjectSync.<sup>®</sup>
+                    </h2>
+                </div>
+
+                {/* Column 3 - Buenos Aires */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                    <h3 className="font-bold mb-4">Cebu</h3>
+                    <a href="mailto:buenosaires@projectsync.com" className="block hover:underline mb-1">
+                        cebu@projectsync.com
+                    </a>
+                    <p className="mb-4">+94972036672</p>
+                    <p className="mb-1">8V3C+395, 816 Katipunan St</p>
+                    <p className="mb-4">Cebu City, 6000 Cebu</p>
+                    <a href="https://www.google.pl/maps/place/Way+Tugpahay+Siomai+Sa+Tisa/@10.3014617,123.8680489,17z/data=!3m1!4b1!4m6!3m5!1s0x33a99ea76b0a05d3:0x5d432e89c7abae88!8m2!3d10.3014617!4d123.8706238!16s%2Fg%2F11cnc827z7?entry=ttu&g_ep=EgoyMDI1MDQwMS4wIKXMDSoASAFQAw%3D%3D" 
+                    target="_blank" rel="noopener noreferrer" className="mb-4 underline">
+                        SEE ON MAP →
+                    </a>
+                    </div>
+
+                    {/* Newsletter */}
+                    <div>
+                    <h3 className="font-bold mb-4">WANT TO BE THE SMARTEST IN YOUR OFFICE?</h3>
+                    <a href="#" className="underline block mb-8">
+                        SIGN UP FOR OUR NEWSLETTER →
+                    </a>
+
+                    <h4 className="mb-4">FOLLOW US</h4>
+                    <div className="flex gap-4">
+                        <a href="#" aria-label="Behance">
+                        <div className="w-8 h-8 flex items-center justify-center">Be</div>
+                        </a>
+                        <a href="#" aria-label="Dribbble">
+                        <div className="w-8 h-8 flex items-center justify-center">
+                            <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="lucide lucide-dribbble"
+                            >
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M19.13 5.09C15.22 9.14 10 10.44 2.25 10.94" />
+                            <path d="M21.75 12.84c-6.62-1.41-12.14 1-16.38 6.32" />
+                            <path d="M8.56 2.75c4.37 6 6 9.42 8 17.72" />
+                            </svg>
+                        </div>
+                        </a>
+                        <a href="#" aria-label="Instagram">
+                        <div className="w-8 h-8 flex items-center justify-center">
+                            <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="lucide lucide-instagram"
+                            >
+                            <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                            <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+                            </svg>
+                        </div>
+                        </a>
+                        <a href="#" aria-label="LinkedIn">
+                            <div className="w-8 h-8 flex items-center justify-center">
+                                <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="lucide lucide-linkedin"
+                                >
+                                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                                <rect width="4" height="12" x="2" y="9" />
+                                <circle cx="4" cy="4" r="2" />
+                                </svg>
+                            </div>
+                        </a>
+                    </div>
+                    </div>
+                </div>
+            </div>
         </footer>
-        </div>
+    </div>
     )
 }

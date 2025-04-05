@@ -1,4 +1,4 @@
-import { Calendar, Home, Inbox, Search, Settings, LayoutDashboard  } from "lucide-react"
+import { Calendar, Home, Inbox, Search, Settings, LayoutDashboard, ClipboardList   } from "lucide-react"
 
 import {
   Sidebar,
@@ -10,10 +10,11 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar
 } from "@/components/ui/sidebar"
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/authentication-context";
-import { Button } from "@/components/ui/button"
+import NavUser from "@/components/nav-user"
 const items = [
     {
       title: "Home",
@@ -31,31 +32,22 @@ const items = [
       icon: Calendar,
     },
     {
-      title: "Search",
-      url: "#",
-      icon: Search,
-    },
-    {
       title: "Tasks",
       url: "/tasks",
-      icon: Search,
+      icon: ClipboardList,
     },
     {
       title: "Dashboard",
       url: "/dashboard",
       icon: LayoutDashboard,
     },
-    {
-      title: "Settings",
-      url: "/settings",
-      icon: Settings,
-    },
   ]
   
   export default function AppSidebar() {
     const location = useLocation();
     const navigate = useNavigate();
-    const { logout } = useAuth();
+    const { logout, currentUser } = useAuth();
+    const { state } = useSidebar()
     const isActive = (path) => {
       if (path === "/" && location.pathname === "/") {
         return true
@@ -94,8 +86,8 @@ const items = [
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
-        <SidebarFooter>
-          <Button onClick={handleLogout} className="w-full h-12 text-base">Logout</Button>
+        <SidebarFooter >
+          <NavUser currentUser={currentUser} onLogout={handleLogout} isCollapsed={state === "collapsed"} />
         </SidebarFooter>
       </Sidebar>
     )
