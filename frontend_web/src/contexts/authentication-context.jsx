@@ -22,7 +22,6 @@ export const AuthenticationProvider = ({ children }) => {
             }
           } catch (error) {
             console.error('Error initializing auth state:', error);
-            // Clear potentially corrupted state
             logout();
           } finally {
             setLoading(false);
@@ -33,28 +32,28 @@ export const AuthenticationProvider = ({ children }) => {
     }, []);
     
     const login = (userData, authToken) => {
-        // Save to state
+        
         setCurrentUser(userData);
         setToken(authToken);
         setIsAuthenticated(true);
         
-        // Save to localStorage
+        
         localStorage.setItem('user', JSON.stringify(userData));
         localStorage.setItem('token', authToken);
         localStorage.setItem('isAuthenticated', 'true');
       
-        // Redirect to home page
+       
         const navigate = useNavigate();
         navigate('/home');
     };
     
     const logout = () => {
-        // Clear state
+        
         setCurrentUser(null);
         setToken(null);
         setIsAuthenticated(false);
         
-        // Clear localStorage
+        
         localStorage.removeItem('user');
         localStorage.removeItem('token');
         localStorage.removeItem('isAuthenticated');
@@ -66,7 +65,7 @@ export const AuthenticationProvider = ({ children }) => {
         localStorage.setItem('user', JSON.stringify(updatedUser));
       };
     
-      // Get authorization header for API requests
+      
       const getAuthHeader = () => {
         return token ? { Authorization: `Bearer ${token}` } : {};
     };
