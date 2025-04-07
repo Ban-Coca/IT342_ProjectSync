@@ -9,6 +9,7 @@ import SignupPage from './pages/AuthenticationPages/Signup'
 import TaskPage from './pages/TaskPage'
 import LandingPage from './pages/LandingPage'
 import { AuthenticationProvider, useAuth } from './contexts/authentication-context'
+import ProjectsPage from './pages/ProjectsPage'
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
   if (loading) {
@@ -72,6 +73,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <TaskPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/projects" 
+            element={
+              <ProtectedRoute>
+                <ProjectsPage />
               </ProtectedRoute>
             }
           />

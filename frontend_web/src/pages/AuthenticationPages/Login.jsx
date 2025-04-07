@@ -22,7 +22,7 @@ export default function LoginPage() {
         </div>
       </div>
       
-      <div className="relative bg-[#80808033] border border-solid shadow-lg lg:block">
+      <div className="relative hidden bg-[#80808033] border border-solid shadow-lg lg:block">
         <img
           src={graphic}
           alt="Image"

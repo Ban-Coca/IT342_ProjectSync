@@ -1,4 +1,4 @@
-import { Calendar, Home, Inbox, Search, Settings, LayoutDashboard, ClipboardList   } from "lucide-react"
+import { Calendar, Home, Inbox, Search, Folder, LayoutDashboard, ClipboardList   } from "lucide-react"
 
 import {
   Sidebar,
@@ -25,6 +25,11 @@ const items = [
       title: "Inbox",
       url: "/inbox",
       icon: Inbox,
+    },
+    {
+      title: "Projects",
+      url: "/projects",
+      icon: Folder,
     },
     {
       title: "Calendar",
@@ -60,8 +65,8 @@ const items = [
       return false
     }
     const handleLogout = () => {
-      logout(); // Call the logout function
-      navigate("/login"); // Redirect to the login page
+      logout();
+      navigate("/login");
     };
     return (
       <Sidebar collapsible="icon">
