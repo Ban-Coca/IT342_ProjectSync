@@ -1,12 +1,13 @@
 package edu.cit.projectsync.Service;
 
-import edu.cit.projectsync.Entity.TaskEntity;
-import edu.cit.projectsync.Repository.TaskRepository;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import edu.cit.projectsync.Entity.TaskEntity;
+import edu.cit.projectsync.Repository.TaskRepository;
 
 @Service
 public class TaskService {
@@ -36,6 +37,10 @@ public class TaskService {
         return taskRepository.findById(taskId).orElse(null);
     }
 
+    public List<TaskEntity> getTasksByProjectId(Long projectId) {
+        return taskRepository.findByProjectId(projectId);
+    }
+    
     public List<TaskEntity> getAllTasks() {
         return taskRepository.findAll();
     }

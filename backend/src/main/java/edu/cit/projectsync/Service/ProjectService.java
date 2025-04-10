@@ -38,6 +38,10 @@ public class ProjectService {
         return projectRepository.findById(projectId).orElse(null);
     }
 
+    public List<ProjectEntity> getProjectsByUserId(Long userId) {
+        return projectRepository.findByOwnerIdOrTeamMembersUserId(userId, userId);
+    }
+
     public List<ProjectEntity> getAllProjects() {
         return projectRepository.findAll();
     }

@@ -1,7 +1,15 @@
 package edu.cit.projectsync.Entity;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "documents")
@@ -26,12 +34,13 @@ public class DocumentEntity {
     @Column(name = "uploaded_at", nullable = false)
     private LocalDateTime uploadedAt;
 
-    @Column(name = "uploaded_by", nullable = false)
-    private String uploadedBy; // User ID or username of the uploader
+    @ManyToOne
+    @JoinColumn(name = "uploaded_by", referencedColumnName = "userId", nullable = false)
+    private UserEntity uploadedBy; // Changed to a relationship with UserEntity
 
     @ManyToOne
-    @JoinColumn(name = "project_id", nullable = false)
-    private ProjectEntity project; // Association with a project
+    @JoinColumn(name = "project_id", referencedColumnName = "id", nullable = false)
+    private ProjectEntity project; // Foreign key to ProjectEntity
 
     // Getters and Setters
     public Long getId() {
@@ -82,11 +91,11 @@ public class DocumentEntity {
         this.uploadedAt = uploadedAt;
     }
 
-    public String getUploadedBy() {
+    public UserEntity getUploadedBy() {
         return uploadedBy;
     }
 
-    public void setUploadedBy(String uploadedBy) {
+    public void setUploadedBy(UserEntity uploadedBy) {
         this.uploadedBy = uploadedBy;
     }
 

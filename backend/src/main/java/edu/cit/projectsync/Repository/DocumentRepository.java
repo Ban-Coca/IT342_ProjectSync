@@ -9,7 +9,6 @@ import edu.cit.projectsync.Entity.DocumentEntity;
 
 @Repository
 public interface DocumentRepository extends JpaRepository<DocumentEntity, Long> {
-    
-    List<DocumentEntity> findByProjectId(Long projectId); // Search documents by project ID
+    List<DocumentEntity> findByUserIdAndProjectId(Long userId, Long projectId);
     List<DocumentEntity> findByFileNameContaining(String query); // Search documents by file name
 }

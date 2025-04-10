@@ -101,7 +101,7 @@ public class UserController {
     }
 
     @PutMapping("/update-profile")
-    public ResponseEntity<?> updateProfile(@RequestBody UserEntity updatedUserDetails, @RequestParam("userId") int userId) {
+    public ResponseEntity<?> updateProfile(@RequestBody UserEntity updatedUserDetails, @RequestParam("userId") Long userId) {
         try {
             logger.info("Received profile update request for user: {}", userId);
 
@@ -133,7 +133,7 @@ public class UserController {
     }
 
     @DeleteMapping("/deleteuserdetails/{userId}")
-    public String deleteUser(@PathVariable int userId) {
+    public String deleteUser(@PathVariable Long userId) {
         return userv.deleteUser(userId);
     }
 
