@@ -11,6 +11,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -33,20 +36,24 @@ public class ProjectEntity {
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
 
-    @Column(nullable = false)
-    private Long owner;
+    @ManyToOne
+    @JoinColumn(name = "owner_id", referencedColumnName = "userId", nullable = false)
+    private UserEntity owner;
 
     @ElementCollection
     @CollectionTable(name = "project_goals", joinColumns = @JoinColumn(name = "project_id"))
     @Column(name = "goal")
     private List<String> goals;
 
-    @ElementCollection
-    @CollectionTable(name = "project_team_members", joinColumns = @JoinColumn(name = "project_id"))
-    @Column(name = "team_member")
-    private List<String> teamMembers;
+    @ManyToMany
+    @JoinTable(
+        name = "project_team_members", // Join table name
+        joinColumns = @JoinColumn(name = "project_id"), // Foreign key for ProjectEntity
+        inverseJoinColumns = @JoinColumn(name = "user_id") // Foreign key for UserEntity
+    )
+    private List<UserEntity> teamMembers;
 
-    // Getters and Setters
+   
     public Long getId() {
         return id;
     }
@@ -87,11 +94,11 @@ public class ProjectEntity {
         this.endDate = endDate;
     }
 
-    public Long getOwner() {
+    public UserEntity getOwner() {
         return owner;
     }
 
-    public void setOwner(Long owner) {
+    public void setOwner(UserEntity owner) {
         this.owner = owner;
     }
 
@@ -103,11 +110,11 @@ public class ProjectEntity {
         this.goals = goals;
     }
 
-    public List<String> getTeamMembers() {
+    public List<UserEntity> getTeamMembers() {
         return teamMembers;
     }
 
-    public void setTeamMembers(List<String> teamMembers) {
+    public void setTeamMembers(List<UserEntity> teamMembers) {
         this.teamMembers = teamMembers;
     }
 }

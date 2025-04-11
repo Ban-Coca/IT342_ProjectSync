@@ -3,7 +3,6 @@ package edu.cit.projectsync.Service;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import javax.naming.NameNotFoundException;
@@ -36,13 +35,13 @@ public class UserService {
 	}
 
     //find by ID
-	public UserEntity findById(int userId) {
+	public UserEntity findById(Long userId) {
 		return userRepository.findById(userId).get();
 	}
 
     //Update of CRUD
 	@SuppressWarnings("finally")
-	public UserEntity putUserDetails (int userId, UserEntity newUserDetails) {
+	public UserEntity putUserDetails (Long userId, UserEntity newUserDetails) {
 		UserEntity user = new UserEntity();
 		
 		try {
@@ -61,7 +60,7 @@ public class UserService {
 	}
 
     //Delete of CRUD
-	public String deleteUser(int userId) {
+	public String deleteUser(Long userId) {
 		String msg = "";
 		
 		if(userRepository.findById(userId).isPresent()) {

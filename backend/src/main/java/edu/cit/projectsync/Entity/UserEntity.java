@@ -1,11 +1,15 @@
 package edu.cit.projectsync.Entity;
 
 import java.util.Date;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -14,7 +18,7 @@ public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int userId;
+    private Long userId;
 
     private String email;
     private String firstName;
@@ -25,6 +29,12 @@ public class UserEntity {
     private Date createdAt;
     private Date lastLogin;
     private Date updatedAt;
+
+    @OneToMany(mappedBy = "assignedTo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<TaskEntity> tasks;
+
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ProjectEntity> projects;
 
     public UserEntity() {
         // Default constructor
@@ -40,12 +50,13 @@ public class UserEntity {
         this.lastLogin = lastLogin;
         this.updatedAt = updatedAt;
     }
+
     // Getters and Setters
-    public int getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
@@ -119,5 +130,21 @@ public class UserEntity {
 
     public void setLastLogin(Date lastLogin) {
         this.lastLogin = lastLogin;
+    }
+
+    public List<TaskEntity> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<TaskEntity> tasks) {
+        this.tasks = tasks;
+    }
+
+    public List<ProjectEntity> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(List<ProjectEntity> projects) {
+        this.projects = projects;
     }
 }
