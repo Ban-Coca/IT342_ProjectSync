@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import edu.cit.projectsync.Entity.TaskEntity;
 
 @Repository
-public interface TaskRepository extends JpaRepository<TaskEntity, Long> {
-    List<TaskEntity> findByProjectId(Long projectId);
+public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
+    List<TaskEntity> findByProject_ProjectId(int projectId);
 }

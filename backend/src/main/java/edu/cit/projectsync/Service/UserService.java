@@ -35,13 +35,13 @@ public class UserService {
 	}
 
     //find by ID
-	public UserEntity findById(Long userId) {
+	public UserEntity findById(int userId) {
 		return userRepository.findById(userId).get();
 	}
 
     //Update of CRUD
 	@SuppressWarnings("finally")
-	public UserEntity putUserDetails (Long userId, UserEntity newUserDetails) {
+	public UserEntity putUserDetails (int userId, UserEntity newUserDetails) {
 		UserEntity user = new UserEntity();
 		
 		try {
@@ -60,7 +60,7 @@ public class UserService {
 	}
 
     //Delete of CRUD
-	public String deleteUser(Long userId) {
+	public String deleteUser(int userId) {
 		String msg = "";
 		
 		if(userRepository.findById(userId).isPresent()) {
@@ -90,8 +90,15 @@ public class UserService {
         }
     }
 
-    public UserEntity findByEmail(String email) {
-        return userRepository.findByEmail(email);
+	public UserEntity findByEmail(String email) {
+        List<UserEntity> users = userRepository.findByEmail(email);
+        if (users.size() > 1) {
+            throw new IllegalStateException("Multiple users found with the same email: " + email);
+        }
+        return users.isEmpty() ? null : users.get(0);
     }
 
+	public UserEntity getUserById(int id) {
+        return userRepository.findById(id).orElse(null);
+    }
 }

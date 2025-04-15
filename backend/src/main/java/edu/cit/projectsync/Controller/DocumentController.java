@@ -16,20 +16,28 @@ import org.springframework.web.multipart.MultipartFile;
 
 import edu.cit.projectsync.Entity.DocumentEntity;
 import edu.cit.projectsync.Entity.ProjectEntity;
+import edu.cit.projectsync.Entity.UserEntity;
 import edu.cit.projectsync.Service.DocumentService;
+import edu.cit.projectsync.Service.ProjectService;
+import edu.cit.projectsync.Service.UserService;
 
 @RestController
-@RequestMapping("/api/v1/documents")
+@RequestMapping("/api/documents")
 public class DocumentController {
 
     @Autowired
     private DocumentService documentService;
 
+    @Autowired
+    private ProjectService projectService; 
+    @Autowired
+    private UserService userService;
+
     @PostMapping("/upload")
     public ResponseEntity<DocumentEntity> uploadDocument(
             @RequestParam("file") MultipartFile file,
-            @RequestParam("project_id") Long projectId,
-            @RequestParam("uploaded_by") String uploadedBy) {
+            @RequestParam("project_id") int projectId,
+            @RequestParam("uploaded_by") int userId) {
         try {
             // Define the upload directory
             String uploadDir = "uploads/";
@@ -40,16 +48,23 @@ public class DocumentController {
             java.nio.file.Files.createDirectories(path.getParent()); // Ensure the directory exists
             file.transferTo(path.toFile()); // Save the file
 
+            // Validate and fetch the user and project entities
+            UserEntity user = userService.getUserById(userId); // Ensure userService exists
+            ProjectEntity project = projectService.getProjectById(projectId); // Ensure projectService exists
+
+            if (user == null || project == null) {
+                return ResponseEntity.badRequest().body(null); // Return 400 if user or project is invalid
+            }
+
             // Create a new DocumentEntity
             DocumentEntity document = new DocumentEntity();
             document.setFileName(file.getOriginalFilename());
             document.setFileType(file.getContentType());
             document.setFileSize(file.getSize());
-            document.setFilePath(filePath); // Save the relative path
+            document.setFilePath(filePath); 
             document.setUploadedAt(LocalDateTime.now());
-            document.setUploadedBy(uploadedBy);
-            document.setProject(new ProjectEntity());
-            document.getProject().setId(projectId);
+            document.setUploadedBy(user);
+            document.setProject(project);
 
             // Save the document metadata to the database
             DocumentEntity savedDocument = documentService.uploadDocument(document);
@@ -60,8 +75,8 @@ public class DocumentController {
         }
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<DocumentEntity> getDocumentById(@PathVariable Long id) {
+    @GetMapping("getdocumentbyid/{id}")
+    public ResponseEntity<DocumentEntity> getDocumentById(@PathVariable int id) {
         DocumentEntity document = documentService.getDocumentById(id);
         if (document != null) {
             return ResponseEntity.ok(document);
@@ -69,21 +84,24 @@ public class DocumentController {
         return ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<List<DocumentEntity>> searchDocuments(
-            @RequestParam(value = "project_id", required = false) Long projectId,
-            @RequestParam(value = "query", required = false) String query) {
-        if (projectId != null) {
-            return ResponseEntity.ok(documentService.searchDocumentsByProjectId(projectId));
-        } else if (query != null) {
-            return ResponseEntity.ok(documentService.searchDocumentsByQuery(query));
-        }
-        return ResponseEntity.badRequest().build();
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDocument(@PathVariable Long id) {
+    @DeleteMapping("/deletedocument/{id}")
+    public ResponseEntity<Void> deleteDocument(@PathVariable int id) {
         documentService.deleteDocument(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/getalldocuments")
+    public ResponseEntity<List<DocumentEntity>> getAllDocuments() {
+        List<DocumentEntity> documents = documentService.getAllDocuments();
+        return ResponseEntity.ok(documents);
+    }
+
+    @GetMapping("/project/{projectId}")
+    public ResponseEntity<List<DocumentEntity>> getDocumentsByProject(@PathVariable int projectId) {
+        List<DocumentEntity> documents = documentService.getDocumentsByProjectId(projectId);
+        if (documents.isEmpty()) {
+            return ResponseEntity.noContent().build(); // Return 204 if no documents found
+        }
+        return ResponseEntity.ok(documents);
     }
 }

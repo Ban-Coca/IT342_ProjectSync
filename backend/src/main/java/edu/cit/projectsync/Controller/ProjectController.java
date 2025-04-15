@@ -1,11 +1,10 @@
 package edu.cit.projectsync.Controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,8 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import edu.cit.projectsync.DTO.ProjectDTO;
 import edu.cit.projectsync.Entity.ProjectEntity;
-import edu.cit.projectsync.Entity.UserEntity;
+import edu.cit.projectsync.Mapper.ProjectMapper;
 import edu.cit.projectsync.Service.ProjectService;
 
 @RestController
@@ -25,63 +25,75 @@ public class ProjectController {
 
     @Autowired
     private ProjectService projectService;
-
+   
     @PostMapping("/createproject")
-    public ResponseEntity<ProjectEntity> createProject(@RequestBody ProjectEntity project) {
-        Long authenticatedUserId = getAuthenticatedUserId(); // Get the authenticated user's ID
-        UserEntity owner = new UserEntity();
-        owner.setUserId(authenticatedUserId); // Set the authenticated user as the owner
-        project.setOwner(owner); // Assign the owner to the project
-        ProjectEntity createdProject = projectService.createProject(project);
-        return ResponseEntity.status(201).body(createdProject);
+    public ResponseEntity<ProjectDTO> createProject(@RequestBody ProjectEntity project) {
+        try {
+            if (project.getOwner() == null || project.getOwner().getUserId() == 0) {
+                return ResponseEntity.badRequest().build();
+            }
+
+            ProjectEntity createdProject = projectService.createProject(project);
+            ProjectDTO projectDTO = ProjectMapper.toDTO(createdProject);
+            return ResponseEntity.status(201).body(projectDTO);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PutMapping("/updateproject/{projectId}/")
-    public ResponseEntity<ProjectEntity> updateProject(@PathVariable Long projectId, @RequestBody ProjectEntity updatedProject) {
+    public ResponseEntity<ProjectDTO> updateProject(@PathVariable int projectId, @RequestBody ProjectEntity updatedProject) {
         ProjectEntity project = projectService.updateProject(projectId, updatedProject);
         if (project != null) {
-            return ResponseEntity.ok(project);
+            ProjectDTO projectDTO = ProjectMapper.toDTO(project);
+            return ResponseEntity.ok(projectDTO);
         }
         return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/getprojectbyid/{projectId}/")
-    public ResponseEntity<ProjectEntity> getProjectById(@PathVariable Long projectId) {
+    public ResponseEntity<ProjectDTO> getProjectById(@PathVariable int projectId) {
         ProjectEntity project = projectService.getProjectById(projectId);
         if (project != null) {
-            return ResponseEntity.ok(project);
+            ProjectDTO projectDTO = ProjectMapper.toDTO(project);
+            return ResponseEntity.ok(projectDTO);
         }
         return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/getallprojects")
-    public ResponseEntity<List<ProjectEntity>> getAllProjects() {
+    public ResponseEntity<List<ProjectDTO>> getAllProjects() {
         List<ProjectEntity> projects = projectService.getAllProjects();
-        return ResponseEntity.ok(projects);
+        List<ProjectDTO> projectDTOs = projects.stream()
+                                               .map(ProjectMapper::toDTO)
+                                               .collect(Collectors.toList());
+        return ResponseEntity.ok(projectDTOs);
     }
 
-    @DeleteMapping("/deleteproject/{projectId}/")
-    public ResponseEntity<Void> deleteProject(@PathVariable Long projectId) {
-        projectService.deleteProject(projectId);
-        return ResponseEntity.noContent().build();
+    @DeleteMapping("/deleteproject/{projectId}")
+    public ResponseEntity<String> deleteProject(@PathVariable int projectId) {
+        try {
+            ProjectEntity project = projectService.getProjectById(projectId);
+            if (project == null) {
+                return ResponseEntity.status(404).body("Project with ID " + projectId + " not found.");
+            }
+
+            projectService.deleteProject(projectId);
+            return ResponseEntity.ok("Project with ID " + projectId + " has been successfully deleted.");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("An error occurred while deleting the project: " + e.getMessage());
+        }
     }
 
     @GetMapping("/getprojectbyuser/{userId}")
-    public ResponseEntity<List<ProjectEntity>> getProjectsByUserId(@PathVariable Long userId) {
+    public ResponseEntity<List<ProjectDTO>> getProjectsByUserId(@PathVariable int userId) {
         List<ProjectEntity> projects = projectService.getProjectsByUserId(userId);
         if (projects != null && !projects.isEmpty()) {
-            return ResponseEntity.ok(projects);
+            List<ProjectDTO> projectDTOs = projects.stream()
+                                                   .map(ProjectMapper::toDTO)
+                                                   .collect(Collectors.toList());
+            return ResponseEntity.ok(projectDTOs);
         }
         return ResponseEntity.noContent().build();
-    }
-
-    // Method to get the authenticated user's ID
-    private Long getAuthenticatedUserId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof UserEntity) {
-            UserEntity user = (UserEntity) authentication.getPrincipal();
-            return user.getUserId(); // Assuming UserEntity contains the userId field
-        }
-        throw new IllegalStateException("No authenticated user found");
     }
 }

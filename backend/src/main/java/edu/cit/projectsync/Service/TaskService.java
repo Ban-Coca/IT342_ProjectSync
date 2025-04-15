@@ -19,7 +19,7 @@ public class TaskService {
         return taskRepository.save(task);
     }
 
-    public TaskEntity updateTask(Long taskId, TaskEntity updatedTask) {
+    public TaskEntity updateTask(int taskId, TaskEntity updatedTask) {
         Optional<TaskEntity> taskOptional = taskRepository.findById(taskId);
         if (taskOptional.isPresent()) {
             TaskEntity task = taskOptional.get();
@@ -33,19 +33,19 @@ public class TaskService {
         return null;
     }
 
-    public TaskEntity getTaskById(Long taskId) {
+    public TaskEntity getTaskById(int taskId) {
         return taskRepository.findById(taskId).orElse(null);
     }
 
-    public List<TaskEntity> getTasksByProjectId(Long projectId) {
-        return taskRepository.findByProjectId(projectId);
+    public List<TaskEntity> getTasksByProjectId(int projectId) {
+        return taskRepository.findByProject_ProjectId(projectId);
     }
     
     public List<TaskEntity> getAllTasks() {
         return taskRepository.findAll();
     }
 
-    public void deleteTask(Long taskId) {
+    public void deleteTask(int taskId) {
         taskRepository.deleteById(taskId);
     }
 }
