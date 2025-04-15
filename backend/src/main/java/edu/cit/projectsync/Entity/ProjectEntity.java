@@ -22,18 +22,11 @@ public class ProjectEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int projectId;
 
-    @Column(nullable = false)
     private String name;
-
-    @Column(length = 1000)
     private String description;
-
-    @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
-
-    @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
 
     @ManyToOne
@@ -42,24 +35,24 @@ public class ProjectEntity {
 
     @ElementCollection
     @CollectionTable(name = "project_goals", joinColumns = @JoinColumn(name = "project_id"))
-    @Column(name = "goal")
+    @Column(name = "goal")  
     private List<String> goals;
 
     @ManyToMany
     @JoinTable(
-        name = "project_team_members", // Join table name
-        joinColumns = @JoinColumn(name = "project_id"), // Foreign key for ProjectEntity
-        inverseJoinColumns = @JoinColumn(name = "user_id") // Foreign key for UserEntity
+        name = "project_team_members",
+        joinColumns = @JoinColumn(name = "project_id", referencedColumnName = "projectId"),
+        inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "userId")
     )
     private List<UserEntity> teamMembers;
 
    
-    public Long getId() {
-        return id;
+    public int getProjectId() {
+        return projectId;
     }
-
-    public void setId(Long id) {
-        this.id = id;
+    
+    public void setProjectId(int projectId) {
+        this.projectId = projectId;
     }
 
     public String getName() {

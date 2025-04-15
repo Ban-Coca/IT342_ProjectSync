@@ -19,7 +19,7 @@ public class ProjectService {
         return projectRepository.save(project);
     }
     
-    public ProjectEntity updateProject(Long projectId, ProjectEntity updatedProject) {
+    public ProjectEntity updateProject(int projectId, ProjectEntity updatedProject) {
         Optional<ProjectEntity> projectOptional = projectRepository.findById(projectId);
         if (projectOptional.isPresent()) {
             ProjectEntity project = projectOptional.get();
@@ -34,19 +34,19 @@ public class ProjectService {
         return null;
     }
 
-    public ProjectEntity getProjectById(Long projectId) {
+    public ProjectEntity getProjectById(int projectId) {
         return projectRepository.findById(projectId).orElse(null);
     }
 
-    public List<ProjectEntity> getProjectsByUserId(Long userId) {
-        return projectRepository.findByOwnerIdOrTeamMembersUserId(userId, userId);
+    public List<ProjectEntity> getProjectsByUserId(int userId) {
+        return projectRepository.findByOwnerUserIdOrTeamMembersUserId (userId, userId);
     }
 
     public List<ProjectEntity> getAllProjects() {
         return projectRepository.findAll();
     }
 
-    public void deleteProject(Long projectId) {
+    public void deleteProject(int projectId) {
         projectRepository.deleteById(projectId);
     }
 }

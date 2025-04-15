@@ -3,7 +3,6 @@ package edu.cit.projectsync.Entity;
 import java.time.LocalDate;
 import java.util.List;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,16 +19,12 @@ public class TaskEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int taskId;
 
-    @Column(nullable = false)
     private String title;
-
-    @Column(length = 500)
     private String description;
-
-    @Column(name = "due_date")
     private LocalDate dueDate;
+    private String status;
 
     @ManyToMany
     @JoinTable(
@@ -40,19 +35,16 @@ public class TaskEntity {
     private List<UserEntity> assignedTo;
 
     @ManyToOne
-    @JoinColumn(name = "project_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "project_id", referencedColumnName = "projectId", nullable = false)
     private ProjectEntity project;
 
-    @Column(nullable = false)
-    private String status;
-
     
-    public Long getId() {
-        return id;
+    public int getTaskId() {
+        return taskId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setTaskId(int taskId) {
+        this.taskId = taskId;
     }
 
     public String getTitle() {
