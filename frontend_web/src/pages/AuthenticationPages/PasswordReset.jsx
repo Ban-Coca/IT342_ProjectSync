@@ -1,28 +1,27 @@
-import { Input } from '@/components/ui/input';
-import { Label } from '@radix-ui/react-label';
+
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { ForgotPasswordForm } from '@/components/forget_password_1';
-import forgotPasswordImg from '@/assets/forgotpassword.svg';
+import resetPassword from '@/assets/reset-password.svg';
+import { PasswordResetForm } from '@/components/forget_password_3';
 import logo from '@/assets/light-logo.svg'
-export default function ForgotPassword() {
+export default function PasswordReset() {
     const ref = useRef(null)
     return (
       <div 
         className="grid min-h-svh lg:grid-cols-2">
         <div className="flex flex-col gap-4 p-6 md:p-10">
           <div className="flex justify-center gap-2 md:justify-start">
-            <a href="#" className="flex items-center gap-2 font-medium">
+            <a href="/login" className="flex items-center gap-2 font-medium">
               <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
                 <img src={logo} className="h-6 w-6" />
               </div>
               ProjectSync
-            </a>
+              </a>
           </div>
           <div className="flex flex-1 items-center justify-center">
             <div className="w-full max-w-xs">
-              <ForgotPasswordForm />
+              <PasswordResetForm />
             </div>
           </div>
         </div>
@@ -43,11 +42,12 @@ export default function ForgotPassword() {
               <h1 className="text-5xl font-bold">ProjectSync</h1>
               <h3 className="text-lg font-bold italic">Keep Your Projects in Perfect Sync</h3>
               <img
-                src={forgotPasswordImg}
+                src={resetPassword}
                 alt="Image"
                 className="animated w-[512px] h-[512px]"
               />
           </motion.div>
+          
         </div>
       </div>
     )

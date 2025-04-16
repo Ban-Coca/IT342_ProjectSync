@@ -6,10 +6,14 @@ import Homepage from './pages/Homepage'
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom'
 import LoginPage from './pages/AuthenticationPages/Login'
 import SignupPage from './pages/AuthenticationPages/Signup'
+import ForgotPassword from './pages/AuthenticationPages/ForgotPassword'
+import VerifyCode from './pages/AuthenticationPages/VerificationCodePage'
+import PasswordReset from './pages/AuthenticationPages/PasswordReset'
 import TaskPage from './pages/TaskPage'
 import LandingPage from './pages/LandingPage'
 import { AuthenticationProvider, useAuth } from './contexts/authentication-context'
 import ProjectsPage from './pages/ProjectsPage'
+
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
   if (loading) {
@@ -57,6 +61,30 @@ function App() {
             element={
               <RedirectIfAuthenticated>
                 <SignupPage />
+              </RedirectIfAuthenticated>
+            } 
+          />
+          <Route 
+            path="/forgot-password" 
+            element={
+              <RedirectIfAuthenticated>
+                <ForgotPassword />
+              </RedirectIfAuthenticated>
+            } 
+          />
+          <Route 
+            path="/verify-code" 
+            element={
+              <RedirectIfAuthenticated>
+                <VerifyCode />
+              </RedirectIfAuthenticated>
+            } 
+          />
+          <Route 
+            path="/reset-password" 
+            element={
+              <RedirectIfAuthenticated>
+                <PasswordReset />
               </RedirectIfAuthenticated>
             } 
           />

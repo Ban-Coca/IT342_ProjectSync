@@ -125,7 +125,7 @@ export default function LandingPage() {
     return (
         <div className="bg-background min-h-screen">
             <Toaster richColors/>
-            <header className="flex justify-between items-center p-4 md:px-8 lg:px-12">
+            <header className="flex justify-between items-center p-4 border-b border-border md:px-8 lg:px-12">
                 {/* Logo */}
                 <img src="/logo.svg" alt="ProjectSync Logo" className="h-10 w-10 md:h-12 md:w-12 lg:h-16 lg:w-16" />
 

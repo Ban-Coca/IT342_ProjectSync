@@ -1,14 +1,16 @@
 import { GalleryVerticalEnd } from 'lucide-react'
 import { SignupForm } from '@/components/signup-form'
-
+import logo from '@/assets/light-logo.svg'
+import signup from '@/assets/signupImg.svg'
+import { motion } from 'motion/react'
 export default function SignupPage() {
-  return (
+  return (  
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex justify-center gap-2 md:justify-start">
           <a href="#" className="flex items-center gap-2 font-medium">
             <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
-              <GalleryVerticalEnd className="size-4" />
+              <img src={logo} className="h-6 w-6" />
             </div>
             ProjectSync
           </a>
@@ -19,13 +21,29 @@ export default function SignupPage() {
           </div>
         </div>
       </div>
-      <div className="relative hidden bg-muted lg:block">
-        <img
-          src="/placeholder.svg"
-          alt="Image"
-          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-        />
-      </div>
+      <div className="hidden lg:flex flex-col items-center relative justify-center bg-primary shadow-2xs">
+          <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{
+                opacity: 1,
+                y: 0,
+                transition: {
+                  delay: 0.3,
+                  duration: 0.6,
+                  ease: "easeOut",
+                },
+              }}
+              className="flex flex-col h-auto items-center justify-center text-white gap-2"
+            >
+              <h1 className="text-5xl font-bold">ProjectSync</h1>
+              <h3 className="text-lg font-bold italic">Keep Your Projects in Perfect Sync</h3>
+              <img
+                src={signup}
+                alt="Image"
+                className="animated w-[512px] h-[512px]"
+              />
+          </motion.div>
+        </div>
     </div>
   )
 }

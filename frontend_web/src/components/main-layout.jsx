@@ -4,6 +4,7 @@ import { Separator } from "@radix-ui/react-dropdown-menu";
 import { Toaster } from "sonner";
 import { Input } from "./ui/input";
 import { Search } from "lucide-react";
+
 const MainLayout = ({ children }) => {
   return (
     <SidebarProvider>
