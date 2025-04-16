@@ -1,6 +1,7 @@
 package edu.cit.projectsync.Controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import edu.cit.projectsync.DTO.ProjectDTO;
 import edu.cit.projectsync.Entity.ProjectEntity;
+import edu.cit.projectsync.Mapper.ProjectMapper;
 import edu.cit.projectsync.Service.ProjectService;
 
 @RestController
@@ -22,40 +25,75 @@ public class ProjectController {
 
     @Autowired
     private ProjectService projectService;
+   
+    @PostMapping("/createproject")
+    public ResponseEntity<ProjectDTO> createProject(@RequestBody ProjectEntity project) {
+        try {
+            if (project.getOwner() == null || project.getOwner().getUserId() == 0) {
+                return ResponseEntity.badRequest().build();
+            }
 
-    @PostMapping("/")
-    public ResponseEntity<ProjectEntity> createProject(@RequestBody ProjectEntity project) {
-        ProjectEntity createdProject = projectService.createProject(project);
-        return ResponseEntity.status(201).body(createdProject);
+            ProjectEntity createdProject = projectService.createProject(project);
+            ProjectDTO projectDTO = ProjectMapper.toDTO(createdProject);
+            return ResponseEntity.status(201).body(projectDTO);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
-    @PutMapping("/{projectId}/")
-    public ResponseEntity<ProjectEntity> updateProject(@PathVariable Long projectId, @RequestBody ProjectEntity updatedProject) {
+    @PutMapping("/updateproject/{projectId}/")
+    public ResponseEntity<ProjectDTO> updateProject(@PathVariable int projectId, @RequestBody ProjectEntity updatedProject) {
         ProjectEntity project = projectService.updateProject(projectId, updatedProject);
         if (project != null) {
-            return ResponseEntity.ok(project);
+            ProjectDTO projectDTO = ProjectMapper.toDTO(project);
+            return ResponseEntity.ok(projectDTO);
         }
         return ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/{projectId}/")
-    public ResponseEntity<ProjectEntity> getProjectById(@PathVariable Long projectId) {
+    @GetMapping("/getprojectbyid/{projectId}/")
+    public ResponseEntity<ProjectDTO> getProjectById(@PathVariable int projectId) {
         ProjectEntity project = projectService.getProjectById(projectId);
         if (project != null) {
-            return ResponseEntity.ok(project);
+            ProjectDTO projectDTO = ProjectMapper.toDTO(project);
+            return ResponseEntity.ok(projectDTO);
         }
         return ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/")
-    public ResponseEntity<List<ProjectEntity>> getAllProjects() {
+    @GetMapping("/getallprojects")
+    public ResponseEntity<List<ProjectDTO>> getAllProjects() {
         List<ProjectEntity> projects = projectService.getAllProjects();
-        return ResponseEntity.ok(projects);
+        List<ProjectDTO> projectDTOs = projects.stream()
+                                               .map(ProjectMapper::toDTO)
+                                               .collect(Collectors.toList());
+        return ResponseEntity.ok(projectDTOs);
     }
 
-    @DeleteMapping("/{projectId}/")
-    public ResponseEntity<Void> deleteProject(@PathVariable Long projectId) {
-        projectService.deleteProject(projectId);
+    @DeleteMapping("/deleteproject/{projectId}")
+    public ResponseEntity<String> deleteProject(@PathVariable int projectId) {
+        try {
+            ProjectEntity project = projectService.getProjectById(projectId);
+            if (project == null) {
+                return ResponseEntity.status(404).body("Project with ID " + projectId + " not found.");
+            }
+
+            projectService.deleteProject(projectId);
+            return ResponseEntity.ok("Project with ID " + projectId + " has been successfully deleted.");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("An error occurred while deleting the project: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/getprojectbyuser/{userId}")
+    public ResponseEntity<List<ProjectDTO>> getProjectsByUserId(@PathVariable int userId) {
+        List<ProjectEntity> projects = projectService.getProjectsByUserId(userId);
+        if (projects != null && !projects.isEmpty()) {
+            List<ProjectDTO> projectDTOs = projects.stream()
+                                                   .map(ProjectMapper::toDTO)
+                                                   .collect(Collectors.toList());
+            return ResponseEntity.ok(projectDTOs);
+        }
         return ResponseEntity.noContent().build();
     }
 }

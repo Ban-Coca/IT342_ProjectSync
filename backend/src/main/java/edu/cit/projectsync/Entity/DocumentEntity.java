@@ -1,7 +1,14 @@
 package edu.cit.projectsync.Entity;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "documents")
@@ -9,37 +16,29 @@ public class DocumentEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int documentId;
 
-    @Column(nullable = false)
     private String fileName;
-
-    @Column(nullable = false)
     private String fileType;
-
-    @Column(nullable = false)
     private Long fileSize; // in bytes
-
-    @Column(nullable = false)
     private String filePath; // Path to the file in the file system or cloud storage
-
-    @Column(name = "uploaded_at", nullable = false)
     private LocalDateTime uploadedAt;
 
-    @Column(name = "uploaded_by", nullable = false)
-    private String uploadedBy; // User ID or username of the uploader
+    @ManyToOne
+    @JoinColumn(name = "uploaded_by", referencedColumnName = "userId", nullable = false)
+    private UserEntity uploadedBy; // Changed to a relationship with UserEntity
 
     @ManyToOne
-    @JoinColumn(name = "project_id", nullable = false)
-    private ProjectEntity project; // Association with a project
+    @JoinColumn(name = "project_id", referencedColumnName = "projectId", nullable = false)
+    private ProjectEntity project;
 
     // Getters and Setters
-    public Long getId() {
-        return id;
+    public int getDocumentId() {
+        return documentId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setDocumentId(int documentId) {
+        this.documentId = documentId;
     }
 
     public String getFileName() {
@@ -82,11 +81,11 @@ public class DocumentEntity {
         this.uploadedAt = uploadedAt;
     }
 
-    public String getUploadedBy() {
+    public UserEntity getUploadedBy() {
         return uploadedBy;
     }
 
-    public void setUploadedBy(String uploadedBy) {
+    public void setUploadedBy(UserEntity uploadedBy) {
         this.uploadedBy = uploadedBy;
     }
 

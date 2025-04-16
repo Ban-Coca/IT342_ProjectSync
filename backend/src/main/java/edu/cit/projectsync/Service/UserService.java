@@ -3,7 +3,6 @@ package edu.cit.projectsync.Service;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import javax.naming.NameNotFoundException;
@@ -91,8 +90,15 @@ public class UserService {
         }
     }
 
-    public UserEntity findByEmail(String email) {
-        return userRepository.findByEmail(email);
+	public UserEntity findByEmail(String email) {
+        List<UserEntity> users = userRepository.findByEmail(email);
+        if (users.size() > 1) {
+            throw new IllegalStateException("Multiple users found with the same email: " + email);
+        }
+        return users.isEmpty() ? null : users.get(0);
     }
 
+	public UserEntity getUserById(int id) {
+        return userRepository.findById(id).orElse(null);
+    }
 }

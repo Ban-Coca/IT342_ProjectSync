@@ -1,12 +1,13 @@
 package edu.cit.projectsync.Service;
 
-import edu.cit.projectsync.Entity.TaskEntity;
-import edu.cit.projectsync.Repository.TaskRepository;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import edu.cit.projectsync.Entity.TaskEntity;
+import edu.cit.projectsync.Repository.TaskRepository;
 
 @Service
 public class TaskService {
@@ -18,7 +19,7 @@ public class TaskService {
         return taskRepository.save(task);
     }
 
-    public TaskEntity updateTask(Long taskId, TaskEntity updatedTask) {
+    public TaskEntity updateTask(int taskId, TaskEntity updatedTask) {
         Optional<TaskEntity> taskOptional = taskRepository.findById(taskId);
         if (taskOptional.isPresent()) {
             TaskEntity task = taskOptional.get();
@@ -32,15 +33,19 @@ public class TaskService {
         return null;
     }
 
-    public TaskEntity getTaskById(Long taskId) {
+    public TaskEntity getTaskById(int taskId) {
         return taskRepository.findById(taskId).orElse(null);
     }
 
+    public List<TaskEntity> getTasksByProjectId(int projectId) {
+        return taskRepository.findByProject_ProjectId(projectId);
+    }
+    
     public List<TaskEntity> getAllTasks() {
         return taskRepository.findAll();
     }
 
-    public void deleteTask(Long taskId) {
+    public void deleteTask(int taskId) {
         taskRepository.deleteById(taskId);
     }
 }

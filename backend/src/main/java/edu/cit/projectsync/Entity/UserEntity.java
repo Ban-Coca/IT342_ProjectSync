@@ -1,22 +1,32 @@
 package edu.cit.projectsync.Entity;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int userId;
 
+    @Column(nullable = false, unique = true)
     private String email;
+    
     private String firstName;
     private String lastName;
     private String password;
@@ -26,20 +36,18 @@ public class UserEntity {
     private Date lastLogin;
     private Date updatedAt;
 
-    public UserEntity() {
-        // Default constructor
-    }
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ProjectEntity> projects = new ArrayList<>(); // Initialize with an empty list
 
-    public UserEntity(String email, String firstName, String lastName, String password, String provider, Date createdAt, Date lastLogin, Date updatedAt) {
-        this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.password = password;
-        this.provider = provider;
-        this.createdAt = createdAt;
-        this.lastLogin = lastLogin;
-        this.updatedAt = updatedAt;
-    }
+    @OneToMany(mappedBy = "assignedTo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<TaskEntity> tasks = new ArrayList<>(); // Initialize with an empty list
+
+    @ManyToMany(mappedBy = "teamMembers")
+    private List<ProjectEntity> teamProjects = new ArrayList<>(); // Initialize with an empty list
+
+    // Default constructor
+    public UserEntity() {}
+
     // Getters and Setters
     public int getUserId() {
         return userId;
@@ -93,8 +101,8 @@ public class UserEntity {
         return isActive;
     }
 
-    public void setIsActive(boolean active) {
-        isActive = active;
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
     }
 
     public Date getCreatedAt() {
@@ -105,6 +113,14 @@ public class UserEntity {
         this.createdAt = createdAt;
     }
 
+    public Date getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(Date lastLogin) {
+        this.lastLogin = lastLogin;
+    }
+
     public Date getUpdatedAt() {
         return updatedAt;
     }
@@ -113,11 +129,27 @@ public class UserEntity {
         this.updatedAt = updatedAt;
     }
 
-    public Date getLastLogin() {
-        return lastLogin;
+    public List<ProjectEntity> getProjects() {
+        return projects;
     }
 
-    public void setLastLogin(Date lastLogin) {
-        this.lastLogin = lastLogin;
+    public void setProjects(List<ProjectEntity> projects) {
+        this.projects = projects;
+    }
+
+    public List<TaskEntity> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<TaskEntity> tasks) {
+        this.tasks = tasks;
+    }
+
+    public List<ProjectEntity> getTeamProjects() {
+        return teamProjects;
+    }
+
+    public void setTeamProjects(List<ProjectEntity> teamProjects) {
+        this.teamProjects = teamProjects;
     }
 }

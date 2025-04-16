@@ -11,6 +11,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -19,40 +22,37 @@ public class ProjectEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int projectId;
 
-    @Column(nullable = false)
     private String name;
-
-    @Column(length = 1000)
     private String description;
-
-    @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
-
-    @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
 
-    @Column(nullable = false)
-    private Long owner;
+    @ManyToOne
+    @JoinColumn(name = "owner_id", referencedColumnName = "userId", nullable = false)
+    private UserEntity owner;
 
     @ElementCollection
     @CollectionTable(name = "project_goals", joinColumns = @JoinColumn(name = "project_id"))
-    @Column(name = "goal")
+    @Column(name = "goal")  
     private List<String> goals;
 
-    @ElementCollection
-    @CollectionTable(name = "project_team_members", joinColumns = @JoinColumn(name = "project_id"))
-    @Column(name = "team_member")
-    private List<String> teamMembers;
+    @ManyToMany
+    @JoinTable(
+        name = "project_team_members",
+        joinColumns = @JoinColumn(name = "project_id", referencedColumnName = "projectId"),
+        inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "userId")
+    )
+    private List<UserEntity> teamMembers;
 
-    // Getters and Setters
-    public Long getId() {
-        return id;
+   
+    public int getProjectId() {
+        return projectId;
     }
-
-    public void setId(Long id) {
-        this.id = id;
+    
+    public void setProjectId(int projectId) {
+        this.projectId = projectId;
     }
 
     public String getName() {
@@ -87,11 +87,11 @@ public class ProjectEntity {
         this.endDate = endDate;
     }
 
-    public Long getOwner() {
+    public UserEntity getOwner() {
         return owner;
     }
 
-    public void setOwner(Long owner) {
+    public void setOwner(UserEntity owner) {
         this.owner = owner;
     }
 
@@ -103,11 +103,11 @@ public class ProjectEntity {
         this.goals = goals;
     }
 
-    public List<String> getTeamMembers() {
+    public List<UserEntity> getTeamMembers() {
         return teamMembers;
     }
 
-    public void setTeamMembers(List<String> teamMembers) {
+    public void setTeamMembers(List<UserEntity> teamMembers) {
         this.teamMembers = teamMembers;
     }
 }
