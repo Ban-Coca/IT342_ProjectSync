@@ -10,5 +10,6 @@ import edu.cit.projectsync.Entity.UserEntity;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, UUID> {
-    List<UserEntity> findByEmail(String email); // Return a list instead of a single result
+    List<UserEntity> findByEmail(String email);
+    List<UserEntity> findByUserIdIn(List<UUID> userIds);
 }

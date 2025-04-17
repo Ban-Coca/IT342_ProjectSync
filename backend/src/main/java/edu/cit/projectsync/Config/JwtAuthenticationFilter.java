@@ -47,7 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 Claims claims = validateAndParseToken(token);
                 
                 if (claims != null) {
-                    String userId = claims.getSubject(); // This now contains the user ID
+                    String userId = claims.getSubject(); // Extract user ID as a string
                     
                     UserEntity user = userService.findById(UUID.fromString(userId));
                     

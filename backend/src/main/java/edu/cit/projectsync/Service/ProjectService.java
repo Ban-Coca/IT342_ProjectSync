@@ -35,6 +35,10 @@ public class ProjectService {
         return null;
     }
 
+    public boolean projectExistsByName(String name) {
+        return projectRepository.existsByName(name);
+    }
+
     public ProjectEntity getProjectById(UUID projectId) {
         return projectRepository.findById(projectId).orElse(null);
     }
@@ -49,5 +53,13 @@ public class ProjectService {
 
     public void deleteProject(UUID projectId) {
         projectRepository.deleteById(projectId);
+    }
+
+    public boolean projectExistsById(UUID projectId) {
+        return projectRepository.existsById(projectId);
+    }
+
+    public boolean projectExistsByNameExcludingId(String name, UUID projectId) {
+        return projectRepository.existsByNameAndProjectIdNot(name, projectId);
     }
 }

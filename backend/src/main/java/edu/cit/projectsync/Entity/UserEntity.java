@@ -4,7 +4,20 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import jakarta.persistence.*;
+
+import org.hibernate.annotations.GenericGenerator;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
 @Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
@@ -20,25 +33,23 @@ public class UserEntity {
     private String firstName;
     private String lastName;
     private String password;
-    private String provider; // e.g., "email", "facebook", "google"
+    private String provider; // e.g., "email", "google"
     private boolean isActive = true;
     private Date createdAt;
     private Date lastLogin;
     private Date updatedAt;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ProjectEntity> projects = new ArrayList<>(); // Initialize with an empty list
+    private List<ProjectEntity> projects = new ArrayList<>();
 
-    @ManyToMany
-    @JoinTable(
-            name = "task_assigned_users",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "task_id")
-    )
-    private List<TaskEntity> tasks = new ArrayList<>();
+    @ManyToMany(mappedBy = "assignedTo")
+    private List<TaskEntity> tasks;
 
     @ManyToMany(mappedBy = "teamMembers")
-    private List<ProjectEntity> teamProjects = new ArrayList<>(); // Initialize with an empty list
+    private List<ProjectEntity> teamProjects = new ArrayList<>();
+
+    @OneToMany(mappedBy = "uploadedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<DocumentEntity> documents = new ArrayList<>();
 
     // Default constructor
     public UserEntity() {}
@@ -146,5 +157,13 @@ public class UserEntity {
 
     public void setTeamProjects(List<ProjectEntity> teamProjects) {
         this.teamProjects = teamProjects;
+    }
+
+    public List<DocumentEntity> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(List<DocumentEntity> documents) {
+        this.documents = documents;
     }
 }

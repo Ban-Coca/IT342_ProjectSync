@@ -15,8 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import edu.cit.projectsync.Entity.ProjectEntity;
+import edu.cit.projectsync.DTO.TaskDTO;
 import edu.cit.projectsync.Entity.TaskEntity;
+import edu.cit.projectsync.Mapper.TaskMapper;
 import edu.cit.projectsync.Service.ProjectService;
 import edu.cit.projectsync.Service.TaskService;
 
@@ -31,54 +32,118 @@ public class TaskController {
     private ProjectService projectService;
 
     @PostMapping("/createtask")
-    public ResponseEntity<TaskEntity> createTask(@RequestBody TaskEntity task, @RequestParam UUID projectId) {
-        ProjectEntity project = projectService.getProjectById(projectId);
-        if (project == null) {
-            return ResponseEntity.badRequest().build(); // Return 400 if the project doesn't exist
-        }
-        task.setProject(project);
+    public ResponseEntity<Object> createTask(@RequestBody TaskDTO taskDTO) {
+        try {
+            // Validate required fields
+            if (taskDTO.getTitle() == null || taskDTO.getTitle().isEmpty()) {
+                return ResponseEntity.badRequest().body("Task title is required."); // Return 400 if title is missing
+            }
+            if (taskDTO.getProject() == null) {
+                return ResponseEntity.badRequest().body("Project ID is required."); // Return 400 if project ID is missing
+            }
 
-        // Create the task
-        TaskEntity createdTask = taskService.createTask(task);
-        return ResponseEntity.status(201).body(createdTask);
+             // Check if a task with the same name already exists
+            boolean taskExists = taskService.taskExistsByTitle(taskDTO.getTitle());
+            if (taskExists) {
+                return ResponseEntity.status(409).body("A task with the title '" + taskDTO.getTitle() + "' already exists."); // Return 409 Conflict
+            }
+
+            // Map TaskDTO to TaskEntity using TaskMapper
+            TaskEntity task = TaskMapper.toEntity(taskDTO, projectService, taskService);
+
+            // Save the task
+            TaskEntity createdTask = taskService.createTask(task);
+
+            // Map TaskEntity back to TaskDTO
+            TaskDTO createdTaskDTO = TaskMapper.toDTO(createdTask);
+
+            return ResponseEntity.status(201).body(createdTaskDTO);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("An error occurred while creating the task: " + e.getMessage()); // Return 400 with a detailed error message
+        }
     }
 
-    @PutMapping("/updatetask/{taskId}/")
-    public ResponseEntity<TaskEntity> updateTask(@PathVariable UUID taskId, @RequestBody TaskEntity updatedTask) {
-        TaskEntity task = taskService.updateTask(taskId, updatedTask);
-        if (task != null) {
-            return ResponseEntity.ok(task);
+    @PutMapping("/updatetask/{taskId}")
+    public ResponseEntity<Object> updateTask(@PathVariable UUID taskId, @RequestBody TaskDTO taskDTO) {
+        try {
+            // Check if the task exists
+            TaskEntity existingTask = taskService.getTaskById(taskId);
+            if (existingTask == null) {
+                return ResponseEntity.status(404).body("Task with ID " + taskId + " does not exist."); // Return 404 if task doesn't exist
+            }
+
+            // Check if a task with the same title already exists (excluding the current task)
+            boolean taskExists = taskService.taskExistsByTitleExcludingId(taskDTO.getTitle(), taskId);
+            if (taskExists) {
+                return ResponseEntity.status(409).body("A task with the title '" + taskDTO.getTitle() + "' already exists."); // Return 409 Conflict
+            }
+
+            // Map TaskDTO to TaskEntity
+            TaskEntity task = TaskMapper.toEntity(taskDTO, projectService, taskService);
+
+            // Update the task
+            TaskEntity updatedTask = taskService.updateTask(taskId, task);
+
+            // Map updated TaskEntity back to TaskDTO
+            TaskDTO updatedTaskDTO = TaskMapper.toDTO(updatedTask);
+
+            return ResponseEntity.ok(updatedTaskDTO);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("An error occurred while updating the task: " + e.getMessage()); // Return 500 for unexpected errors
         }
-        return ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/gettaskid/{taskId}/")
-    public ResponseEntity<TaskEntity> getTaskById(@PathVariable UUID taskId) {
+    @GetMapping("/gettaskid/{taskId}")
+    public ResponseEntity<TaskDTO> getTaskById(@PathVariable UUID taskId) {
         TaskEntity task = taskService.getTaskById(taskId);
         if (task != null) {
-            return ResponseEntity.ok(task);
+            TaskDTO taskDTO = TaskMapper.toDTO(task);
+            return ResponseEntity.ok(taskDTO);
         }
         return ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/project/{projectId}/")
-    public ResponseEntity<List<TaskEntity>> getTasksByProjectId(@PathVariable UUID projectId) {
+    @GetMapping("/project/{projectId}")
+    public ResponseEntity<Object> getTasksByProjectId(@PathVariable UUID projectId) {
+        // Check if the project exists
+        boolean projectExists = projectService.projectExistsById(projectId);
+        if (!projectExists) {
+            return ResponseEntity.status(404).body("Project with ID " + projectId + " does not exist."); // Return 404 if project doesn't exist
+        }
+
+        // Retrieve tasks for the project
         List<TaskEntity> tasks = taskService.getTasksByProjectId(projectId);
         if (tasks != null && !tasks.isEmpty()) {
-            return ResponseEntity.ok(tasks);
+            List<TaskDTO> taskDTOs = tasks.stream()
+                .map(TaskMapper::toDTO)
+                .toList();
+            return ResponseEntity.ok(taskDTOs);
         }
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent().build(); // Return 204 if no tasks are found
     }
 
     @GetMapping("/getalltask")
-    public ResponseEntity<List<TaskEntity>> getAllTasks() {
+    public ResponseEntity<List<TaskDTO>> getAllTasks() {
         List<TaskEntity> tasks = taskService.getAllTasks();
-        return ResponseEntity.ok(tasks);
+        List<TaskDTO> taskDTOs = tasks.stream()
+            .map(TaskMapper::toDTO)
+            .toList();
+        return ResponseEntity.ok(taskDTOs);
     }
 
-    @DeleteMapping("/deletetask/{taskId}/")
-    public ResponseEntity<Void> deleteTask(@PathVariable UUID taskId) {
-        taskService.deleteTask(taskId);
-        return ResponseEntity.noContent().build();
+    @DeleteMapping("/deletetask/{taskId}")
+    public ResponseEntity<String> deleteTask(@PathVariable UUID taskId) {
+        try {
+            TaskEntity task = taskService.getTaskById(taskId);
+            if (task == null) {
+                return ResponseEntity.status(404).body("Task with ID " + taskId + " not found.");
+            }
+
+            taskService.deleteTask(taskId);
+            return ResponseEntity.ok("Task with ID " + taskId + " has been successfully deleted.");
+        } catch (Exception e) {
+            System.err.println("Error deleting task with ID " + taskId + ": " + e.getMessage());
+            return ResponseEntity.status(500).body("An error occurred while deleting the task.");
+        }
     }
 }

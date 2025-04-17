@@ -11,4 +11,6 @@ import edu.cit.projectsync.Entity.TaskEntity;
 @Repository
 public interface TaskRepository extends JpaRepository<TaskEntity, UUID> {
     List<TaskEntity> findByProject_ProjectId(UUID projectId);
+    boolean existsByTitle(String title);
+    boolean existsByTitleAndTaskIdNot(String title, UUID id);
 }

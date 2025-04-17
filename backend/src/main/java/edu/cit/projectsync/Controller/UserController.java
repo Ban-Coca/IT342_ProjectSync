@@ -34,6 +34,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.HttpServletResponse;
 
+
+
 @RestController
 @RequestMapping("/api/user")
 @CrossOrigin(origins = "http://localhost:5173")
@@ -441,5 +443,26 @@ public class UserController {
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
                 .signWith(SignatureAlgorithm.HS256, jwtSecret)
                 .compact();
+    }
+
+    @GetMapping("/findbyid/{userId}")
+    public ResponseEntity<?> findById(@PathVariable UUID userId) {
+        try {
+            logger.info("Fetching user details for userId: {}", userId);
+
+            // Fetch user by ID
+            UserEntity user = userv.findById(userId);
+            if (user == null) {
+                return ResponseEntity.status(404).body(Map.of("error", "User not found"));
+            }
+
+            // Convert to DTO and return response
+            UserDTO userDTO = UserMapper.toDTO(user);
+            return ResponseEntity.ok(userDTO);
+
+        } catch (Exception e) {
+            logger.error("Error fetching user by ID: ", e);
+            return ResponseEntity.status(500).body(Map.of("error", "Failed to fetch user: " + e.getMessage()));
+        }
     }
 }

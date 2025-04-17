@@ -8,12 +8,16 @@ import org.springframework.stereotype.Service;
 
 import edu.cit.projectsync.Entity.DocumentEntity;
 import edu.cit.projectsync.Repository.DocumentRepository;
+import edu.cit.projectsync.Repository.ProjectRepository;
 
 @Service
 public class DocumentService {
 
     @Autowired
     private DocumentRepository documentRepository;
+
+    @Autowired
+    private ProjectRepository projectRepository;
 
     public DocumentEntity uploadDocument(DocumentEntity document) {
         return documentRepository.save(document);
@@ -37,5 +41,9 @@ public class DocumentService {
 
     public void deleteDocument(UUID id) {
         documentRepository.deleteById(id);
+    }
+
+    public boolean projectExistsById(UUID projectId) {
+        return projectRepository.existsById(projectId);
     }
 }

@@ -1,37 +1,18 @@
-package edu.cit.projectsync.Entity;
+package edu.cit.projectsync.DTO;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+public class DocumentDTO {
 
-@Entity
-@Table(name = "documents")
-public class DocumentEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID documentId;
-
     private String fileName;
     private String fileType;
     private Long fileSize;
     private String filePath;
     private LocalDateTime uploadedAt;
-
-    @ManyToOne
-    @JoinColumn(name = "uploaded_by", referencedColumnName = "userId", nullable = false)
-    private UserEntity uploadedBy;
-
-    @ManyToOne
-    @JoinColumn(name = "project_id", referencedColumnName = "projectId", nullable = false)
-    private ProjectEntity project;
+    private UUID uploadedBy; // User ID of the uploader
+    private UUID projectId;  // Project ID
 
     // Getters and Setters
     public UUID getDocumentId() {
@@ -82,19 +63,19 @@ public class DocumentEntity {
         this.uploadedAt = uploadedAt;
     }
 
-    public UserEntity getUploadedBy() {
+    public UUID getUploadedBy() {
         return uploadedBy;
     }
 
-    public void setUploadedBy(UserEntity uploadedBy) {
+    public void setUploadedBy(UUID uploadedBy) {
         this.uploadedBy = uploadedBy;
     }
 
-    public ProjectEntity getProject() {
-        return project;
+    public UUID getProjectId() {
+        return projectId;
     }
 
-    public void setProject(ProjectEntity project) {
-        this.project = project;
+    public void setProjectId(UUID projectId) {
+        this.projectId = projectId;
     }
 }

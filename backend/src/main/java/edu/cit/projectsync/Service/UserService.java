@@ -10,7 +10,6 @@ import javax.naming.NameNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import edu.cit.projectsync.Entity.UserEntity;
@@ -21,9 +20,6 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     //Create of CRUD
 	public UserEntity postUserRecord(UserEntity user) {
@@ -100,7 +96,11 @@ public class UserService {
         return users.isEmpty() ? null : users.get(0);
     }
 
-	public UserEntity getUserById(UUID id) {
-        return userRepository.findById(id).orElse(null);
-    }
+	public List<UserEntity> getUsersById(List<UUID> userIds) {
+		return userRepository.findByUserIdIn(userIds);
+	}
+
+	public boolean userExistsById(UUID userId) {
+		return userRepository.existsById(userId);
+	}
 }

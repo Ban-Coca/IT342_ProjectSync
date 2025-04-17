@@ -13,8 +13,10 @@ public class UserDTO {
     private boolean isActive;
     private Date createdAt;
     private Date lastLogin;
-    private List<ProjectDTO> projects; // Include full project details if needed
-    private List<UUID> teamProjectIds; // IDs of projects where the user is a team member
+    private List<UUID> projects;
+    private List<UUID> teamProjectIds;
+    private List<UUID> tasks;
+    private List<UUID> documents;
 
     // Getters and Setters
     public UUID getUserId() {
@@ -81,11 +83,27 @@ public class UserDTO {
         this.teamProjectIds = teamProjectIds;
     }
 
-    public List<ProjectDTO> getProjects() {
+    public List<UUID> getProjects() {
         return projects;
     }
 
-    public void setProjects(List<ProjectDTO> projects) {
+    public void setProjects(List<UUID> projects) {
         this.projects = projects;
+    }
+
+    public List<UUID> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<UUID> tasks) {
+        this.tasks = tasks;
+    }
+
+    public List<UUID> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(List<UUID> documents) {
+        this.documents = documents;
     }
 }
