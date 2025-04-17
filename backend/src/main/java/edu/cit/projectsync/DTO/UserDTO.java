@@ -2,25 +2,28 @@ package edu.cit.projectsync.DTO;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public class UserDTO {
 
-    private int userId;
+    private UUID userId;
     private String email;
     private String firstName;
     private String lastName;
     private boolean isActive;
     private Date createdAt;
     private Date lastLogin;
-    private List<ProjectDTO> projects; // Include full project details if needed
-    private List<Integer> teamProjectIds; // IDs of projects where the user is a team member
+    private List<UUID> projects;
+    private List<UUID> teamProjectIds;
+    private List<UUID> tasks; 
+    private List<UUID> documents;
 
     // Getters and Setters
-    public int getUserId() {
+    public UUID getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(UUID userId) {
         this.userId = userId;
     }
 
@@ -72,19 +75,35 @@ public class UserDTO {
         this.lastLogin = lastLogin;
     }
 
-    public List<Integer> getTeamProjectIds() {
+    public List<UUID> getTeamProjectIds() {
         return teamProjectIds;
     }
 
-    public void setTeamProjectIds(List<Integer> teamProjectIds) {
+    public void setTeamProjectIds(List<UUID> teamProjectIds) {
         this.teamProjectIds = teamProjectIds;
     }
 
-    public List<ProjectDTO> getProjects() {
+    public List<UUID> getProjects() {
         return projects;
     }
 
-    public void setProjects(List<ProjectDTO> projects) {
+    public void setProjects(List<UUID> projects) {
         this.projects = projects;
+    }
+
+    public List<UUID> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<UUID> tasks) {
+        this.tasks = tasks;
+    }
+
+    public List<UUID> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(List<UUID> documents) {
+        this.documents = documents;
     }
 }

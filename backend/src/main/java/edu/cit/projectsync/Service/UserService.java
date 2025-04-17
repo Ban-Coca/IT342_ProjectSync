@@ -3,13 +3,13 @@ package edu.cit.projectsync.Service;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import javax.naming.NameNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import edu.cit.projectsync.Entity.UserEntity;
@@ -20,9 +20,6 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     //Create of CRUD
 	public UserEntity postUserRecord(UserEntity user) {
@@ -35,13 +32,13 @@ public class UserService {
 	}
 
     //find by ID
-	public UserEntity findById(int userId) {
+	public UserEntity findById(UUID userId) {
 		return userRepository.findById(userId).get();
 	}
 
     //Update of CRUD
 	@SuppressWarnings("finally")
-	public UserEntity putUserDetails (int userId, UserEntity newUserDetails) {
+	public UserEntity putUserDetails (UUID userId, UserEntity newUserDetails) {
 		UserEntity user = new UserEntity();
 		
 		try {
@@ -60,7 +57,7 @@ public class UserService {
 	}
 
     //Delete of CRUD
-	public String deleteUser(int userId) {
+	public String deleteUser(UUID userId) {
 		String msg = "";
 		
 		if(userRepository.findById(userId).isPresent()) {
@@ -98,7 +95,11 @@ public class UserService {
         return users.isEmpty() ? null : users.get(0);
     }
 
-	public UserEntity getUserById(int id) {
-        return userRepository.findById(id).orElse(null);
-    }
+	public List<UserEntity> getUsersById(List<UUID> userIds) {
+		return userRepository.findByUserIdIn(userIds);
+	}
+
+	public boolean userExistsById(UUID userId) {
+		return userRepository.existsById(userId);
+	}
 }

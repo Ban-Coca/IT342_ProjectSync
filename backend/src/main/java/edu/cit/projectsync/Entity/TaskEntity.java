@@ -2,6 +2,9 @@ package edu.cit.projectsync.Entity;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
+
+import org.hibernate.annotations.GenericGenerator;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,8 +21,9 @@ import jakarta.persistence.Table;
 public class TaskEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int taskId;
+    @GeneratedValue(generator= "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    private UUID taskId;
 
     private String title;
     private String description;
@@ -33,17 +37,17 @@ public class TaskEntity {
         inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private List<UserEntity> assignedTo;
-
+    
     @ManyToOne
     @JoinColumn(name = "project_id", referencedColumnName = "projectId", nullable = false)
     private ProjectEntity project;
 
     
-    public int getTaskId() {
+    public UUID getTaskId() {
         return taskId;
     }
 
-    public void setTaskId(int taskId) {
+    public void setTaskId(UUID taskId) {
         this.taskId = taskId;
     }
 
