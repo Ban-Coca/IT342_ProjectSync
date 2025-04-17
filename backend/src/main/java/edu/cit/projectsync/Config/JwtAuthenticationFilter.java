@@ -2,6 +2,7 @@ package edu.cit.projectsync.Config;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,18 +42,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 Claims claims = validateAndParseToken(token);
                 
                 if (claims != null) {
-                    String userId = claims.getSubject(); // This now contains the user ID
+                    String userIdString = claims.getSubject(); // Extract user ID as a string
                     
-                    UserEntity user = userService.findById(Integer.parseInt(userId));
-                    
-                    if (user != null) {
-                        UsernamePasswordAuthenticationToken authentication = 
-                            new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());
+                    try {
+                        UUID userId = UUID.fromString(userIdString); // Parse the user ID as UUID
                         
-                        SecurityContextHolder.getContext().setAuthentication(authentication);
-                        logger.debug("Authentication set for user ID: {}", userId);
-                    } else {
-                        logger.warn("No user found for ID: {}", userId);
+                        UserEntity user = userService.findById(userId);
+                        
+                        if (user != null) {
+                            UsernamePasswordAuthenticationToken authentication = 
+                                new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());
+                            
+                            SecurityContextHolder.getContext().setAuthentication(authentication);
+                            logger.debug("Authentication set for user ID: {}", userId);
+                        } else {
+                            logger.warn("No user found for ID: {}", userId);
+                        }
+                    } catch (IllegalArgumentException e) {
+                        logger.error("Invalid UUID format for user ID: {}", userIdString, e);
                     }
                 }
             }

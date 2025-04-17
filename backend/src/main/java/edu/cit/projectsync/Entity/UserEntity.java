@@ -3,6 +3,9 @@ package edu.cit.projectsync.Entity;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
+
+import org.hibernate.annotations.GenericGenerator;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -21,8 +24,9 @@ import jakarta.persistence.UniqueConstraint;
 public class UserEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int userId;
+    @GeneratedValue(generator= "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    private UUID userId;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -30,30 +34,33 @@ public class UserEntity {
     private String firstName;
     private String lastName;
     private String password;
-    private String provider; // e.g., "email", "facebook", "google"
+    private String provider; // e.g., "email", "google"
     private boolean isActive = true;
     private Date createdAt;
     private Date lastLogin;
     private Date updatedAt;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ProjectEntity> projects = new ArrayList<>(); // Initialize with an empty list
+    private List<ProjectEntity> projects = new ArrayList<>(); 
 
-    @OneToMany(mappedBy = "assignedTo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<TaskEntity> tasks = new ArrayList<>(); // Initialize with an empty list
+    @ManyToMany(mappedBy = "assignedTo")
+    private List<TaskEntity> tasks;
 
     @ManyToMany(mappedBy = "teamMembers")
-    private List<ProjectEntity> teamProjects = new ArrayList<>(); // Initialize with an empty list
+    private List<ProjectEntity> teamProjects = new ArrayList<>(); 
+
+    @OneToMany(mappedBy = "uploadedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<DocumentEntity> documents = new ArrayList<>();
 
     // Default constructor
     public UserEntity() {}
 
     // Getters and Setters
-    public int getUserId() {
+    public UUID getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(UUID userId) {
         this.userId = userId;
     }
 
@@ -151,5 +158,13 @@ public class UserEntity {
 
     public void setTeamProjects(List<ProjectEntity> teamProjects) {
         this.teamProjects = teamProjects;
+    }
+
+    public List<DocumentEntity> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(List<DocumentEntity> documents) {
+        this.documents = documents;
     }
 }

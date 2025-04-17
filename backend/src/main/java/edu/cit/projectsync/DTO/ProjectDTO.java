@@ -2,24 +2,29 @@ package edu.cit.projectsync.DTO;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
+
+import org.hibernate.internal.util.type.PrimitiveWrapperHelper;
 
 public class ProjectDTO {
 
-    private int projectId;
+    private UUID projectId;
     private String name;
     private String description;
     private LocalDate startDate;
     private LocalDate endDate;
-    private int ownerId; // Include the owner's ID
-    private List<String> goals; // Include project goals
-    private List<Integer> teamMemberIds; // Only include user IDs for team members
+    private UserDTO ownerId;
+    private List<String> goals; 
+    private List<UserDTO> teamMemberIds;
+    private List<UUID> tasks;
+    private List<UUID> documents;
 
     // Getters and Setters
-    public int getProjectId() {
+    public UUID getProjectId() {
         return projectId;
     }
 
-    public void setProjectId(int projectId) {
+    public void setProjectId(UUID projectId) {
         this.projectId = projectId;
     }
 
@@ -55,11 +60,11 @@ public class ProjectDTO {
         this.endDate = endDate;
     }
 
-    public int getOwnerId() {
+    public UserDTO getOwnerId() {
         return ownerId;
     }
 
-    public void setOwnerId(int ownerId) {
+    public void setOwnerId(UserDTO ownerId) {
         this.ownerId = ownerId;
     }
 
@@ -71,11 +76,27 @@ public class ProjectDTO {
         this.goals = goals;
     }
 
-    public List<Integer> getTeamMemberIds() {
+    public List<UserDTO> getTeamMemberIds() {
         return teamMemberIds;
     }
 
-    public void setTeamMemberIds(List<Integer> teamMemberIds) {
+    public void setTeamMemberIds(List<UserDTO> teamMemberIds) {
         this.teamMemberIds = teamMemberIds;
+    }
+
+    public List<UUID> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<UUID> tasks) {
+        this.tasks = tasks;
+    }
+
+    public List<UUID> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(List<UUID> documents) {
+        this.documents = documents;
     }
 }

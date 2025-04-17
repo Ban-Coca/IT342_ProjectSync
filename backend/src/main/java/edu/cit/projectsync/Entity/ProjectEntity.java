@@ -2,11 +2,16 @@ package edu.cit.projectsync.Entity;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
+import org.hibernate.annotations.GenericGenerator;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -14,6 +19,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -21,8 +27,9 @@ import jakarta.persistence.Table;
 public class ProjectEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int projectId;
+    @GeneratedValue(generator= "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    private UUID projectId;
 
     private String name;
     private String description;
@@ -38,6 +45,9 @@ public class ProjectEntity {
     @Column(name = "goal")  
     private List<String> goals;
 
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<TaskEntity> tasks;
+
     @ManyToMany
     @JoinTable(
         name = "project_team_members",
@@ -46,12 +56,14 @@ public class ProjectEntity {
     )
     private List<UserEntity> teamMembers;
 
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<DocumentEntity> documents;
    
-    public int getProjectId() {
+    public UUID getProjectId() {
         return projectId;
     }
     
-    public void setProjectId(int projectId) {
+    public void setProjectId(UUID projectId) {
         this.projectId = projectId;
     }
 
@@ -109,5 +121,21 @@ public class ProjectEntity {
 
     public void setTeamMembers(List<UserEntity> teamMembers) {
         this.teamMembers = teamMembers;
+    }
+
+    public List<TaskEntity> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<TaskEntity> tasks) {
+        this.tasks = tasks;
+    }
+
+    public List<DocumentEntity> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(List<DocumentEntity> documents) {
+        this.documents = documents;
     }
 }
