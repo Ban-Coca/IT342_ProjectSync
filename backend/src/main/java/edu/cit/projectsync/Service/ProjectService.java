@@ -2,6 +2,7 @@ package edu.cit.projectsync.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,7 @@ public class ProjectService {
         return projectRepository.save(project);
     }
     
-    public ProjectEntity updateProject(int projectId, ProjectEntity updatedProject) {
+    public ProjectEntity updateProject(UUID projectId, ProjectEntity updatedProject) {
         Optional<ProjectEntity> projectOptional = projectRepository.findById(projectId);
         if (projectOptional.isPresent()) {
             ProjectEntity project = projectOptional.get();
@@ -34,11 +35,11 @@ public class ProjectService {
         return null;
     }
 
-    public ProjectEntity getProjectById(int projectId) {
+    public ProjectEntity getProjectById(UUID projectId) {
         return projectRepository.findById(projectId).orElse(null);
     }
 
-    public List<ProjectEntity> getProjectsByUserId(int userId) {
+    public List<ProjectEntity> getProjectsByUserId(UUID userId) {
         return projectRepository.findByOwnerUserIdOrTeamMembersUserId (userId, userId);
     }
 
@@ -46,7 +47,7 @@ public class ProjectService {
         return projectRepository.findAll();
     }
 
-    public void deleteProject(int projectId) {
+    public void deleteProject(UUID projectId) {
         projectRepository.deleteById(projectId);
     }
 }

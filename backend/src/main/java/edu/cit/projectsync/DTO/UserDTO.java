@@ -2,10 +2,11 @@ package edu.cit.projectsync.DTO;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public class UserDTO {
 
-    private int userId;
+    private UUID userId;
     private String email;
     private String firstName;
     private String lastName;
@@ -13,14 +14,14 @@ public class UserDTO {
     private Date createdAt;
     private Date lastLogin;
     private List<ProjectDTO> projects; // Include full project details if needed
-    private List<Integer> teamProjectIds; // IDs of projects where the user is a team member
+    private List<UUID> teamProjectIds; // IDs of projects where the user is a team member
 
     // Getters and Setters
-    public int getUserId() {
+    public UUID getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(UUID userId) {
         this.userId = userId;
     }
 
@@ -72,11 +73,11 @@ public class UserDTO {
         this.lastLogin = lastLogin;
     }
 
-    public List<Integer> getTeamProjectIds() {
+    public List<UUID> getTeamProjectIds() {
         return teamProjectIds;
     }
 
-    public void setTeamProjectIds(List<Integer> teamProjectIds) {
+    public void setTeamProjectIds(List<UUID> teamProjectIds) {
         this.teamProjectIds = teamProjectIds;
     }
 

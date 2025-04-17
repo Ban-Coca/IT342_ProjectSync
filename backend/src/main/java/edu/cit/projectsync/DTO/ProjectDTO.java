@@ -2,24 +2,25 @@ package edu.cit.projectsync.DTO;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 public class ProjectDTO {
 
-    private int projectId;
+    private UUID projectId;
     private String name;
     private String description;
     private LocalDate startDate;
     private LocalDate endDate;
-    private int ownerId; // Include the owner's ID
+    private UUID ownerId; // Include the owner's ID
     private List<String> goals; // Include project goals
-    private List<Integer> teamMemberIds; // Only include user IDs for team members
+    private List<UUID> teamMemberIds; // Only include user IDs for team members
 
     // Getters and Setters
-    public int getProjectId() {
+    public UUID getProjectId() {
         return projectId;
     }
 
-    public void setProjectId(int projectId) {
+    public void setProjectId(UUID projectId) {
         this.projectId = projectId;
     }
 
@@ -55,11 +56,11 @@ public class ProjectDTO {
         this.endDate = endDate;
     }
 
-    public int getOwnerId() {
+    public UUID getOwnerId() {
         return ownerId;
     }
 
-    public void setOwnerId(int ownerId) {
+    public void setOwnerId(UUID ownerId) {
         this.ownerId = ownerId;
     }
 
@@ -71,11 +72,11 @@ public class ProjectDTO {
         this.goals = goals;
     }
 
-    public List<Integer> getTeamMemberIds() {
+    public List<UUID> getTeamMemberIds() {
         return teamMemberIds;
     }
 
-    public void setTeamMemberIds(List<Integer> teamMemberIds) {
+    public void setTeamMemberIds(List<UUID> teamMemberIds) {
         this.teamMemberIds = teamMemberIds;
     }
 }

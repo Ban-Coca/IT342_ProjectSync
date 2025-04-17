@@ -2,6 +2,7 @@ package edu.cit.projectsync.Controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -36,8 +37,8 @@ public class DocumentController {
     @PostMapping("/upload")
     public ResponseEntity<DocumentEntity> uploadDocument(
             @RequestParam("file") MultipartFile file,
-            @RequestParam("project_id") int projectId,
-            @RequestParam("uploaded_by") int userId) {
+            @RequestParam("project_id") UUID projectId,
+            @RequestParam("uploaded_by") UUID userId) {
         try {
             // Define the upload directory
             String uploadDir = "uploads/";
@@ -76,7 +77,7 @@ public class DocumentController {
     }
 
     @GetMapping("getdocumentbyid/{id}")
-    public ResponseEntity<DocumentEntity> getDocumentById(@PathVariable int id) {
+    public ResponseEntity<DocumentEntity> getDocumentById(@PathVariable UUID id) {
         DocumentEntity document = documentService.getDocumentById(id);
         if (document != null) {
             return ResponseEntity.ok(document);
@@ -85,7 +86,7 @@ public class DocumentController {
     }
 
     @DeleteMapping("/deletedocument/{id}")
-    public ResponseEntity<Void> deleteDocument(@PathVariable int id) {
+    public ResponseEntity<Void> deleteDocument(@PathVariable UUID id) {
         documentService.deleteDocument(id);
         return ResponseEntity.noContent().build();
     }
@@ -97,7 +98,7 @@ public class DocumentController {
     }
 
     @GetMapping("/project/{projectId}")
-    public ResponseEntity<List<DocumentEntity>> getDocumentsByProject(@PathVariable int projectId) {
+    public ResponseEntity<List<DocumentEntity>> getDocumentsByProject(@PathVariable UUID projectId) {
         List<DocumentEntity> documents = documentService.getDocumentsByProjectId(projectId);
         if (documents.isEmpty()) {
             return ResponseEntity.noContent().build(); // Return 204 if no documents found

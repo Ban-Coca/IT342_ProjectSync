@@ -2,6 +2,7 @@ package edu.cit.projectsync.Entity;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -21,8 +22,8 @@ import jakarta.persistence.Table;
 public class ProjectEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int projectId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID projectId;
 
     private String name;
     private String description;
@@ -47,11 +48,11 @@ public class ProjectEntity {
     private List<UserEntity> teamMembers;
 
    
-    public int getProjectId() {
+    public UUID getProjectId() {
         return projectId;
     }
     
-    public void setProjectId(int projectId) {
+    public void setProjectId(UUID projectId) {
         this.projectId = projectId;
     }
 

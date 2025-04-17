@@ -1,6 +1,7 @@
 package edu.cit.projectsync.Controller;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class ProjectController {
     @PostMapping("/createproject")
     public ResponseEntity<ProjectDTO> createProject(@RequestBody ProjectEntity project) {
         try {
-            if (project.getOwner() == null || project.getOwner().getUserId() == 0) {
+            if (project.getOwner() == null || project.getOwner().getUserId() == null) {
                 return ResponseEntity.badRequest().build();
             }
 
@@ -42,7 +43,7 @@ public class ProjectController {
     }
 
     @PutMapping("/updateproject/{projectId}/")
-    public ResponseEntity<ProjectDTO> updateProject(@PathVariable int projectId, @RequestBody ProjectEntity updatedProject) {
+    public ResponseEntity<ProjectDTO> updateProject(@PathVariable UUID projectId, @RequestBody ProjectEntity updatedProject) {
         ProjectEntity project = projectService.updateProject(projectId, updatedProject);
         if (project != null) {
             ProjectDTO projectDTO = ProjectMapper.toDTO(project);
@@ -52,7 +53,7 @@ public class ProjectController {
     }
 
     @GetMapping("/getprojectbyid/{projectId}/")
-    public ResponseEntity<ProjectDTO> getProjectById(@PathVariable int projectId) {
+    public ResponseEntity<ProjectDTO> getProjectById(@PathVariable UUID projectId) {
         ProjectEntity project = projectService.getProjectById(projectId);
         if (project != null) {
             ProjectDTO projectDTO = ProjectMapper.toDTO(project);
@@ -71,7 +72,7 @@ public class ProjectController {
     }
 
     @DeleteMapping("/deleteproject/{projectId}")
-    public ResponseEntity<String> deleteProject(@PathVariable int projectId) {
+    public ResponseEntity<String> deleteProject(@PathVariable UUID projectId) {
         try {
             ProjectEntity project = projectService.getProjectById(projectId);
             if (project == null) {
@@ -86,7 +87,7 @@ public class ProjectController {
     }
 
     @GetMapping("/getprojectbyuser/{userId}")
-    public ResponseEntity<List<ProjectDTO>> getProjectsByUserId(@PathVariable int userId) {
+    public ResponseEntity<List<ProjectDTO>> getProjectsByUserId(@PathVariable UUID userId) {
         List<ProjectEntity> projects = projectService.getProjectsByUserId(userId);
         if (projects != null && !projects.isEmpty()) {
             List<ProjectDTO> projectDTOs = projects.stream()

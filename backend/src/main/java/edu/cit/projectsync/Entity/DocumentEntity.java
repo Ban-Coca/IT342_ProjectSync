@@ -1,6 +1,7 @@
 package edu.cit.projectsync.Entity;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,8 +16,8 @@ import jakarta.persistence.Table;
 public class DocumentEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int documentId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID documentId;
 
     private String fileName;
     private String fileType;
@@ -33,11 +34,11 @@ public class DocumentEntity {
     private ProjectEntity project;
 
     // Getters and Setters
-    public int getDocumentId() {
+    public UUID getDocumentId() {
         return documentId;
     }
 
-    public void setDocumentId(int documentId) {
+    public void setDocumentId(UUID documentId) {
         this.documentId = documentId;
     }
 

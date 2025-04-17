@@ -3,26 +3,16 @@ package edu.cit.projectsync.Entity;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import java.util.UUID;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 public class UserEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int userId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID userId;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -39,8 +29,13 @@ public class UserEntity {
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ProjectEntity> projects = new ArrayList<>(); // Initialize with an empty list
 
-    @OneToMany(mappedBy = "assignedTo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<TaskEntity> tasks = new ArrayList<>(); // Initialize with an empty list
+    @ManyToMany
+    @JoinTable(
+            name = "task_assigned_users",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "task_id")
+    )
+    private List<TaskEntity> tasks = new ArrayList<>();
 
     @ManyToMany(mappedBy = "teamMembers")
     private List<ProjectEntity> teamProjects = new ArrayList<>(); // Initialize with an empty list
@@ -49,11 +44,11 @@ public class UserEntity {
     public UserEntity() {}
 
     // Getters and Setters
-    public int getUserId() {
+    public UUID getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(UUID userId) {
         this.userId = userId;
     }
 

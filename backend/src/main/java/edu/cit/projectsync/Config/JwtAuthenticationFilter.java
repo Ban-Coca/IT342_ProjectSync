@@ -2,6 +2,7 @@ package edu.cit.projectsync.Config;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 if (claims != null) {
                     String userId = claims.getSubject(); // This now contains the user ID
                     
-                    UserEntity user = userService.findById(Integer.parseInt(userId));
+                    UserEntity user = userService.findById(UUID.fromString(userId));
                     
                     if (user != null) {
                         UsernamePasswordAuthenticationToken authentication = 

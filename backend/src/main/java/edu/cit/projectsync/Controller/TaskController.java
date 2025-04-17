@@ -1,6 +1,7 @@
 package edu.cit.projectsync.Controller;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class TaskController {
     private ProjectService projectService;
 
     @PostMapping("/createtask")
-    public ResponseEntity<TaskEntity> createTask(@RequestBody TaskEntity task, @RequestParam int projectId) {
+    public ResponseEntity<TaskEntity> createTask(@RequestBody TaskEntity task, @RequestParam UUID projectId) {
         ProjectEntity project = projectService.getProjectById(projectId);
         if (project == null) {
             return ResponseEntity.badRequest().build(); // Return 400 if the project doesn't exist
@@ -43,7 +44,7 @@ public class TaskController {
     }
 
     @PutMapping("/updatetask/{taskId}/")
-    public ResponseEntity<TaskEntity> updateTask(@PathVariable int taskId, @RequestBody TaskEntity updatedTask) {
+    public ResponseEntity<TaskEntity> updateTask(@PathVariable UUID taskId, @RequestBody TaskEntity updatedTask) {
         TaskEntity task = taskService.updateTask(taskId, updatedTask);
         if (task != null) {
             return ResponseEntity.ok(task);
@@ -52,7 +53,7 @@ public class TaskController {
     }
 
     @GetMapping("/gettaskid/{taskId}/")
-    public ResponseEntity<TaskEntity> getTaskById(@PathVariable int taskId) {
+    public ResponseEntity<TaskEntity> getTaskById(@PathVariable UUID taskId) {
         TaskEntity task = taskService.getTaskById(taskId);
         if (task != null) {
             return ResponseEntity.ok(task);
@@ -61,7 +62,7 @@ public class TaskController {
     }
 
     @GetMapping("/project/{projectId}/")
-    public ResponseEntity<List<TaskEntity>> getTasksByProjectId(@PathVariable int projectId) {
+    public ResponseEntity<List<TaskEntity>> getTasksByProjectId(@PathVariable UUID projectId) {
         List<TaskEntity> tasks = taskService.getTasksByProjectId(projectId);
         if (tasks != null && !tasks.isEmpty()) {
             return ResponseEntity.ok(tasks);
@@ -76,7 +77,7 @@ public class TaskController {
     }
 
     @DeleteMapping("/deletetask/{taskId}/")
-    public ResponseEntity<Void> deleteTask(@PathVariable int taskId) {
+    public ResponseEntity<Void> deleteTask(@PathVariable UUID taskId) {
         taskService.deleteTask(taskId);
         return ResponseEntity.noContent().build();
     }
