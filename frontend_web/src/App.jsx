@@ -13,7 +13,7 @@ import TaskPage from './pages/TaskPage'
 import LandingPage from './pages/LandingPage'
 import { AuthenticationProvider, useAuth } from './contexts/authentication-context'
 import ProjectsPage from './pages/ProjectsPage'
-
+import { Toaster } from '@/components/ui/sonner'
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
   if (loading) {
@@ -38,6 +38,7 @@ const RedirectIfAuthenticated = ({ children }) => {
 function App() {
   return (
     <AuthenticationProvider>
+      <Toaster richColors/>
       <Router>
         <Routes>
           <Route 
