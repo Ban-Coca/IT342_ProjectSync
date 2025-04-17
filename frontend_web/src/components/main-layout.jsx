@@ -8,7 +8,7 @@ import { Search } from "lucide-react";
 const MainLayout = ({ children }) => {
   return (
     <SidebarProvider>
-      <AppSidebar className="bg-sidebar" />
+      <AppSidebar className="bg-sidebar-foreground"/>
       <SidebarInset>
         <header className="sticky top-0 z-10 flex h-16 items-center bg-background border-b border-border p-4 shadow-sm">
           <SidebarTrigger className="-ml-1"/>

@@ -32,9 +32,7 @@ export const loginUser = async (credential) => {
 
 export const requestPasswordReset = async (email) => {
     try {
-        const response = await axios.post(`${API_BASE_URL}/request-reset`, {
-            email: email
-        });
+        const response = await axios.post(`${API_BASE_URL}/request-password-reset`, { email });
         return response.data;
     } catch (error) {
         console.error('Error requesting password reset:', error);
@@ -44,9 +42,9 @@ export const requestPasswordReset = async (email) => {
 
 export const verifyResetCode = async (email, code) => {
     try {
-        const response = await axios.post(`${API_BASE_URL}/verify-reset-code`, {
-            email: email,
-            code: code
+        const response = await axios.post(`${API_BASE_URL}/verify-reset-code`, { 
+            email, 
+            code 
         });
         return response.data;
     } catch (error) {
@@ -60,7 +58,7 @@ export const resetPassword = async (credential) => {
         const response = await axios.post(`${API_BASE_URL}/reset-password`, {
             email: credential.email,
             resetToken: credential.resetToken,
-            password: credential.password
+            newPassword: credential.password,
         });
         return response.data;
     } catch (error) {

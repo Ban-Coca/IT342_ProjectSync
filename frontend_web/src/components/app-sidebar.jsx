@@ -89,7 +89,7 @@ export default function AppSidebar() {
             <SidebarMenu className="mt-6">
               {data.items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton className="text-base h-12 hover:bg-gray-300" isActive={isActive(item.url)}asChild>
+                  <SidebarMenuButton className="text-base h-12 hover:bg-primary" isActive={isActive(item.url)}asChild>
                     <a href={item.url} className="gap-4">
                       <item.icon />
                       <span>{item.title}</span>

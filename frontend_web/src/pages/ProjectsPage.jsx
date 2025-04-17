@@ -1,15 +1,15 @@
 import MainLayout from "@/components/main-layout";
 import { Button } from "@/components/ui/button";
 import { EllipsisVertical } from "lucide-react";
-const mockProjects = [
-    { id: 1, name: "Project Alpha", description: "Description for Project Alpha" },
-    { id: 2, name: "Project Beta", description: "Description for Project Beta" },
-    { id: 3, name: "Project Gamma", description: "Description for Project Gamma" },
-]
+import { useAuth } from "@/contexts/authentication-context";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 export default function ProjectsPage(){
-    // const { currentUser } = useAuth();
-    // const navigate = useNavigate();
-    
+    const { currentUser, getAuthHeader } = useAuth();
+    const navigate = useNavigate();
+
+    const [projects, setProjects] = useState([]);
+
     return (
         <MainLayout>
             <div className="flex flex-col gap-2 md:mt-4">
@@ -19,12 +19,12 @@ export default function ProjectsPage(){
                         <p className="text-muted-foreground">Manage your projects here.</p>
                     </div>
                     <div>
-                        <Button className="w-full sm:w-auto ml-0 sm:ml-auto hover:text-black hover:border border-black hover:bg-white ">Create New Project</Button>
+                        <Button className="w-full sm:w-auto ml-0 sm:ml-auto  ">Create New Project</Button>
                     </div>
                 </div>
                 
                 <div>
-                    {mockProjects.length > 0 ? (
+                    {projects.length > 0 ? (
                         <div className="flex flex-col gap-3 md:gap-4">
                         {mockProjects.map((project) => (
                             <div
@@ -53,7 +53,7 @@ export default function ProjectsPage(){
                             You don't have any projects yet. Start by creating your first project to organize your work and
                             collaborate with your team.
                         </p>
-                            <Button className="w-full sm:w-auto hover:text-black hover:border border-black hover:bg-white">
+                            <Button className="w-full sm:w-auto">
                                 Create Your First Project
                             </Button>
                         </div>
