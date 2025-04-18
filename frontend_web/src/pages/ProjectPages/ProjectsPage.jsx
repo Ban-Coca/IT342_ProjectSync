@@ -11,6 +11,7 @@ import { toast } from "sonner"
 import { Loading } from "@/components/loading-state";
 import { ProjectDropdown } from "@/components/project-dropdown-fucntions";
 import DeleteModal from "@/components/delete-modal";
+import { useProject } from "@/hooks/use-project";
 import { set } from "date-fns";
 const mockUsers = [
     { userId: "user1", name: "John Doe" },
@@ -29,49 +30,22 @@ export default function ProjectsPage(){
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
     const [currentProject, setCurrentProject] = useState(null);
     const [projectToDelete, setProjectToDelete] = useState(null);
-
-    const { data: projects =[], isPending, error} = useQuery({
-        queryKey: ["projects", currentUser?.userId],
-        queryFn: () => getProjectsByUserId(currentUser?.userId, getAuthHeader()),
-        enabled: !!currentUser?.userId,
-    })
-
-    const createProjectMutation = useMutation({
-        mutationFn: (newProject) => createProject(newProject, getAuthHeader()),
-        onSuccess: (data) => {
-            queryClient.invalidateQueries(["projects", currentUser?.userId]);
-            setDialogOpen(false);
-            toast.success("Project created successfully")
-        },
-        onError: (error) => {
-            toast.error("Failed to create project. Please try again.")
-        },
-    })
-
-    const editProjectMutation = useMutation({
-        mutationFn: (updatedProject) => updateProject(updatedProject, getAuthHeader()),
-        onSuccess: (data) => {
-            queryClient.invalidateQueries(["projects", currentUser?.userId]);
-            setDialogOpen(false);
-            toast.success("Project updated successfully")
-        },
-        onError: (error) => {
-            toast.error("Failed to update project. Please try again.")
-        },
-    })
-
-    const deleteProjectMutation = useMutation({
-        mutationFn: (projectId) => deleteProject(projectId, getAuthHeader()),
-        onSuccess: () => {
-            queryClient.invalidateQueries(["projects", currentUser?.userId]);
-            setDeleteDialogOpen(false);
-            toast.success("Project deleted successfully")
-        },
-        onError: (error) => {
-            toast.error("Failed to delete project. Please try again.")
-        },
+    const {
+        projects,
+        isLoading,
+        error,
+        createProjectMutation,
+        editProjectMutation,
+        deleteProjectMutation,
+    } = useProject({
+        currentUser,
+        queryClient,
+        getAuthHeader,
+        onCreateSuccess: () => {setDialogOpen(false);},
+        onUpdateSuccess: () => {setDialogOpen(false);},
+        onDeleteSuccess: () => {setDeleteDialogOpen(false);},
     });
-
+    
     const handleCreateProject = (project) => {
         const projectWithOwner = {
             ...project,
@@ -93,7 +67,6 @@ export default function ProjectsPage(){
     }
 
     const handleDeleteProject = (projectId) => {
-        
         deleteProjectMutation.mutate(projectId);
     }
 
@@ -128,7 +101,7 @@ export default function ProjectsPage(){
                     </div>
                 </div>
                 
-                {isPending ? (
+                {isLoading ? (
                     <div className="flex justify-center items-center h-48 sm:h-64">
                         <Loading size="lg" text="Loading projects..." />
                     </div>
@@ -155,7 +128,8 @@ export default function ProjectsPage(){
                                             <ProjectDropdown 
                                                 project={project} 
                                                 onEdit={() => handleEditButton(project)} 
-                                                onDelete={() => handleDeleteButton(project)}/>
+                                                onDelete={() => handleDeleteButton(project)}
+                                            />
                                         </div>
                                     </div>
                                 ))}

@@ -58,7 +58,7 @@ export function CalendarTab({ tasks }) {
                         </Badge>
                         <div className="flex items-center gap-2">
                           <User className="h-3 w-3 text-muted-foreground" />
-                          <span className="text-xs text-muted-foreground">{task.assignee.name}</span>
+                          <span className="text-xs text-muted-foreground">{task.assignedTo.name}</span>
                         </div>
                       </div>
                     </div>

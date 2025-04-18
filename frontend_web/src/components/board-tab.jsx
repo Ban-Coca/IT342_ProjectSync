@@ -23,7 +23,7 @@ import { getPriorityColor, getStatusIcon } from "@/utils/task-utils"
 // Draggable Task Card Component
 function DraggableTaskCard({ task }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id: task.id.toString(),
+    id: task.taskId.toString(),
     data: {
       type: "task",
       task,
@@ -36,6 +36,9 @@ function DraggableTaskCard({ task }) {
     opacity: isDragging ? 0.5 : 1,
     zIndex: isDragging ? 1 : 0,
   }
+  const assignee = task.assignedTo && task.assignedTo.length > 0 
+    ? task.assignedTo[0] 
+    : { name: "Unassigned", avatar: null, initials: "UN" };
 
   return (
     <Card
@@ -64,8 +67,8 @@ function DraggableTaskCard({ task }) {
         </div>
         <div className="flex justify-end mt-2">
           <Avatar className="h-5 w-5">
-            <AvatarImage src={task.assignee.avatar} alt={task.assignee.name} />
-            <AvatarFallback className="text-[10px]">{task.assignee.initials}</AvatarFallback>
+            <AvatarImage src={assignee.avatar} alt={assignee.name} />
+            <AvatarFallback className="text-[10px]">{assignee.initials}</AvatarFallback>
           </Avatar>
         </div>
       </CardContent>
@@ -132,7 +135,7 @@ function DroppableColumn({
         </div>
       </div>
       <div className="p-2 space-y-2 max-h-[calc(100vh-250px)] overflow-auto">
-        <SortableContext items={tasks.map((task) => task.id.toString())} strategy={verticalListSortingStrategy}>
+        <SortableContext items={tasks.map((task) => task.taskId.toString())} strategy={verticalListSortingStrategy}>
           {children}
           {tasks.length === 0 && (
             <div className="h-20 flex items-center justify-center border rounded-lg bg-muted/10">
@@ -209,9 +212,9 @@ export function BoardTab({ tasks, onTaskUpdate }) {
 
   // Helper to find which container a task belongs to
   const findContainer = (id) => {
-    if (tasksByStatus["To Do"].some((task) => task.id.toString() === id)) return "To Do"
-    if (tasksByStatus["In Progress"].some((task) => task.id.toString() === id)) return "In Progress"
-    if (tasksByStatus["Done"].some((task) => task.id.toString() === id)) return "Done"
+    if (tasksByStatus["To Do"].some((task) => task.taskId.toString() === id)) return "To Do"
+    if (tasksByStatus["In Progress"].some((task) => task.taskId.toString() === id)) return "In Progress"
+    if (tasksByStatus["Done"].some((task) => task.taskId.toString() === id)) return "Done"
     return null
   }
 
@@ -221,7 +224,7 @@ export function BoardTab({ tasks, onTaskUpdate }) {
         {Object.entries(tasksByStatus).map(([status, statusTasks]) => (
           <DroppableColumn key={status} status={status} tasks={statusTasks}>
             {statusTasks.map((task) => (
-              <DraggableTaskCard key={task.id} task={task} />
+              <DraggableTaskCard key={task.taskId} task={task} />
             ))}
           </DroppableColumn>
         ))}

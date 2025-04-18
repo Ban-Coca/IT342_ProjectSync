@@ -41,7 +41,7 @@ export default function DetailsView({project, onProjectUpdate}){
             </div>
             <div className="col-span-2 row-span-2 col-start-3">
                 <Card className="w-full h-48">
-                    {project.teamMemberIds.length === 0 ? (
+                    {project.teamMemberIds?.length === 0 ? (
                         <CardContent className="flex flex-col justify-center items-center h-full">
                             <div className="text-lg font-semibold">There are currently no members on this project</div>
                             <Button className="mt-4" onClick={() => alert("Add members functionality")}>
@@ -54,7 +54,7 @@ export default function DetailsView({project, onProjectUpdate}){
                                 <CardTitle className="text-xl font-bold">Team Members</CardTitle>
                             </CardHeader>
                             <div className="flex items-center gap-2 mt-4">
-                                {project.teamMemberIds.map((member) => (
+                                {project.teamMemberIds?.map((member) => (
                                     <div key={member.userId} className="flex items-center gap-2">
                                         <Avatar className="h-8 w-8">
                                             <AvatarImage src={member.avatar} alt={member.name} />
@@ -74,11 +74,11 @@ export default function DetailsView({project, onProjectUpdate}){
                         <CardTitle className="text-xl font-bold">Project Goals</CardTitle>
                     </CardHeader>
                     <CardContent className="flex flex-col justify-center items-start h-full">
-                        {project.goals.length === 0 ? (
+                        {project.goals?.length === 0 ? (
                             <div className="text-lg font-semibold">No goals set for this project</div>
                         ) : (
                             <div className="flex flex-col gap-2">
-                                {project.goals.map((goal, index) => (
+                                {project.goals?.map((goal, index) => (
                                     <Badge key={index} variant="outline" className="flex items-center gap-2">
                                         {goal}
                                     </Badge>

@@ -9,15 +9,21 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
 import { getPriorityColor, getStatusIcon } from "@/utils/task-utils"
 import { ClipboardX } from "lucide-react"
+import { useAuth } from "@/contexts/authentication-context"
+import { useQueryClient } from "@tanstack/react-query"
+import { useTask } from "@/hooks/use-task"
 
 // Draggable table row component
 function DraggableTableRow({ task }) {
-  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: task.id })
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: task.taskId })
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
   }
+  const assignee = task.assignedTo && task.assignedTo.length > 0 
+    ? task.assignedTo[0] 
+    : { name: "Unassigned", avatar: null, initials: "UN" };
 
   return (
     <TableRow
@@ -40,10 +46,10 @@ function DraggableTableRow({ task }) {
       <TableCell className="hidden lg:table-cell">
         <div className="flex items-center gap-2">
           <Avatar className="h-6 w-6">
-            <AvatarImage src={task.assignee.avatar || "/placeholder.svg"} alt={task.assignee.name} />
-            <AvatarFallback>{task.assignee.initials}</AvatarFallback>
+            <AvatarImage src={assignee.avatar || "/placeholder.svg"} alt={assignee.name} />
+            <AvatarFallback>{assignee.initials || assignee.name?.charAt(0) || 'U'}</AvatarFallback>
           </Avatar>
-          <span className="text-sm">{task.assignee.name}</span>
+          <span className="text-sm">{assignee.name}</span>
         </div>
       </TableCell>
     </TableRow>
@@ -92,10 +98,10 @@ function StatusTable({ status, tasks }) {
                 <TableHead className="hidden lg:table-cell">Assignee</TableHead>
               </TableRow>
             </TableHeader>
-            <SortableContext items={tasks.map((task) => task.id)}>
+            <SortableContext items={tasks.map((task) => task.taskId)}>
               <TableBody>
                 {tasks.map((task) => (
-                  <DraggableTableRow key={task.id} task={task} />
+                  <DraggableTableRow key={task.taskId} task={task} />
                 ))}
               </TableBody>
             </SortableContext>
@@ -106,8 +112,18 @@ function StatusTable({ status, tasks }) {
   )
 }
 
-export function TableTab({ tasks: initialTasks }) {
-  const [tasks, setTasks] = useState(initialTasks || [])
+export function TableTab({ tasks, projectId, setTasks }) {
+  // const [tasks, setTasks] = useState(initialTasks || [])
+  const { currentUser, getAuthHeader } = useAuth();
+  const queryClient = useQueryClient()
+
+  const { editTaskMutation } = useTask({
+    projectId,
+    currentUser,
+    queryClient,
+    getAuthHeader,
+    onUpdateSuccess: () => {}
+  })
 
   //Sensors for drag and drop
   const pointerSensor = useSensor(PointerSensor)
@@ -117,8 +133,7 @@ export function TableTab({ tasks: initialTasks }) {
 
   const sensors = useSensors(pointerSensor, keyboardSensor)
 
-  // Handle case when initialTasks is empty or undefined
-  if (!initialTasks || initialTasks.length === 0) {
+  if (!tasks || tasks.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16">
         <ClipboardX className="h-16 w-16 text-muted-foreground mb-4" />
@@ -148,18 +163,42 @@ export function TableTab({ tasks: initialTasks }) {
     if (!over) return
 
     // Find the task being dragged
-    const activeTask = tasks.find((task) => task.id === active.id)
+    const activeTask = tasks.find((task) => task.taskId === active.id)
     if (!activeTask) return
 
     // Find which table the task was dropped on
     const overTableStatus = statuses.find((status) => {
-      return tasksByStatus[status].some((task) => task.id === over.id)
+      return tasksByStatus[status].some((task) => task.taskId === over.id)
     })
 
     if (!overTableStatus || activeTask.status === overTableStatus) return
 
     // Update the task's status
-    setTasks((prev) => prev.map((task) => (task.id === active.id ? { ...task, status: overTableStatus } : task)))
+    if (setTasks) {
+      setTasks((prev) => 
+        prev.map((task) => 
+          task.taskId === active.id ? { ...task, status: overTableStatus } : task
+        )
+      )
+    }
+    const updatedTask = {
+      ...activeTask,
+      status: overTableStatus
+    };
+
+    editTaskMutation.mutate(updatedTask, {
+      onError: () => {
+        
+        if (setTasks) {
+          toast.error("Failed to update task status. Reverting changes.");
+          setTasks((prev) => 
+            prev.map((task) => 
+              task.taskId === active.id ? { ...task, status: activeTask.status } : task
+            )
+          );
+        }
+      }
+    });
   }
 
   return (

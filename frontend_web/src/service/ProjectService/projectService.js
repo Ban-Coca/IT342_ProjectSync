@@ -2,11 +2,8 @@ import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL_PROJECT_SERVICE;
 
-// Create a new project
 export const createProject = async (projectData, header) => {
   try {
-    console.log("Project Data:", projectData);
-    console.log("Header:", header);
     const response = await axios.post(`${API_URL}/createproject`, projectData, {headers: header});
     return response.data;
   } catch (error) {
@@ -33,22 +30,18 @@ export const updateProject = async (projectData, header) => {
 export const getProjectById = async (projectId, header) => {
   try {
     const response = await axios.get(`${API_URL}/getprojectbyid/${projectId}`,{headers: header});
-    console.log("Project Data:", response.data);
     return response.data;
   } catch (error) {
-    console.error('Error fetching project:', error);
     throw error;
   }
 };
 
-// Delete a project
 export const deleteProject = async (projectId, header) => {
   try {
 
     const response = await axios.delete(`${API_URL}/deleteproject/${projectId}`, {headers: header});
     return response.data;
   } catch (error) {
-    console.error('Error deleting project:', error);
     throw error;
   }
 };

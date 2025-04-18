@@ -31,7 +31,7 @@ export function ProjectDropdown({project, onEdit, onDelete}) {
   };
 
   return (
-    <DropdownMenu open={open} onOpenChange={setOpen} ref={dropdownRef}>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         <Button
             variant="ghost"
