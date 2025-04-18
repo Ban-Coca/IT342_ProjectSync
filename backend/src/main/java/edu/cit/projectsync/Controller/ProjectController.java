@@ -6,14 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import edu.cit.projectsync.DTO.ProjectDTO;
 import edu.cit.projectsync.Entity.ProjectEntity;
@@ -23,6 +16,7 @@ import edu.cit.projectsync.Service.UserService;
 
 @RestController
 @RequestMapping("/api/projects")
+@CrossOrigin(origins = "http://localhost:5173")
 public class ProjectController {
 
     @Autowired
@@ -85,10 +79,9 @@ public class ProjectController {
         } catch (Exception e) {
             return ResponseEntity.status(500).body("An error occurred while updating the project: " + e.getMessage()); // Return 500 for unexpected errors
         }
-
     }
 
-    @GetMapping("/getprojectbyid/{projectId}/")
+    @GetMapping("/getprojectbyid/{projectId}")
     public ResponseEntity<Object> getProjectById(@PathVariable UUID projectId) {
         // Check if the project exists
         boolean projectExists = projectService.projectExistsById(projectId);

@@ -21,12 +21,16 @@ public class EmailService {
 
     public void sendVerificationEmail(String toEmail, String verificationCode) {
         final MailtrapConfig config = new MailtrapConfig.Builder()
+                .sandbox(true)
+                .inboxId(3589442L)
                 .token(TOKEN)
                 .build();
+
         final MailtrapClient client = MailtrapClientFactory.createMailtrapClient(config);
+
         final MailtrapMail mail = MailtrapMail.builder()
-                .from(new Address("hello@project-sync.xyz", "Reset Password"))
-                .to(List.of(new Address(toEmail)))
+                .from(new Address("hello@demomailtrap.co", "Mailtrap Test"))
+                .to(List.of(new Address("vanharvey.coca@cit.edu")))
                 .templateUuid(TEMPLATE_RESET_ID)
                 .templateVariables(Map.of(
                         "user_email", toEmail,
@@ -34,6 +38,10 @@ public class EmailService {
                 ))
                 .build();
 
-        System.out.println(client.sendingApi().emails().send(mail));
+        try {
+            System.out.println(client.send(mail));
+        } catch (Exception e) {
+            System.out.println("Caught exception : " + e);
+        }
     }
 }
