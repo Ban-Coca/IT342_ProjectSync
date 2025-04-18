@@ -127,7 +127,6 @@ public class ProjectController {
             return ResponseEntity.status(404).body("User with ID " + userId + " does not exist."); // Return 404 if user doesn't exist
         }
 
-        // Retrieve projects for the user
         List<ProjectEntity> projects = projectService.getProjectsByUserId(userId);
         if (projects != null && !projects.isEmpty()) {
             List<ProjectDTO> projectDTOs = projects.stream()
@@ -137,4 +136,24 @@ public class ProjectController {
         }
         return ResponseEntity.noContent().build(); // Return 204 if no projects are found
     }
+
+//    @GetMapping("/getprojectbyteammember/{userId}")
+//    public ResponseEntity<Object> getProjectsByTeamMemberId(@PathVariable UUID userId) {
+//        // Check if the user exists
+//        boolean userExists = userService.userExistsById(userId);
+//        if (!userExists) {
+//            return ResponseEntity.status(404).body("User with ID " + userId + " does not exist."); // Return 404 if user doesn't exist
+//        }
+//
+//        // Retrieve projects for the team member
+//        List<ProjectEntity> projects = projectService.getProjectsByTeamMemberId(userId);
+//        if (projects != null && !projects.isEmpty()) {
+//            List<ProjectDTO> projectDTOs = projects.stream()
+//                                                .map(ProjectMapper::toDTO)
+//                                                .collect(Collectors.toList());
+//            return ResponseEntity.ok(projectDTOs);
+//        }
+//        return ResponseEntity.noContent().build(); // Return 204 if no projects are found
+//    }
+
 }

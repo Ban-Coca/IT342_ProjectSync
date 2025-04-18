@@ -1,6 +1,7 @@
 package edu.cit.projectsync.Entity;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,7 +27,7 @@ public class TaskEntity {
     private String description;
     private LocalDate dueDate;
     private String status;
-
+    private String priority;
     @ManyToMany
     @JoinTable(
         name = "task_assigned_users",
@@ -51,7 +52,6 @@ public class TaskEntity {
     public String getTitle() {
         return title;
     }
-
     public void setTitle(String title) {
         this.title = title;
     }
@@ -59,7 +59,6 @@ public class TaskEntity {
     public String getDescription() {
         return description;
     }
-
     public void setDescription(String description) {
         this.description = description;
     }
@@ -67,15 +66,13 @@ public class TaskEntity {
     public LocalDate getDueDate() {
         return dueDate;
     }
-
     public void setDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
     }
 
     public List<UserEntity> getAssignedTo() {
-        return assignedTo;
+        return assignedTo != null ? assignedTo : new ArrayList<>();
     }
-
     public void setAssignedTo(List<UserEntity> assignedTo) {
         this.assignedTo = assignedTo;
     }
@@ -83,7 +80,6 @@ public class TaskEntity {
     public ProjectEntity getProject() {
         return project;
     }
-
     public void setProject(ProjectEntity project) {
         this.project = project;
     }
@@ -91,8 +87,14 @@ public class TaskEntity {
     public String getStatus() {
         return status;
     }
-
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getPriority() {
+        return priority;
+    }
+    public void setPriority(String priority) {
+        this.priority = priority;
     }
 }
