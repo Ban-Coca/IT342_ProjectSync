@@ -125,7 +125,7 @@ export default function LandingPage() {
     return (
         <div className="bg-background min-h-screen">
             <Toaster richColors/>
-            <header className="flex justify-between items-center p-4 md:px-8 lg:px-12">
+            <header className="flex justify-between items-center p-4 border-b border-border md:px-8 lg:px-12">
                 {/* Logo */}
                 <img src="/logo.svg" alt="ProjectSync Logo" className="h-10 w-10 md:h-12 md:w-12 lg:h-16 lg:w-16" />
 
@@ -243,12 +243,12 @@ export default function LandingPage() {
             <div className="flex flex-col gap-12 mt-12 max-w-7xl mx-auto">
                 <div ref={scope} style={{ opacity: 0 }} className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
                     {features.map((feature, index) => (
-                        <div key={index} className="p-4 flex rounded-lg shadow-xl justify-center">
-                            <div className="p-4 bg-primary rounded-lg shadow-lg">
+                        <div key={index} className="p-4 flex rounded-lg shadow-xl justify-center transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-2xl">
+                            <div className="p-4 bg-primary rounded-lg shadow-lg transition-all duration-300 hover:bg-primary/90">
                                 <img src={feature.image} alt={feature.title} className="w-96 h-36 z-10 rounded-md" />
                             </div>
                             <div className="px-4 flex flex-col justify-center items-start">
-                                <h2 className="text-lg text-primary font-bold">{feature.title}</h2>
+                                <h2 className="text-lg text-primary font-bold transition-colors duration-300">{feature.title}</h2>
                                 <p className="text-muted-foreground mt-2">{feature.description}</p>
                             </div>
                         </div>

@@ -6,13 +6,30 @@ import Homepage from './pages/Homepage'
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom'
 import LoginPage from './pages/AuthenticationPages/Login'
 import SignupPage from './pages/AuthenticationPages/Signup'
+import ForgotPassword from './pages/AuthenticationPages/ForgotPassword'
+import VerifyCode from './pages/AuthenticationPages/VerificationCodePage'
+import PasswordReset from './pages/AuthenticationPages/PasswordReset'
 import TaskPage from './pages/TaskPage'
 import LandingPage from './pages/LandingPage'
+import ProjectDetailsPage from './pages/ProjectPages/ProjectDetailsPage'
 import { AuthenticationProvider, useAuth } from './contexts/authentication-context'
+import ProjectsPage from './pages/ProjectPages/ProjectsPage'
+import { Toaster } from '@/components/ui/sonner'
+import { Loading } from './components/loading-state'
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh', 
+        width: '100%' 
+      }}>
+        <Loading size="lg" text="Loading..." />
+      </div>
+    )
   }
   
   if (!isAuthenticated) {
@@ -33,6 +50,7 @@ const RedirectIfAuthenticated = ({ children }) => {
 function App() {
   return (
     <AuthenticationProvider>
+      <Toaster richColors/>
       <Router>
         <Routes>
           <Route 
@@ -60,6 +78,30 @@ function App() {
             } 
           />
           <Route 
+            path="/forgot-password" 
+            element={
+              <RedirectIfAuthenticated>
+                <ForgotPassword />
+              </RedirectIfAuthenticated>
+            } 
+          />
+          <Route 
+            path="/verify-code" 
+            element={
+              <RedirectIfAuthenticated>
+                <VerifyCode />
+              </RedirectIfAuthenticated>
+            } 
+          />
+          <Route 
+            path="/reset-password" 
+            element={
+              <RedirectIfAuthenticated>
+                <PasswordReset />
+              </RedirectIfAuthenticated>
+            } 
+          />
+          <Route 
             path="/home" 
             element={
               <ProtectedRoute>
@@ -72,6 +114,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <TaskPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/projects" 
+            element={
+              <ProtectedRoute>
+                <ProjectsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/projects/:projectId" 
+            element={
+              <ProtectedRoute>
+                <ProjectDetailsPage />
               </ProtectedRoute>
             }
           />

@@ -27,8 +27,7 @@ import jakarta.persistence.Table;
 public class ProjectEntity {
 
     @Id
-    @GeneratedValue(generator= "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID projectId;
 
     private String name;
@@ -58,7 +57,7 @@ public class ProjectEntity {
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<DocumentEntity> documents;
-   
+
     public UUID getProjectId() {
         return projectId;
     }

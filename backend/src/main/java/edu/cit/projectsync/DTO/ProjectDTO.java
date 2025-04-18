@@ -14,7 +14,7 @@ public class ProjectDTO {
     private LocalDate startDate;
     private LocalDate endDate;
     private UserDTO ownerId;
-    private List<String> goals; 
+    private List<String> goals;
     private List<UserDTO> teamMemberIds;
     private List<UUID> tasks;
     private List<UUID> documents;

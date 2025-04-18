@@ -66,7 +66,7 @@ export const AuthenticationProvider = ({ children }) => {
       };
     
       
-      const getAuthHeader = () => {
+    const getAuthHeader = () => {
         return token ? { Authorization: `Bearer ${token}` } : {};
     };
     const contextValue = {

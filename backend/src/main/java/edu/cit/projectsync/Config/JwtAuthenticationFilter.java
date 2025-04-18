@@ -32,6 +32,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Value("${jwt.secret}")
     private String jwtSecret;
 
+    @Autowired
+    public JwtAuthenticationFilter(UserService userService) {
+        this.userService = userService;
+    }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -42,24 +47,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 Claims claims = validateAndParseToken(token);
                 
                 if (claims != null) {
-                    String userIdString = claims.getSubject(); // Extract user ID as a string
+                    String userId = claims.getSubject(); // Extract user ID as a string
                     
-                    try {
-                        UUID userId = UUID.fromString(userIdString); // Parse the user ID as UUID
+                    UserEntity user = userService.findById(UUID.fromString(userId));
+                    
+                    if (user != null) {
+                        UsernamePasswordAuthenticationToken authentication = 
+                            new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());
                         
-                        UserEntity user = userService.findById(userId);
-                        
-                        if (user != null) {
-                            UsernamePasswordAuthenticationToken authentication = 
-                                new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());
-                            
-                            SecurityContextHolder.getContext().setAuthentication(authentication);
-                            logger.debug("Authentication set for user ID: {}", userId);
-                        } else {
-                            logger.warn("No user found for ID: {}", userId);
-                        }
-                    } catch (IllegalArgumentException e) {
-                        logger.error("Invalid UUID format for user ID: {}", userIdString, e);
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                        logger.debug("Authentication set for user ID: {}", userId);
+                    } else {
+                        logger.warn("No user found for ID: {}", userId);
                     }
                 }
             }

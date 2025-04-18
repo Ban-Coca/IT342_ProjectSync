@@ -20,19 +20,75 @@ export function SignupForm({
   });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState({
+    firstName: false,
+    lastName: false,
+    email: false,
+    password: false,
+    confirmPassword: false,
+  });
 
   const handleChange = (e) => {
     const { id, value } = e.target;
     setFormData((prev) => ({ ...prev, [id]: value }));
+    
+    if (fieldErrors[id]) {
+      setFieldErrors(prev => ({ ...prev, [id]: false }));
+      setError(null);
+    }
   };
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+    
+    // Reset all field errors
+    setFieldErrors({
+      firstName: false,
+      lastName: false,
+      email: false,
+      password: false,
+      confirmPassword: false,
+    });
+    
+    // Validate fields
+    let hasError = false;
+    
+    if (!formData.firstName.trim()) {
+      setFieldErrors(prev => ({ ...prev, firstName: true }));
+      hasError = true;
+    }
+    
+    if (!formData.lastName.trim()) {
+      setFieldErrors(prev => ({ ...prev, lastName: true }));
+      hasError = true;
+    }
+    
+    if (!formData.email.trim()) {
+      setFieldErrors(prev => ({ ...prev, email: true }));
+      hasError = true;
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      setFieldErrors(prev => ({ ...prev, email: true }));
+      hasError = true;
+    }
+    
+    if (!formData.password) {
+      setFieldErrors(prev => ({ ...prev, password: true }));
+      hasError = true;
+    }
+    
+    if (!formData.confirmPassword) {
+      setFieldErrors(prev => ({ ...prev, confirmPassword: true }));
+      hasError = true;
+    }
 
     if (formData.password !== formData.confirmPassword) {
+      setFieldErrors(prev => ({ ...prev, confirmPassword: true }));
       setError("Passwords do not match.");
-      return;
+      hasError = true;
     }
+    
+    if (hasError) return;
 
     try {
       setLoading(true);
@@ -52,7 +108,8 @@ export function SignupForm({
           Enter your details below to create your account
         </p>
       </div>
-      <div className="grid gap-6">
+      <div className="grid gap-2">
+        {error && <p className="text-red-500 text-sm">{error}</p>}
         <div className="grid grid-cols-2 gap-2">
           <div>
             <Label htmlFor="firstName">First Name</Label>
@@ -63,7 +120,9 @@ export function SignupForm({
               placeholder="John"
               value={formData.firstName}
               onChange={handleChange}
-              required />
+              className={fieldErrors.firstName ? "border-red-500" : ""}
+              />
+            {fieldErrors.firstName && <p className="text-xs text-red-500">First name is required</p>}
           </div>
           <div>
             <Label htmlFor="lastName">Last Name</Label>
@@ -73,8 +132,10 @@ export function SignupForm({
               type="text"
               value={formData.lastName}
               onChange={handleChange}
-              placeholder="Doe" 
-              required />
+              placeholder="Doe"
+              className={fieldErrors.lastName ? "border-red-500" : ""}
+               />
+            {fieldErrors.lastName && <p className="text-xs text-red-500">Last name is required</p>}
           </div>
         </div>
         <div className="grid gap-2">
@@ -86,7 +147,9 @@ export function SignupForm({
             placeholder="johndoe@email.com"
             value={formData.email}
             onChange={handleChange}
-            required />
+            className={fieldErrors.email ? "border-red-500" : ""}
+            />
+          {fieldErrors.email && <p className="text-xs text-red-500">Please enter a valid email address</p>}
         </div>
         <div className="grid gap-2">
           <Label htmlFor="password">Password</Label>
@@ -95,8 +158,10 @@ export function SignupForm({
             id="password" 
             type="password"
             value={formData.password}
-            onChange={handleChange} 
-            required />
+            onChange={handleChange}
+            className={fieldErrors.password ? "border-red-500" : ""}
+            />
+          {fieldErrors.password && <p className="text-xs text-red-500">Password is required</p>}
         </div>
         <div className="grid gap-2">
           <Label htmlFor="confirmPassword">Confirm Password</Label>
@@ -106,10 +171,12 @@ export function SignupForm({
             type="password"
             value={formData.confirmPassword}
             onChange={handleChange}
-            required />
+            className={fieldErrors.confirmPassword ? "border-red-500" : ""}
+            />
+          {fieldErrors.confirmPassword && <p className="text-xs text-red-500">Passwords must match</p>}
         </div>
-        <Button type="submit" className="w-full">
-          Sign Up
+        <Button type="submit" className="w-full" disabled={loading}>
+          {loading ? "Signing up..." : "Sign Up"}
         </Button>
         <div
           className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
@@ -129,7 +196,7 @@ export function SignupForm({
       </div>
       <div className="text-center text-sm">
         Already have an account?{" "}
-        <a href="#" className="underline underline-offset-4">
+        <a href="/login" className="underline underline-offset-4">
           Login here
         </a>
       </div>

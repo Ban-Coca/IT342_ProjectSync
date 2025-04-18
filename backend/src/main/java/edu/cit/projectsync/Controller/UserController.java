@@ -1,12 +1,12 @@
 package edu.cit.projectsync.Controller;
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import edu.cit.projectsync.Entity.VerificationCodeEntity;
+import edu.cit.projectsync.Service.EmailService;
+import edu.cit.projectsync.Service.VerificationCodeService;
+import edu.cit.projectsync.util.VerificationCodeGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +45,12 @@ public class UserController {
 
     @Autowired
     private UserService userv;
+
+    @Autowired
+    private VerificationCodeService codeService;
+
+    @Autowired
+    private EmailService emailService;
 
     @Value("${jwt.secret}")
     private String jwtSecret;
@@ -300,6 +306,135 @@ public class UserController {
         }
     }
 
+    @PostMapping("/request-password-reset")
+    public ResponseEntity<?> requestPasswordReset(@RequestBody Map<String, String> request) {
+        try {
+            String email = request.get("email");
+
+            if (email == null || email.isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Email is required"));
+            }
+
+            // Find user by email
+            UserEntity user = userv.findByEmail(email);
+            if (user == null) {
+                // For security reasons, don't reveal if email exists or not
+                return ResponseEntity.ok(Map.of("message", "If your email exists in our system, you will receive a reset code"));
+            }
+
+            // Generate a random 6-digit verification code
+            String verificationCode = VerificationCodeGenerator.generateVerificationCode();
+
+            // Save the verification code
+            codeService.createVerificationCode(user, verificationCode);
+
+            // Send email with verification code
+            emailService.sendVerificationEmail(email, verificationCode);
+
+            return ResponseEntity.ok(Map.of("message", "If your email exists in our system, you will receive a reset code"));
+
+        } catch (Exception e) {
+            logger.error("Error in password reset request: ", e);
+            return ResponseEntity.status(500).body(Map.of("error", "Error processing request: " + e.getMessage()));
+        }
+    }
+
+    @PostMapping("/verify-reset-code")
+    public ResponseEntity<?> verifyResetCode(@RequestBody Map<String, String> request) {
+        try {
+            String email = request.get("email");
+            String code = request.get("code");
+
+            if (email == null || email.isEmpty() || code == null || code.isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Email and verification code are required"));
+            }
+
+            // Find user by email
+            UserEntity user = userv.findByEmail(email);
+            if (user == null) {
+                return ResponseEntity.status(404).body(Map.of("error", "Invalid or expired verification code"));
+            }
+
+            // Find verification code for user
+            Optional<VerificationCodeEntity> verificationCodeOpt = codeService.findByUser(user);
+
+            if (verificationCodeOpt.isEmpty()) {
+                return ResponseEntity.status(404).body(Map.of("error", "Invalid or expired verification code"));
+            }
+
+            VerificationCodeEntity verificationCode = verificationCodeOpt.get();
+
+            // Check if code matches and is not expired
+            if (!verificationCode.getCode().equals(code) || !codeService.isCodeValid(verificationCode)) {
+                return ResponseEntity.status(400).body(Map.of("error", "Invalid or expired verification code"));
+            }
+
+            // Generate a temporary token for secure password reset
+            String resetToken = UUID.randomUUID().toString();
+            // Store the reset token (you might want to add this field to your VerificationCode entity)
+            verificationCode.setResetToken(resetToken);
+            codeService.save(verificationCode);
+
+            return ResponseEntity.ok(Map.of(
+                    "message", "Verification successful",
+                    "resetToken", resetToken
+            ));
+
+        } catch (Exception e) {
+            logger.error("Error in code verification: ", e);
+            return ResponseEntity.status(500).body(Map.of("error", "Error verifying code: " + e.getMessage()));
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
+        try {
+            String email = request.get("email");
+            String resetToken = request.get("resetToken");
+            String newPassword = request.get("newPassword");
+
+            logger.info("Password reset execution for email: {}", email);
+
+            if (email == null || email.isEmpty() || resetToken == null || resetToken.isEmpty() ||
+                    newPassword == null || newPassword.isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Email, reset token, and new password are required"));
+            }
+
+            // Find user by email
+            UserEntity user = userv.findByEmail(email);
+            if (user == null) {
+                return ResponseEntity.status(404).body(Map.of("error", "Invalid request"));
+            }
+
+            // Verify reset token
+            Optional<VerificationCodeEntity> verificationCodeOpt = codeService.findByUser(user);
+
+            if (verificationCodeOpt.isEmpty()) {
+                return ResponseEntity.status(404).body(Map.of("error", "Invalid request"));
+            }
+
+            VerificationCodeEntity verificationCode = verificationCodeOpt.get();
+
+            // Check if token matches and is not expired
+            if (!verificationCode.getResetToken().equals(resetToken) || !codeService.isCodeValid(verificationCode)) {
+                return ResponseEntity.status(400).body(Map.of("error", "Invalid or expired reset token"));
+            }
+
+            // Encrypt and update password
+            String encryptedPassword = passwordEncoder.encode(newPassword);
+            user.setPassword(encryptedPassword);
+
+            userv.postUserRecord(user);
+
+            // Delete the verification code record to prevent reuse
+            codeService.deleteByUser(user);
+
+            return ResponseEntity.ok(Map.of("message", "Password reset successfully"));
+        } catch (Exception e) {
+            logger.error("Error in password reset: ", e);
+            return ResponseEntity.status(500).body(Map.of("error", "Error in password reset: " + e.getMessage()));
+        }
+    }
     private String generateToken(UserEntity user) {
         return Jwts.builder()
                 .setSubject(String.valueOf(user.getUserId()))

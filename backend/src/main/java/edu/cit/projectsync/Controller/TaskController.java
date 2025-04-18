@@ -5,14 +5,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import edu.cit.projectsync.DTO.TaskDTO;
 import edu.cit.projectsync.Entity.TaskEntity;
@@ -22,6 +15,7 @@ import edu.cit.projectsync.Service.TaskService;
 
 @RestController
 @RequestMapping("/api/tasks")
+@CrossOrigin(origins = "http://localhost:5173")
 public class TaskController {
 
     @Autowired
@@ -46,16 +40,16 @@ public class TaskController {
             if (taskExists) {
                 return ResponseEntity.status(409).body("A task with the title '" + taskDTO.getTitle() + "' already exists."); // Return 409 Conflict
             }
-    
+
             // Map TaskDTO to TaskEntity using TaskMapper
             TaskEntity task = TaskMapper.toEntity(taskDTO, projectService, taskService);
-    
+
             // Save the task
             TaskEntity createdTask = taskService.createTask(task);
-    
+
             // Map TaskEntity back to TaskDTO
             TaskDTO createdTaskDTO = TaskMapper.toDTO(createdTask);
-    
+
             return ResponseEntity.status(201).body(createdTaskDTO);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("An error occurred while creating the task: " + e.getMessage()); // Return 400 with a detailed error message
@@ -108,7 +102,7 @@ public class TaskController {
         boolean projectExists = projectService.projectExistsById(projectId);
         if (!projectExists) {
             return ResponseEntity.status(404).body("Project with ID " + projectId + " does not exist."); // Return 404 if project doesn't exist
-        } 
+        }
 
         // Retrieve tasks for the project
         List<TaskEntity> tasks = taskService.getTasksByProjectId(projectId);

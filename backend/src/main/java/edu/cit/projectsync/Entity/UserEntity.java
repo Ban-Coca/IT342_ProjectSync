@@ -24,8 +24,7 @@ import jakarta.persistence.UniqueConstraint;
 public class UserEntity {
 
     @Id
-    @GeneratedValue(generator= "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID userId;
 
     @Column(nullable = false, unique = true)
@@ -41,13 +40,13 @@ public class UserEntity {
     private Date updatedAt;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ProjectEntity> projects = new ArrayList<>(); 
+    private List<ProjectEntity> projects = new ArrayList<>();
 
     @ManyToMany(mappedBy = "assignedTo")
     private List<TaskEntity> tasks;
 
     @ManyToMany(mappedBy = "teamMembers")
-    private List<ProjectEntity> teamProjects = new ArrayList<>(); 
+    private List<ProjectEntity> teamProjects = new ArrayList<>();
 
     @OneToMany(mappedBy = "uploadedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<DocumentEntity> documents = new ArrayList<>();

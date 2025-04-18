@@ -38,7 +38,7 @@ public class UserService {
 
     //Update of CRUD
 	@SuppressWarnings("finally")
-	public UserEntity putUserDetails (UUID userId, UserEntity newUserDetails) {
+	public UserEntity putUserDetails (UUID userId, UserEntity newUserDetails) throws NameNotFoundException {
 		UserEntity user = new UserEntity();
 		
 		try {
@@ -51,9 +51,10 @@ public class UserService {
             user.setUpdatedAt(newUserDetails.getUpdatedAt());
 		}catch(NoSuchElementException nex){
 			throw new NameNotFoundException("User "+ userId +"not found");
-		}finally {
-			return userRepository.save(user);
 		}
+
+		return userRepository.save(user);
+
 	}
 
     //Delete of CRUD

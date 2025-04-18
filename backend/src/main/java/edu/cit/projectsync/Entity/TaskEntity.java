@@ -4,8 +4,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-import org.hibernate.annotations.GenericGenerator;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,8 +19,7 @@ import jakarta.persistence.Table;
 public class TaskEntity {
 
     @Id
-    @GeneratedValue(generator= "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID taskId;
 
     private String title;
@@ -37,7 +34,7 @@ public class TaskEntity {
         inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private List<UserEntity> assignedTo;
-    
+
     @ManyToOne
     @JoinColumn(name = "project_id", referencedColumnName = "projectId", nullable = false)
     private ProjectEntity project;

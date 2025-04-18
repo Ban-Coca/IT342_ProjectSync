@@ -1,5 +1,8 @@
 package edu.cit.projectsync.DTO;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -15,10 +18,19 @@ public class UserDTO {
     private Date lastLogin;
     private List<UUID> projects;
     private List<UUID> teamProjectIds;
-    private List<UUID> tasks; 
+    private List<UUID> tasks;
     private List<UUID> documents;
 
-    // Getters and Setters
+    public UserDTO() {
+    }
+
+
+    @JsonCreator
+    public UserDTO(@JsonProperty("userId") String userId) {
+        this.userId = UUID.fromString(userId);
+    }
+
+
     public UUID getUserId() {
         return userId;
     }
