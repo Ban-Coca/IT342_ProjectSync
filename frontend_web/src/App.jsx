@@ -11,13 +11,25 @@ import VerifyCode from './pages/AuthenticationPages/VerificationCodePage'
 import PasswordReset from './pages/AuthenticationPages/PasswordReset'
 import TaskPage from './pages/TaskPage'
 import LandingPage from './pages/LandingPage'
+import ProjectDetailsPage from './pages/ProjectPages/ProjectDetailsPage'
 import { AuthenticationProvider, useAuth } from './contexts/authentication-context'
-import ProjectsPage from './pages/ProjectsPage'
+import ProjectsPage from './pages/ProjectPages/ProjectsPage'
 import { Toaster } from '@/components/ui/sonner'
+import { Loading } from './components/loading-state'
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh', 
+        width: '100%' 
+      }}>
+        <Loading size="lg" text="Loading..." />
+      </div>
+    )
   }
   
   if (!isAuthenticated) {
@@ -110,6 +122,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <ProjectsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/projects/:projectId" 
+            element={
+              <ProtectedRoute>
+                <ProjectDetailsPage />
               </ProtectedRoute>
             }
           />

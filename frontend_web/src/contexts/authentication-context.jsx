@@ -67,7 +67,6 @@ export const AuthenticationProvider = ({ children }) => {
     
       
     const getAuthHeader = () => {
-        console.log("getAuthHeader called: ", token);
         return token ? { Authorization: `Bearer ${token}` } : {};
     };
     const contextValue = {

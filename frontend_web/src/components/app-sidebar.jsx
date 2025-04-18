@@ -29,24 +29,19 @@ const data = {
         icon: Home,
       },
       {
-        title: "Inbox",
-        url: "/inbox",
-        icon: Inbox,
-      },
-      {
         title: "Projects",
         url: "/projects",
         icon: Folder,
       },
       {
-        title: "Calendar",
-        url: "/calendar",
-        icon: Calendar,
-      },
-      {
         title: "Tasks",
         url: "/tasks",
         icon: ClipboardList,
+      },
+      {
+        title: "Calendar",
+        url: "/calendar",
+        icon: Calendar,
       },
       {
         title: "Dashboard",

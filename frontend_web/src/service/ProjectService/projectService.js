@@ -15,9 +15,13 @@ export const createProject = async (projectData, header) => {
   }
 };
 
-// Update an existing project
-export const updateProject = async (projectId, projectData, header) => {
+export const updateProject = async (projectData, header) => {
   try {
+    const projectId = projectData.projectId;
+    if (!projectId) {
+      throw new Error('Project ID is missing in the provided data');
+    }
+    
     const response = await axios.put(`${API_URL}/updateproject/${projectId}/`, projectData, {headers: header});
     return response.data;
   } catch (error) {
@@ -26,10 +30,10 @@ export const updateProject = async (projectId, projectData, header) => {
   }
 };
 
-// Get a project by its ID
 export const getProjectById = async (projectId, header) => {
   try {
-    const response = await axios.get(`${API_URL}/getprojectbyid/${projectId}/`,{headers: header});
+    const response = await axios.get(`${API_URL}/getprojectbyid/${projectId}`,{headers: header});
+    console.log("Project Data:", response.data);
     return response.data;
   } catch (error) {
     console.error('Error fetching project:', error);
@@ -40,7 +44,8 @@ export const getProjectById = async (projectId, header) => {
 // Delete a project
 export const deleteProject = async (projectId, header) => {
   try {
-    const response = await axios.delete(`${API_URL}/deleteproject/${projectId}/`, {headers: header});
+
+    const response = await axios.delete(`${API_URL}/deleteproject/${projectId}`, {headers: header});
     return response.data;
   } catch (error) {
     console.error('Error deleting project:', error);
@@ -50,10 +55,9 @@ export const deleteProject = async (projectId, header) => {
 
 export const getProjectsByUserId = async (userId, header) => {
   try {
-    const response = await axios.get(`${API_URL}/getprojectbyuser/${userId}/`, {headers: header});
+    const response = await axios.get(`${API_URL}/getprojectbyuser/${userId}`, {headers: header});
     return response.data;
   } catch (error) {
-    console.error('Error fetching user projects:', error);
     throw error;
   }
 };

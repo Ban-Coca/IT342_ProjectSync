@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -18,8 +18,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 export default function ProjectModal({
   open,
   onOpenChange,
-  onCreateProject,
-  availableUsers = [], // Default to empty array if not provided
+  onSubmit,
+  project = null,
+  availableUsers = [], 
 }) {
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
@@ -29,26 +30,46 @@ export default function ProjectModal({
   const [currentGoal, setCurrentGoal] = useState("")
   const [teamMembers, setTeamMembers] = useState([])
 
+  const isEditMode = !!project
+
+  useEffect(() => {
+    if(project){
+      setName(project.name || "")
+      setDescription(project.description || "")
+      setStartDate(project.startDate || "")
+      setEndDate(project.endDate || "")
+      setGoals(project.goals || [])
+      setTeamMembers(project.teamMemberIds || [])
+    } else {
+      resetForm()
+    }
+  }, [project])
+
+  const resetForm = () => {
+    setName("");
+    setDescription("");
+    setStartDate("");
+    setEndDate("");
+    setGoals([]);
+    setCurrentGoal("");
+    setTeamMembers([]);
+  };
   const handleSubmit = (e) => {
     e.preventDefault()
-    onCreateProject({
+
+    const projectData = {
       name,
       description,
       startDate: startDate || null,
       endDate: endDate || null,
       goals,
       teamMembers,
-    })
-
-    // Reset form
-    setName("")
-    setDescription("")
-    setStartDate("")
-    setEndDate("")
-    setGoals([])
-    setCurrentGoal("")
-    setTeamMembers([])
-
+    }
+    if(isEditMode){
+      projectData.projectId = project.projectId
+    }
+    onSubmit(projectData, isEditMode)
+    resetForm()
     onOpenChange(false)
   }
 
@@ -73,13 +94,27 @@ export default function ProjectModal({
     setTeamMembers(teamMembers.filter((id) => id !== userId))
   }
 
+  useEffect(() => {
+    if (!open) {
+      
+      const cleanup = () => {
+        document.body.style.pointerEvents = '';
+      };
+      
+      setTimeout(cleanup, 100);
+      return cleanup;
+    }
+  }, [open]);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[550px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Create New Project</DialogTitle>
-            <DialogDescription>Fill in the details below to create your new project.</DialogDescription>
+            <DialogTitle>{isEditMode ? "Edit Project" : "Create New Project"}</DialogTitle>
+            <DialogDescription>
+              {isEditMode ? "Update the project details below." : "Fill in the details below to create your new project."}
+            </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             {/* Project Name */}
@@ -229,7 +264,7 @@ export default function ProjectModal({
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit">Create Project</Button>
+            <Button type="submit">{isEditMode ? "Update Project" : "Create Project"}</Button>
           </DialogFooter>
         </form>
       </DialogContent>
