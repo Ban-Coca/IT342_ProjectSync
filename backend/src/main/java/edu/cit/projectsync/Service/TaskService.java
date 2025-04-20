@@ -64,15 +64,14 @@ public class TaskService {
         taskRepository.deleteById(taskId);
     }
 
-    public boolean taskExistsByTitle(String title) {
-        return taskRepository.existsByTitle(title);
-    }
-
     public List<UserEntity> getUsersByIds(List<UUID> userIds) {
         return userService.getUsersById(userIds);
     }
 
     public boolean taskExistsByTitleExcludingId(String title, UUID taskId) {
         return taskRepository.existsByTitleAndTaskIdNot(title, taskId);
+    }
+    public List<TaskEntity> getTasksByUserId(UUID userId) {
+        return taskRepository.findTasksAssignedToUser(userId);
     }
 }
