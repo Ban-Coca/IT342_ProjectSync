@@ -2,7 +2,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useAuth } from "@/contexts/authentication-context";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { getProjectById } from "@/service/ProjectService/projectService";
 import { toast } from 'sonner';
 import { Loading } from "@/components/loading-state";
@@ -19,7 +19,7 @@ import { ProjectDropdown } from "@/components/project-dropdown-fucntions";
 import ProjectModal from "@/components/project-modal";
 import DeleteModal from "@/components/delete-modal";
 import TaskModal from "@/components/task-modal";
-
+import FilesTab from "../DocumentPage/FilesTab";
 export default function ProjectDetailsPage () {
     const { projectId } = useParams();
     const { currentUser, getAuthHeader } = useAuth();
@@ -200,7 +200,7 @@ export default function ProjectDetailsPage () {
                             <CalendarTab tasks={tasks} />
                         </TabsContent>
                         <TabsContent value="Files" className="space-y-4">
-                            {/* <FilesTab tasks={tasks} /> */}
+                            <FilesTab projectId={projectId} />
                         </TabsContent>
                     </Tabs>
                 </div>

@@ -61,7 +61,6 @@ export default function TaskViewCard({ open, taskId, onOpenChange }) {
 
     useEffect(() => {
         if (project) {
-            console.log("Project team members:", project.teamMemberIds)
             setTeamMembers(project.teamMemberIds);
         }
     }, [project]);
@@ -77,7 +76,6 @@ export default function TaskViewCard({ open, taskId, onOpenChange }) {
 
     useEffect(() => {
         if (task) {
-            console.log("Task data:", task)
             setEditedTask({ ...task });
             setSelectedDate(task.dueDate ? new Date(task.dueDate) : null);
         }
@@ -161,6 +159,13 @@ export default function TaskViewCard({ open, taskId, onOpenChange }) {
 
                     <div className="space-y-4 mt-6">
                         <div className="grid grid-cols-1 gap-4">
+                            <div className="flex items-center space-x-3 p-3 rounded-md bg-slate-50">
+                                <CheckCircle2Icon className="h-5 w-5 text-slate-500" />
+                                <div className="flex-1">
+                                    <p className="text-sm font-medium">Project</p>
+                                    <p className="text-sm text-slate-500 mt-1">{task?.project?.name || "No project"}</p>
+                                </div>
+                            </div>
                             {/* Due Date */}
                             <div className="flex items-center space-x-3 p-3 rounded-md bg-slate-50">
                             <CalendarIcon className="h-5 w-5 text-slate-500" />

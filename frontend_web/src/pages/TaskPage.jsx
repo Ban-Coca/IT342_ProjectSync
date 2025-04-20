@@ -51,24 +51,10 @@ export default function TaskPage(){
               <h1 className="text-2xl sm:text-3xl font-bold">Tasks</h1>
               <p className="text-muted-foreground">Manage and organize your tasks</p>
             </div>
-            <div className="flex items-center gap-2 w-full sm:w-auto">
-              <Select defaultValue="all">
-                <SelectTrigger className="w-full sm:w-[180px]">
-                  <SelectValue placeholder="Filter" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Tasks</SelectItem>
-                  <SelectItem value="my">My Tasks</SelectItem>
-                  <SelectItem value="high">High Priority</SelectItem>
-                  <SelectItem value="upcoming">Upcoming</SelectItem>
-                </SelectContent>
-              </Select>
-              <Button className="whitespace-nowrap">Add Task</Button>
-            </div>
           </div>
 
           <Tabs defaultValue="table" className="w-full">
-            <TabsList className="bg-primary text-white grid w-full grid-cols-4 mb-6">
+            <TabsList className="bg-primary text-white grid w-full grid-cols-3 mb-6">
               <TabsTrigger value="table" className="flex items-center gap-2">
                 <ListTodo className="h-4 w-4" />
                 <span className="hidden sm:inline">Table</span>
