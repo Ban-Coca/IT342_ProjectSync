@@ -31,7 +31,7 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/user/login", "/api/user/oauth2/authorize/google", "/api/user/postuserrecord").permitAll() // Allow all requests to /api/user/**
-                .requestMatchers("/api/documents/**", "/api/projects/**", "/api/tasks/**", "/api/user/update-profile", "api/user/search").authenticated()
+                .requestMatchers("/api/documents/**", "/api/projects/**", "/api/tasks/**", "/api/user/update-profile", "/api/user/search").authenticated()
                 .anyRequest().permitAll()// Allow all requests
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

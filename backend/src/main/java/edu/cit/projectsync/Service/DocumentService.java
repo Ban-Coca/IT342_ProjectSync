@@ -3,6 +3,9 @@ package edu.cit.projectsync.Service;
 import java.util.List;
 import java.util.UUID;
 
+import edu.cit.projectsync.Entity.ProjectEntity;
+import edu.cit.projectsync.Entity.UserEntity;
+import edu.cit.projectsync.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -45,8 +48,105 @@ public class DocumentService {
     @Autowired
     private ProjectRepository projectRepository;
 
-    public DocumentEntity uploadDocument(DocumentEntity document) {
-        return documentRepository.save(document);
+    @Value("${backblaze.application-key-id}")
+    private String applicationKeyId;
+
+    @Value("${backblaze.application-key}")
+    private String applicationKey;
+
+    @Value("${backblaze.bucket-id}")
+    private String bucketId;
+
+    @Value("${backblaze.bucket-name}")
+    private String bucketName;
+
+    private String userAgent = "ProjectSync/1.0";
+
+    public B2StorageClient storageClient;
+    @Autowired
+    private UserRepository userRepository;
+
+    private B2StorageClient getB2Client(){
+        if (storageClient == null) {
+            storageClient = B2StorageClientFactory.createDefaultFactory().create( applicationKeyId, applicationKey, userAgent );
+        }
+        return storageClient;
+    }
+
+    public DocumentEntity uploadDocument(MultipartFile file, UUID projectId, UUID userId) throws IOException, B2Exception {
+
+        if(!projectRepository.existsById(projectId)) {
+            throw new IllegalArgumentException("Project does not exist");
+        }
+
+        File tempFile = convertMultipartFileToFile(file);
+
+        try{
+            B2ContentSource contentSource = B2FileContentSource.builder(tempFile).build();
+            String fileName = file.getOriginalFilename();
+            String contentType = file.getContentType() != null ? file.getContentType() : B2ContentTypes.B2_AUTO;
+
+            String b2FilePath = "project/" + projectId + "/" + UUID.randomUUID() + "/" + fileName;
+
+            B2UploadFileRequest request = B2UploadFileRequest.builder(bucketId, b2FilePath, contentType, contentSource).build();
+
+            B2FileVersion fileVersion = getB2Client().uploadSmallFile(request);
+
+            DocumentEntity document = new DocumentEntity();
+            document.setFileName(fileName);
+            document.setFileType(file.getContentType());
+            document.setFileSize(file.getSize());
+            document.setFilePath(b2FilePath);
+            document.setUploadedAt(LocalDateTime.now());
+
+            document.setB2FileId(fileVersion.getFileId());
+            document.setB2BucketId(bucketId);
+            document.setB2BucketName(bucketName);
+            document.setB2FileUrl(getB2Client().getDownloadByIdUrl(fileVersion.getFileId()));
+            document.setB2ContentSha1(fileVersion.getContentSha1());
+
+            ProjectEntity project = projectRepository.getReferenceById(projectId);
+            UserEntity user = userRepository.getReferenceById(userId);
+
+            document.setProject(project);
+            document.setUploadedBy(user);
+
+            return documentRepository.save(document);
+        } finally {
+            if (tempFile.exists()) {
+                tempFile.delete();
+            }
+        }
+    }
+
+    public byte[] downloadDocument(UUID documentId) throws B2Exception {
+        DocumentEntity document = getDocumentById(documentId);
+        if (document == null) {
+            throw new IllegalArgumentException("Document not found");
+        }
+
+        B2DownloadByIdRequest request = B2DownloadByIdRequest.builder(document.getB2FileId()).build();
+        B2ContentMemoryWriter contentHandler = B2ContentMemoryWriter.build();
+
+        getB2Client().downloadById(request, contentHandler);
+
+        return contentHandler.getBytes();
+    }
+
+    public void deleteDocument(UUID documentId) throws B2Exception {
+        DocumentEntity document = getDocumentById(documentId);
+        if (document == null) {
+            throw new IllegalArgumentException("Document not found");
+        }
+
+        B2DeleteFileVersionRequest deleteRequest = B2DeleteFileVersionRequest.builder(
+                document.getB2FileId(),
+                document.getFileName()
+        ).build();
+
+        getB2Client().deleteFileVersion(deleteRequest);
+
+        documentRepository.deleteById(documentId);
     }
 
     public DocumentEntity getDocumentById(UUID id) {
@@ -65,11 +165,15 @@ public class DocumentService {
         return documentRepository.findByFileNameContaining(query);
     }
 
-    public void deleteDocument(UUID id) {
-        documentRepository.deleteById(id);
-    }
-
     public boolean projectExistsById(UUID projectId) {
         return projectRepository.existsById(projectId);
+    }
+
+    private File convertMultipartFileToFile(MultipartFile file) throws IOException {
+        File tempFile = File.createTempFile("b2upload-", "-" + file.getOriginalFilename());
+        try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+            fos.write(file.getBytes());
+        }
+        return tempFile;
     }
 }

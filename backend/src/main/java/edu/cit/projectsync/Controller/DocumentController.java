@@ -1,9 +1,13 @@
 package edu.cit.projectsync.Controller;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import com.backblaze.b2.client.exceptions.B2Exception;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,10 +20,15 @@ import edu.cit.projectsync.Service.DocumentService;
 import edu.cit.projectsync.Service.ProjectService;
 import edu.cit.projectsync.Service.UserService;
 
+import org.springframework.http.MediaType;
+import org.springframework.http.HttpHeaders;
+
 @RestController
 @RequestMapping("/api/documents")
 @CrossOrigin(origins = "http://localhost:5173")
 public class DocumentController {
+
+    private static final Logger log = LoggerFactory.getLogger(DocumentController.class);
 
     @Autowired
     private DocumentService documentService;
@@ -47,29 +56,39 @@ public class DocumentController {
             return ResponseEntity.status(404).body("User with ID " + uploadedBy + " does not exist.");
         }
 
-        // Save the file (you can implement file storage logic here)
-        String filePath = "/uploads/" + file.getOriginalFilename(); // Example file path
-        long fileSize = file.getSize();
-        String fileType = file.getContentType();
+        try {
+            // Use the new B2 upload functionality
+            DocumentEntity savedDocument = documentService.uploadDocument(file, projectId, uploadedBy);
 
-        // Create a DocumentDTO
-        DocumentDTO documentDTO = new DocumentDTO();
-        documentDTO.setFileName(file.getOriginalFilename());
-        documentDTO.setFileType(fileType);
-        documentDTO.setFileSize(fileSize);
-        documentDTO.setFilePath(filePath);
-        documentDTO.setUploadedAt(LocalDateTime.now());
-        documentDTO.setUploadedBy(uploadedBy);
-        documentDTO.setProjectId(projectId);
+            // Map saved entity back to DTO
+            DocumentDTO savedDocumentDTO = DocumentMapper.toDTO(savedDocument);
+            return ResponseEntity.status(201).body(savedDocumentDTO);
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body("Failed to process file: " + e.getMessage());
+        } catch (B2Exception e) {
+            log.error("B2 upload error: {}", e.getMessage(), e);
+            return ResponseEntity.status(500).body("Failed to upload to B2: " + e.getMessage());
 
-        // Map DTO to Entity and save
-        DocumentEntity documentEntity = DocumentMapper.toEntity(documentDTO);
-        DocumentEntity savedDocument = documentService.uploadDocument(documentEntity);
+        }
+    }
 
-        // Map saved entity back to DTO
-        DocumentDTO savedDocumentDTO = DocumentMapper.toDTO(savedDocument);
+    @GetMapping("/download/{documentId}")
+    public ResponseEntity<byte[]> downloadDocument(@PathVariable UUID documentId) {
+        try {
+            DocumentEntity document = documentService.getDocumentById(documentId);
+            if (document == null) {
+                return ResponseEntity.notFound().build();
+            }
 
-        return ResponseEntity.status(201).body(savedDocumentDTO); // Return 201 Created with the saved document
+            byte[] fileData = documentService.downloadDocument(documentId);
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(document.getFileType()))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + document.getFileName() + "\"")
+                    .body(fileData);
+        } catch (B2Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 
     @PostMapping("/test-upload")
@@ -98,9 +117,13 @@ public class DocumentController {
             return ResponseEntity.status(404).body("Document with ID " + documentId + " does not exist.");
         }
 
-        // Delete the document
-        documentService.deleteDocument(documentId);
-        return ResponseEntity.ok("Document with ID " + documentId + " has been successfully deleted.");
+        try {
+            // Delete the document from B2 and database
+            documentService.deleteDocument(documentId);
+            return ResponseEntity.ok("Document with ID " + documentId + " has been successfully deleted.");
+        } catch (B2Exception e) {
+            return ResponseEntity.status(500).body("Failed to delete from B2: " + e.getMessage());
+        }
     }
 
     @GetMapping("/getalldocuments")
