@@ -81,10 +81,6 @@ export default function TaskPage(){
                 <CalendarIcon className="h-4 w-4" />
                 <span className="hidden sm:inline">Calendar</span>
               </TabsTrigger>
-              <TabsTrigger value="Files" className="hidden sm:flex items-center gap-2">
-                <Files className="h-4 w-4" />
-                <span className="hidden sm:inline">Files</span>
-              </TabsTrigger>
             </TabsList>
 
               {/* Table View */}
