@@ -465,4 +465,12 @@ public class UserController {
             return ResponseEntity.status(500).body(Map.of("error", "Failed to fetch user: " + e.getMessage()));
         }
     }
+    @GetMapping("/search")
+    public ResponseEntity<List<UserDTO>> searchUsers(@RequestParam("keyword") String keyword) {
+        List<UserEntity> users = userv.searchUsers(keyword);
+        List<UserDTO> userDTOs = users.stream()
+                .map(UserMapper::toDTO)
+                .toList();
+        return ResponseEntity.ok(userDTOs);
+    }
 }

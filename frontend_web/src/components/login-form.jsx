@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label"
 import { loginUser } from "@/service/AuthenticationService/authenticationService"
 import { useAuth } from "@/contexts/authentication-context"
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, Link } from "react-router-dom"
 export function LoginForm({
   className,
   ...props
@@ -99,9 +99,9 @@ export function LoginForm({
         <div className="grid gap-2">
           <div className="flex items-center">
             <Label htmlFor="password">Password</Label>
-            <a href="/forgot-password" className="ml-auto text-sm underline-offset-4 hover:underline">
+            <Link to="/forgot-password" className="ml-auto text-sm underline-offset-4 hover:underline">
               Forgot your password?
-            </a>
+            </Link>
           </div>
           <Input 
             id="password"
@@ -141,9 +141,9 @@ export function LoginForm({
 
       <div className="text-center text-sm">
         Don&apos;t have an account?{" "}
-        <a href="/signup" className="underline underline-offset-4">
+        <Link to="/signup" className="underline underline-offset-4">
           Sign up
-        </a>
+        </Link>
       </div>
     </form>)
   );

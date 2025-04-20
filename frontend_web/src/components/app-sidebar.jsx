@@ -13,7 +13,7 @@ import {
   useSidebar
 } from "@/components/ui/sidebar"
 import Logo from "@/assets/logo.svg"
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/authentication-context";
 import NavUser from "@/components/nav-user"
 
@@ -85,10 +85,10 @@ export default function AppSidebar() {
               {data.items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton className="text-base h-12 hover:bg-primary" isActive={isActive(item.url)}asChild>
-                    <a href={item.url} className="gap-4">
+                    <Link to={item.url} className="gap-4">
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

@@ -37,6 +37,7 @@ public class TaskService {
             task.setDueDate(updatedTask.getDueDate());
             task.setAssignedTo(updatedTask.getAssignedTo());
             task.setStatus(updatedTask.getStatus());
+            task.setPriority(updatedTask.getPriority());
             return taskRepository.save(task);
         }
         return null;
@@ -63,15 +64,14 @@ public class TaskService {
         taskRepository.deleteById(taskId);
     }
 
-    public boolean taskExistsByTitle(String title) {
-        return taskRepository.existsByTitle(title);
-    }
-
     public List<UserEntity> getUsersByIds(List<UUID> userIds) {
         return userService.getUsersById(userIds);
     }
 
     public boolean taskExistsByTitleExcludingId(String title, UUID taskId) {
         return taskRepository.existsByTitleAndTaskIdNot(title, taskId);
+    }
+    public List<TaskEntity> getTasksByUserId(UUID userId) {
+        return taskRepository.findTasksAssignedToUser(userId);
     }
 }

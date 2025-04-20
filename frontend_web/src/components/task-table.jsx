@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { format } from "date-fns"
+import { format, set } from "date-fns"
 import { DndContext, KeyboardSensor, PointerSensor, closestCenter, useSensor, useSensors } from "@dnd-kit/core"
 import { SortableContext, sortableKeyboardCoordinates, useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
@@ -9,16 +9,21 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
 import { getPriorityColor, getStatusIcon } from "@/utils/task-utils"
 import { ClipboardX } from "lucide-react"
-
+import { useAuth } from "@/contexts/authentication-context"
+import { useQueryClient } from "@tanstack/react-query"
+import { useTask } from "@/hooks/use-task"
+import TaskViewCard from "@/components/task-view-card"
+import { toast } from 'sonner'
 // Draggable table row component
-function DraggableTableRow({ task }) {
-  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: task.id })
+function DraggableTableRow({ task, onSelectTask }) {
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: task.taskId })
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
   }
-
+  const assignee = task.assignedTo && task.assignedTo.length > 0 
+    ? task.assignedTo[0] : { firstName: "Unassigned", avatar: null, initials: "UN" };
   return (
     <TableRow
       ref={setNodeRef}
@@ -28,8 +33,16 @@ function DraggableTableRow({ task }) {
       {...listeners}
     >
       <TableCell>
-        <div className="font-medium">{task.title}</div>
-        <div className="text-sm text-muted-foreground hidden sm:block">{task.description}</div>
+        <div 
+          className="font-medium cursor-pointer" 
+          onClick={(e) => {
+            e.stopPropagation();
+            onSelectTask(task.taskId);
+          }}
+        >
+          <div className="font-medium">{task.title}</div>
+          <div className="text-sm text-muted-foreground hidden sm:block">{task.description}</div>
+        </div>
       </TableCell>
       <TableCell className="hidden md:table-cell">{format(task.dueDate, "MMM d, yyyy")}</TableCell>
       <TableCell className="hidden md:table-cell">
@@ -40,10 +53,10 @@ function DraggableTableRow({ task }) {
       <TableCell className="hidden lg:table-cell">
         <div className="flex items-center gap-2">
           <Avatar className="h-6 w-6">
-            <AvatarImage src={task.assignee.avatar || "/placeholder.svg"} alt={task.assignee.name} />
-            <AvatarFallback>{task.assignee.initials}</AvatarFallback>
+            <AvatarImage src={assignee.avatar || "/placeholder.svg"} alt={assignee.name} />
+            <AvatarFallback>{assignee.initials || assignee.firstName?.charAt(0) || 'U'}</AvatarFallback>
           </Avatar>
-          <span className="text-sm">{task.assignee.name}</span>
+          <span className="text-sm">{assignee.name}</span>
         </div>
       </TableCell>
     </TableRow>
@@ -66,7 +79,7 @@ function EmptyState({ status }) {
 }
 
 // Status table component
-function StatusTable({ status, tasks }) {
+function StatusTable({ status, tasks, onSelectTask }) {
   const isEmpty = tasks.length === 0
 
   return (
@@ -92,10 +105,10 @@ function StatusTable({ status, tasks }) {
                 <TableHead className="hidden lg:table-cell">Assignee</TableHead>
               </TableRow>
             </TableHeader>
-            <SortableContext items={tasks.map((task) => task.id)}>
+            <SortableContext items={tasks.map((task) => task.taskId)}>
               <TableBody>
                 {tasks.map((task) => (
-                  <DraggableTableRow key={task.id} task={task} />
+                  <DraggableTableRow key={task.taskId} task={task} onSelectTask={onSelectTask} />
                 ))}
               </TableBody>
             </SortableContext>
@@ -106,19 +119,36 @@ function StatusTable({ status, tasks }) {
   )
 }
 
-export function TableTab({ tasks: initialTasks }) {
-  const [tasks, setTasks] = useState(initialTasks || [])
+export function TableTab({ tasks, projectId, setTasks }) {
+  // const [tasks, setTasks] = useState(initialTasks || [])
+  const { currentUser, getAuthHeader } = useAuth();
+  const queryClient = useQueryClient()
+  const [selectedTask, setSelectedTask] = useState(null)
+  const [isSheetOpen, setIsSheetOpen] = useState(false)
+
+  const { editTaskMutation } = useTask({
+    projectId,
+    currentUser,
+    queryClient,
+    getAuthHeader,
+    onUpdateSuccess: () => {}
+  })
 
   //Sensors for drag and drop
-  const pointerSensor = useSensor(PointerSensor)
+  const pointerSensor = useSensor(PointerSensor, {
+    activationConstraint: {
+      distance: 8,
+      delay: 100,  
+    },
+  });
+  
   const keyboardSensor = useSensor(KeyboardSensor, {
     coordinateGetter: sortableKeyboardCoordinates,
   })
 
   const sensors = useSensors(pointerSensor, keyboardSensor)
 
-  // Handle case when initialTasks is empty or undefined
-  if (!initialTasks || initialTasks.length === 0) {
+  if (!tasks || tasks.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16">
         <ClipboardX className="h-16 w-16 text-muted-foreground mb-4" />
@@ -148,27 +178,66 @@ export function TableTab({ tasks: initialTasks }) {
     if (!over) return
 
     // Find the task being dragged
-    const activeTask = tasks.find((task) => task.id === active.id)
+    const activeTask = tasks.find((task) => task.taskId === active.id)
     if (!activeTask) return
 
     // Find which table the task was dropped on
     const overTableStatus = statuses.find((status) => {
-      return tasksByStatus[status].some((task) => task.id === over.id)
+      return tasksByStatus[status].some((task) => task.taskId === over.id)
     })
 
     if (!overTableStatus || activeTask.status === overTableStatus) return
 
     // Update the task's status
-    setTasks((prev) => prev.map((task) => (task.id === active.id ? { ...task, status: overTableStatus } : task)))
+    if (setTasks) {
+      setTasks((prev) => 
+        prev.map((task) => 
+          task.taskId === active.id ? { ...task, status: overTableStatus } : task
+        )
+      )
+    }
+    const updatedTask = {
+      ...activeTask,
+      status: overTableStatus
+    };
+
+    editTaskMutation.mutate(updatedTask, {
+      onError: () => {
+        
+        if (setTasks) {
+          toast.error("Failed to update task status. Reverting changes.");
+          setTasks((prev) => 
+            prev.map((task) => 
+              task.taskId === active.id ? { ...task, status: activeTask.status } : task
+            )
+          );
+        }
+      }
+    });
   }
 
+  function handleSelectTask(task) {
+    setSelectedTask(task)
+    setIsSheetOpen(true)
+  }
+  //TODO PASS THE SELECTED TASK ID INSTEAD OF THE TASK OBJECT
   return (
-    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-      <div>
-        {statuses.map((status) => (
-          <StatusTable key={status} status={status} tasks={tasksByStatus[status] || []} />
-        ))}
-      </div>
-    </DndContext>
+    <>
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <div>
+          {statuses.map((status) => (
+            <StatusTable key={status} status={status} tasks={tasksByStatus[status] || []} onSelectTask={handleSelectTask}/>
+          ))}
+        </div>
+      </DndContext>  
+      {selectedTask && (
+        <TaskViewCard
+          open={isSheetOpen}
+          onOpenChange={setIsSheetOpen}
+          taskId={selectedTask}
+          onSelectTask={handleSelectTask}
+        />
+      )}
+    </>
   )
 }

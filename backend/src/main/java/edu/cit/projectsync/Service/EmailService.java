@@ -2,46 +2,46 @@ package edu.cit.projectsync.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
-import io.mailtrap.client.MailtrapClient;
-import io.mailtrap.config.MailtrapConfig;
-import io.mailtrap.factory.MailtrapClientFactory;
-import io.mailtrap.model.request.emails.Address;
-import io.mailtrap.model.request.emails.MailtrapMail;
-
-import java.util.List;
-import java.util.Map;
+import com.mailersend.sdk.emails.Email;
+import com.mailersend.sdk.Recipient;
+import com.mailersend.sdk.MailerSend;
+import com.mailersend.sdk.MailerSendResponse;
+import com.mailersend.sdk.exceptions.MailerSendException;
 
 @Service
 public class EmailService {
-    @Value("${MAILTRAP_API_TOKEN}")
-    private String TOKEN;
-    @Value("${MATILTRAP_TEMPLATE_RESET_ID}")
-    private String TEMPLATE_RESET_ID;
+
+    @Autowired
+    private Environment env;
 
     public void sendVerificationEmail(String toEmail, String verificationCode) {
-        final MailtrapConfig config = new MailtrapConfig.Builder()
-                .sandbox(true)
-                .inboxId(3589442L)
-                .token(TOKEN)
-                .build();
+        Email email = new Email();
 
-        final MailtrapClient client = MailtrapClientFactory.createMailtrapClient(config);
+        // Get values from environment that were loaded from your .env
+        String apiToken = env.getProperty("MAILERSEND_API_TOKEN");
+        String templateId = env.getProperty("MAILERSEND_TEMPLATE_VERIFICATION", "zr6ke4n8rym4on12");
 
-        final MailtrapMail mail = MailtrapMail.builder()
-                .from(new Address("hello@demomailtrap.co", "Mailtrap Test"))
-                .to(List.of(new Address("vanharvey.coca@cit.edu")))
-                .templateUuid(TEMPLATE_RESET_ID)
-                .templateVariables(Map.of(
-                        "user_email", toEmail,
-                        "user_code", verificationCode
-                ))
-                .build();
+        email.setFrom("ProjectSync", "info@domain.com");
+
+        Recipient recipient = new Recipient(toEmail, toEmail);
+        email.addRecipient(toEmail, toEmail);
+
+        email.setTemplateId(templateId);
+
+        email.addPersonalization(recipient, "user_code", verificationCode);
+        email.addPersonalization(recipient, "user_email", toEmail);
+
+        MailerSend ms = new MailerSend();
+        ms.setToken(apiToken);
 
         try {
-            System.out.println(client.send(mail));
-        } catch (Exception e) {
-            System.out.println("Caught exception : " + e);
+            MailerSendResponse response = ms.emails().send(email);
+            System.out.println("Email sent successfully. Message ID: " + response.messageId);
+        } catch (MailerSendException e) {
+            System.err.println("Failed to send email: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

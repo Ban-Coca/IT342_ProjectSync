@@ -1,7 +1,6 @@
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
 import AppSidebar from "../components/app-sidebar";
 import { Separator } from "@radix-ui/react-dropdown-menu";
-import { Toaster } from "sonner";
 import { Input } from "./ui/input";
 import { Search } from "lucide-react";
 
@@ -25,7 +24,6 @@ const MainLayout = ({ children }) => {
         <div className="flex-1 px-4 overflow-auto">
           <div className="container mx-auto px-4">
             {/* Main content goes here */}
-            <Toaster richColors/>
             {children}
           </div>
         </div>

@@ -10,6 +10,7 @@ public class TaskDTO{
     private String description;
     private LocalDate dueDate;
     private String status;
+    private String priority;
     private ProjectDTO project;
     private List<UserDTO> assignedTo;
 
@@ -46,6 +47,12 @@ public class TaskDTO{
     }
     public void setStatus(String status) {
         this.status = status;
+    }
+    public String getPriority() {
+        return priority;
+    }
+    public void setPriority(String priority) {
+        this.priority = priority;
     }
     public ProjectDTO getProject() {
         return project;

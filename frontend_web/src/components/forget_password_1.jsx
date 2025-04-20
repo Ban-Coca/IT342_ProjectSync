@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { useState } from "react"
 import { requestPasswordReset } from "@/service/AuthenticationService/authenticationService"
 export function ForgotPasswordForm({
@@ -60,9 +60,9 @@ export function ForgotPasswordForm({
       </div>
       <div className="text-center text-sm">
         Go back to {" "}
-        <a href="/login" className="underline underline-offset-4">
+        <Link to="/login" className="underline underline-offset-4">
           Log in?
-        </a>
+        </Link>
       </div>
     </form>)
   );

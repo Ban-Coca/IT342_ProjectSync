@@ -35,12 +35,6 @@ public class TaskController {
                 return ResponseEntity.badRequest().body("Project ID is required."); // Return 400 if project ID is missing
             }
 
-             // Check if a task with the same name already exists
-            boolean taskExists = taskService.taskExistsByTitle(taskDTO.getTitle());
-            if (taskExists) {
-                return ResponseEntity.status(409).body("A task with the title '" + taskDTO.getTitle() + "' already exists."); // Return 409 Conflict
-            }
-
             // Map TaskDTO to TaskEntity using TaskMapper
             TaskEntity task = TaskMapper.toEntity(taskDTO, projectService, taskService);
 
@@ -138,5 +132,17 @@ public class TaskController {
             System.err.println("Error deleting task with ID " + taskId + ": " + e.getMessage());
             return ResponseEntity.status(500).body("An error occurred while deleting the task.");
         }
+    }
+
+    @GetMapping("/assignedToMe/{userId}")
+    public ResponseEntity<List<TaskDTO>> getTasksAssignedToUser(@PathVariable UUID userId) {
+        List<TaskEntity> tasks = taskService.getTasksByUserId(userId);
+        if (tasks != null && !tasks.isEmpty()) {
+            List<TaskDTO> taskDTOs = tasks.stream()
+                .map(TaskMapper::toDTO)
+                .toList();
+            return ResponseEntity.ok(taskDTOs);
+        }
+        return ResponseEntity.noContent().build(); // Return 204 if no tasks are found
     }
 }

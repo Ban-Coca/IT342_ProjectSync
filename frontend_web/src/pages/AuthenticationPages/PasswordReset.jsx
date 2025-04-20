@@ -1,6 +1,6 @@
 
 import React, { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import resetPassword from '@/assets/reset-password.svg';
 import { PasswordResetForm } from '@/components/forget_password_3';
@@ -12,12 +12,12 @@ export default function PasswordReset() {
         className="grid min-h-svh lg:grid-cols-2">
         <div className="flex flex-col gap-4 p-6 md:p-10">
           <div className="flex justify-center gap-2 md:justify-start">
-            <a href="/login" className="flex items-center gap-2 font-medium">
+            <Link to="/login" className="flex items-center gap-2 font-medium">
               <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
                 <img src={logo} className="h-6 w-6" />
               </div>
               ProjectSync
-              </a>
+            </Link>
           </div>
           <div className="flex flex-1 items-center justify-center">
             <div className="w-full max-w-xs">

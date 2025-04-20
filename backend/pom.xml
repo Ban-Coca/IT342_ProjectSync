@@ -92,7 +92,16 @@
 			<artifactId>mailtrap-java</artifactId>
 			<version>1.0.0</version>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+		<dependency>
+			<groupId>com.mailersend</groupId>
+			<artifactId>java-sdk</artifactId>
+			<version>1.0.1</version>
+		</dependency>
+    </dependencies>
 	<build>
 		<plugins>
 			<plugin>

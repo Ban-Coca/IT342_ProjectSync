@@ -103,4 +103,8 @@ public class UserService {
 	public boolean userExistsById(UUID userId) {
 		return userRepository.existsById(userId);
 	}
+
+	public List<UserEntity> searchUsers(String keyword) {
+		return userRepository.searchUsers(keyword);
+	}
 }

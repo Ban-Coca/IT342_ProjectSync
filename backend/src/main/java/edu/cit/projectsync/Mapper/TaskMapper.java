@@ -19,6 +19,7 @@ public class TaskMapper {
         dto.setDescription(task.getDescription());
         dto.setDueDate(task.getDueDate());
         dto.setStatus(task.getStatus());
+        dto.setPriority(task.getPriority());
 
         // Map ProjectEntity to ProjectDTO
         ProjectDTO projectDTO = new ProjectDTO();
@@ -50,7 +51,8 @@ public class TaskMapper {
         task.setDescription(dto.getDescription());
         task.setDueDate(dto.getDueDate());
         task.setStatus(dto.getStatus());
-    
+        task.setPriority(dto.getPriority());
+
         // Fetch and set the project
         if (dto.getProject() != null) {
             ProjectEntity project = projectService.getProjectById(dto.getProject().getProjectId());

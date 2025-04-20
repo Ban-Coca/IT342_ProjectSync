@@ -19,7 +19,9 @@ export default function DeleteModal({
         let baseText = `Are you sure you want to delete this ${entityType}?`;
         if (project && project.name) {
           baseText = `Are you sure you want to delete "${project.name}"?`;
-        }
+        } else if (task && task.title) {
+          baseText = `Are you sure you want to delete "${task.title}"?`;
+        } 
         return `${baseText} This action cannot be undone.`;
       };
 
@@ -38,8 +40,11 @@ export default function DeleteModal({
                     </Button>
                     <Button variant="destructive" onClick={() => {
                         if(project){
-                            console.log("Deleting project:", project.projectId);
                             onDelete(project.projectId);
+                        } else if(task){
+                            onDelete(task.taskId);
+                        } else if(document){
+                            onDelete(document.documentId);
                         }
                     }}>
                         Delete

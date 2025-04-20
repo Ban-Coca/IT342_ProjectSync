@@ -16,15 +16,15 @@ export default function DetailsView({project, onProjectUpdate}){
         <div className="grid grid-cols-4 grid-rows-4 gap-4">
             <div className="col-span-2 row-span-5">
                 <Card className="w-full h-96">
-                    <CardContent className="flex flex-col justify-center items-start">
+                    <CardContent className="flex flex-col justify-between h-full items-start">
                         <div className="flex flex-col items-start" >
-                            <CardHeader className="flex flex-col items-start px-0">
+                            <CardHeader className="flex flex-col items-start pb-0 px-0">
                                 <CardTitle className="text-xl font-bold">Description</CardTitle>
                             </CardHeader>
                             <p className="text-sm text-muted-foreground">{project.description}</p>
                         </div>
                         <div className="flex flex-col items-start mt-4">
-                            <CardHeader className="flex flex-col items-start px-0">
+                            <CardHeader className="flex flex-col items-start pb-0 px-0">
                                 <CardTitle className="text-xl font-bold">Project Timeline</CardTitle>
                             </CardHeader>
                             <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -36,12 +36,16 @@ export default function DetailsView({project, onProjectUpdate}){
                                 <span>Due by {formatDate(project.endDate)}</span>
                             </div>
                         </div>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <UsersIcon className="h-4 w-4" />
+                            <span>Owner: {project.ownerId?.firstName} {project.ownerId?.lastName}</span>
+                        </div>
                     </CardContent>
                 </Card>
             </div>
             <div className="col-span-2 row-span-2 col-start-3">
                 <Card className="w-full h-48">
-                    {project.teamMemberIds.length === 0 ? (
+                    {project.teamMemberIds?.length === 0 ? (
                         <CardContent className="flex flex-col justify-center items-center h-full">
                             <div className="text-lg font-semibold">There are currently no members on this project</div>
                             <Button className="mt-4" onClick={() => alert("Add members functionality")}>
@@ -49,18 +53,18 @@ export default function DetailsView({project, onProjectUpdate}){
                             </Button>
                         </CardContent>
                     ) : (
-                        <CardContent className="flex flex-col justify-center items-start">
+                        <CardContent className="flex flex-col justify-center items-start ">
                             <CardHeader className="flex flex-col items-start px-0">
                                 <CardTitle className="text-xl font-bold">Team Members</CardTitle>
                             </CardHeader>
-                            <div className="flex items-center gap-2 mt-4">
-                                {project.teamMemberIds.map((member) => (
+                            <div className="flex items-center gap-2 mt-0">
+                                {project.teamMemberIds?.map((member) => (
                                     <div key={member.userId} className="flex items-center gap-2">
                                         <Avatar className="h-8 w-8">
-                                            <AvatarImage src={member.avatar} alt={member.name} />
-                                            <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
+                                            <AvatarImage src={member.avatar} alt={member.firstName} />
+                                            <AvatarFallback>{member.firstName.charAt(0)}</AvatarFallback>
                                         </Avatar>
-                                        <span className="text-sm text-muted-foreground">{member.name}</span>
+                                        <span className="text-sm text-muted-foreground">{member.firstName}</span>
                                     </div>
                                 ))}
                             </div>
@@ -74,11 +78,11 @@ export default function DetailsView({project, onProjectUpdate}){
                         <CardTitle className="text-xl font-bold">Project Goals</CardTitle>
                     </CardHeader>
                     <CardContent className="flex flex-col justify-center items-start h-full">
-                        {project.goals.length === 0 ? (
+                        {project.goals?.length === 0 ? (
                             <div className="text-lg font-semibold">No goals set for this project</div>
                         ) : (
                             <div className="flex flex-col gap-2">
-                                {project.goals.map((goal, index) => (
+                                {project.goals?.map((goal, index) => (
                                     <Badge key={index} variant="outline" className="flex items-center gap-2">
                                         {goal}
                                     </Badge>
