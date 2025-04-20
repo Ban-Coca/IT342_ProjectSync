@@ -25,7 +25,10 @@ public class ProjectsyncApplication {
         System.setProperty("EMAIL_PORT", Objects.requireNonNull(dotenv.get("EMAIL_PORT")));
         System.setProperty("EMAIL_USERNAME", Objects.requireNonNull(dotenv.get("EMAIL_USERNAME")));
         System.setProperty("EMAIL_PASSWORD", Objects.requireNonNull(dotenv.get("EMAIL_PASSWORD")));
-
+        System.setProperty("BACKBLAZE_APPLICATION_KEY_ID", Objects.requireNonNull(dotenv.get("BACKBLAZE_APPLICATION_KEY_ID")));
+        System.setProperty("BACKBLAZE_APPLICATION_KEY", Objects.requireNonNull(dotenv.get("BACKBLAZE_APPLICATION_KEY")));
+        System.setProperty("BACKBLAZE_BUCKET_ID", Objects.requireNonNull(dotenv.get("BACKBLAZE_BUCKET_ID")));
+        System.setProperty("BACKBLAZE_BUCKET_NAME", Objects.requireNonNull(dotenv.get("BACKBLAZE_BUCKET_NAME")));
 		SpringApplication.run(ProjectsyncApplication.class, args);
 	}
 
