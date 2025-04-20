@@ -4,7 +4,7 @@ import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getProjectById } from "@/service/ProjectService/projectService";
-import { toast } from "sonner";
+import { toast } from 'sonner';
 import { Loading } from "@/components/loading-state";
 import { CalendarIcon, LayoutGrid, FolderRoot, ListTodo, Files, EllipsisVertical } from "lucide-react";
 import MainLayout from "@/components/main-layout";
@@ -125,7 +125,7 @@ export default function ProjectDetailsPage () {
                     <div className="flex items-center justify-between mb-4">
                         <div className="flex flex-col items-start gap-0.5">
                             <h1 className="text-4xl font-bold">{project.name}</h1>
-                            <p className="text-sm text-muted-foreground">{project.projectId}</p>
+                            <p className="text-sm text-muted-foreground">Task Id: {project.projectId}</p>
                         </div>
                         <div className="flex items-center self-end sm:self-auto gap-2">
                             <ProjectDropdown 
@@ -155,7 +155,7 @@ export default function ProjectDetailsPage () {
                             </TabsTrigger>
                             <TabsTrigger value="Files" className="flex items-center gap-2">
                                 <Files className="h-4 w-4" />
-                                <span>Files</span>
+                                <span className="hidden sm:inline">Files</span>
                             </TabsTrigger>
                         </TabsList>
 
@@ -225,7 +225,7 @@ export default function ProjectDetailsPage () {
                 onOpenChange={setTaskDialogOpen} 
                 onSubmit={handleCreateTask}
                 task={null}
-                availableUsers={[]}
+                teamMembers={ project.teamMemberIds|| []}
             />
         </MainLayout>
     )

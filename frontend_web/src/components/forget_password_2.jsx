@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { InputOTPPattern } from "./input-code"
-import { useNavigate, useLocation } from "react-router-dom"
+import { useNavigate, useLocation, Link } from "react-router-dom"
 import { useState, useEffect } from "react"
 import { verifyResetCode } from "@/service/AuthenticationService/authenticationService"
 
@@ -93,9 +93,9 @@ export function EnterCodeForm({
       </div>
       <div className="text-center text-sm">
         Go back to {" "}
-        <a href="/login" className="underline underline-offset-4">
+        <Link to="/login" className="underline underline-offset-4">
           Log in?
-        </a>
+        </Link>
       </div>
     </form>)
   );

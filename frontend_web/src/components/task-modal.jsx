@@ -4,16 +4,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useState, useEffect } from "react";
-import { useTask } from "@/hooks/use-task";
+import { useState, useEffect, useRef } from "react";
+import { useUser } from "@/hooks/use-user";
+import { useAuth } from "@/contexts/authentication-context";
 import { useQueryClient } from "@tanstack/react-query";
-
+import { Loading } from "./loading-state";
+import { X } from "lucide-react";
 export default function TaskModal({
     open,
     onOpenChange,
     onSubmit,
     task = null,
-    availableUsers = [],
+    teamMembers = [],
 }) {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -22,7 +24,19 @@ export default function TaskModal({
     const [priority, setPriority] = useState("");
     const [assignedTo, setAssignedTo] = useState([]);
 
+    const [searchTerm, setSearchTerm] = useState('');
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
     const isEditMode = !!task;
+
+
+    const filteredTeamMembers = searchTerm.trim() === '' ? 
+        [] : 
+        teamMembers.filter(member => 
+            (member.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+             member.lastName?.toLowerCase().includes(searchTerm.toLowerCase())) &&
+            !assignedTo.some(assigned => assigned.userId === member.userId)
+        );
 
     useEffect(() => {
         if (task) {
@@ -48,20 +62,20 @@ export default function TaskModal({
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
+        
         const taskData = {
             title,
             description,
             dueDate,
             status,
             priority,
-            assignedTo: assignedTo.map((user) => user.id),
+            assignedTo: assignedTo.map((user) => ({userId: user.userId})),
         };
 
         if (isEditMode) {
             taskData.taskId = task.taskId;
         }
-
+        console.log("taskData", taskData);
         onSubmit(taskData, isEditMode);
         resetForm();
         onOpenChange(false);
@@ -79,7 +93,15 @@ export default function TaskModal({
         }
       }, [open]);
 
-      
+    const assignUser = (user) => {
+        setAssignedTo(prev => [...prev, user]);
+        setSearchTerm('');
+        setIsDropdownOpen(false);
+    };
+    
+    const removeUser = (userId) => {
+        setAssignedTo(prev => prev.filter(user => user.userId !== userId));
+    };
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[500px]">
@@ -159,28 +181,76 @@ export default function TaskModal({
                         
                         <div className="grid gap-2">
                             <Label htmlFor="assignedTo">Assign To</Label>
-                            <Select 
-                                value={assignedTo} 
-                                onValueChange={(value) => {
-                                    // Only update if the value is different to prevent loops
-                                    const newValue = Array.isArray(value) ? value : [value];
-                                    if (JSON.stringify(newValue) !== JSON.stringify(assignedTo)) {
-                                        setAssignedTo(newValue);
-                                    }
-                                }}
-                                multiple
-                            >
-                                <SelectTrigger id="assignedTo">
-                                    <SelectValue placeholder="Select team members" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {availableUsers.map((user) => (
-                                        <SelectItem key={user.id} value={user.id}>
-                                            {user.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                            
+                            {/* Selected users display */}
+                            <div className="flex flex-wrap gap-2 mb-2">
+                                {assignedTo.map(user => (
+                                    <div 
+                                        key={user.userId} 
+                                        className="flex items-center gap-1 bg-slate-100 px-2 py-1 rounded-md"
+                                    >
+                                        <span>{user.firstName}</span>
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="sm"
+                                            className="h-4 w-4 p-0"
+                                            onClick={() => removeUser(user.userId)}
+                                        >
+                                            <X className="h-3 w-3" />
+                                            <span className="sr-only">Remove {user.firstName}</span>
+                                        </Button>
+                                    </div>
+                                ))}
+                            </div>
+                            
+                            {/* Search input */}
+                            <div className="relative">
+                                <Input
+                                    id="assignedTo"
+                                    placeholder="Search team members..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    onFocus={() => setIsDropdownOpen(true)}
+                                    onBlur={() => setTimeout(() => setIsDropdownOpen(false), 200)}
+                                    aria-autocomplete="list"
+                                    aria-controls="user-search-results"
+                                    aria-expanded={isDropdownOpen}
+                                />
+                                
+                                {/* Dropdown results */}
+                                {isDropdownOpen && filteredTeamMembers.length > 0 && (
+                                    <div 
+                                        id="user-search-results"
+                                        className="absolute w-full mt-1 max-h-60 overflow-auto z-10 bg-white border border-gray-200 rounded-md shadow-lg"
+                                        role="listbox"
+                                    >
+                                        {filteredTeamMembers.map(user => (
+                                            <div
+                                                key={user.userId}
+                                                className="px-4 py-2 cursor-pointer hover:bg-slate-100"
+                                                role="option"
+                                                aria-selected="false"
+                                                onMouseDown={(e) => {
+                                                    e.preventDefault();
+                                                    assignUser(user);
+                                                }}
+                                            >
+                                                {user.firstName} {user.lastName}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                            
+                            {/* Status messages */}
+                            {isDropdownOpen && searchTerm && filteredTeamMembers.length === 0 && (
+                                <p className="text-sm text-gray-500">No matching team members found</p>
+                            )}
+                            
+                            {teamMembers.length === 0 && (
+                                <p className="text-sm text-gray-500">No team members available for this project</p>
+                            )}
                         </div>
                     </div>
                     

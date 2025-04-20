@@ -64,10 +64,20 @@ export const deleteTask = async (taskId, header) => {
   }
 };
 
+export const getTaskByUserId = async (userId, header) => {
+  try {
+    const response = await axios.get(`${API_URL}/assignedToMe/${userId}`, {headers: header});
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : 'Error fetching tasks assigned to user';
+  }
+}
+
 export default {
   createTask,
   updateTask,
   getTaskById,
+  getTaskByUserId,
   getTasksByProjectId,
   getAllTasks,
   deleteTask

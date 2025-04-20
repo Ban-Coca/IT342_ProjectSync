@@ -6,17 +6,10 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/authentication-context";
 import { ChevronLeft, ChevronRight, Briefcase, Plus, FileText } from "lucide-react";
 import { useProject } from "@/hooks/use-project";
+import { useTask } from "@/hooks/use-task";
 import { useQueryClient } from "@tanstack/react-query";
 import { Loading } from "@/components/loading-state";
 import { useNavigate } from "react-router-dom";
-  const mockTasks = [
-    // { id: 1, title: "Task One", description: "Description for Task One", status: "In Progress" },
-    // { id: 2, title: "Task Two", description: "Description for Task Two", status: "Completed" },
-    // { id: 3, title: "Task Three", description: "Description for Task Three", status: "Pending" },
-    // { id: 4, title: "Task Four", description: "Description for Task Four", status: "In Progress" },
-    // { id: 5, title: "Task Five", description: "Description for Task Five", status: "Completed" },
-    // { id: 6, title: "Task Six", description: "Description for Task Six", status: "Pending" },
-  ]
 
 function Homepage() {
     const isMobile = useIsMobile();
@@ -33,6 +26,12 @@ function Homepage() {
         getAuthHeader,
     })
     
+    const { assignedToMe, isAssignTaskLoading } = useTask({
+        currentUser,
+        queryClient,
+        getAuthHeader,
+    })
+    
     const [projectPage, setProjectPage] = useState(1)
     const projectsPerPage = isMobile ? 2 : 3
     const totalProjectPages = Math.max(1, Math.ceil(projects.length / projectsPerPage))
@@ -40,7 +39,7 @@ function Homepage() {
     
     const [taskPage, setTaskPage] = useState(1)
     const tasksPerPage = 3
-    const totalTaskPages = Math.max(1, Math.ceil(mockTasks.length / tasksPerPage))
+    const totalTaskPages = Math.max(1, Math.ceil(assignedToMe?.length / tasksPerPage))
 
     
     const indexOfLastProject = projectPage * projectsPerPage
@@ -49,12 +48,11 @@ function Homepage() {
 
     const indexOfLastTask = taskPage * tasksPerPage
     const indexOfFirstTask = indexOfLastTask - tasksPerPage
-    const currentTasks = mockTasks.slice(indexOfFirstTask, indexOfLastTask)
-
+    const currentTasks = assignedToMe?.slice(indexOfFirstTask, indexOfLastTask)
 
     
     const projectsEmpty = projects.length === 0
-    const tasksEmpty = mockTasks.length === 0
+    const tasksEmpty = assignedToMe?.length === 0
 
     
     const nextProjectPage = () => {
@@ -172,8 +170,8 @@ function Homepage() {
                     <>
                         <div className="rounded-md border">
                             <ul className="divide-y">
-                                {currentTasks.map((task) => (
-                                    <li key={task.id} className="flex items-center justify-between p-4 hover:bg-muted/50">
+                                {currentTasks?.map((task) => (
+                                    <li key={task.taskId} className="flex items-center justify-between p-4 hover:bg-muted/50">
                                         <div>
                                             <h3 className="font-medium">{task.title}</h3>
                                             <p className="text-sm text-muted-foreground">{task.description}</p>

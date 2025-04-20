@@ -56,7 +56,7 @@ export function useProject ({
     const projectQuery = useQuery({
             queryKey: ["project", projectId],
             queryFn: () => getProjectById(projectId, getAuthHeader()),
-            enabled: !!currentUser?.userId,
+            enabled: !!currentUser?.userId && !!projectId,
             onError: (error) => {
                 toast.error("Failed to fetch project details. Please try again.")
             },

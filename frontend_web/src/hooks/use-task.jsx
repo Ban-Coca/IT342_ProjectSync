@@ -1,5 +1,5 @@
 import { useQuery, useMutation } from '@tanstack/react-query'
-import { getTaskById, createTask, getTasksByProjectId, updateTask, deleteTask } from "@/service/TaskService/taskService";
+import { getTaskById, createTask, getTasksByProjectId, updateTask, deleteTask, getTaskByUserId } from "@/service/TaskService/taskService";
 import { toast } from 'sonner';
 
 export function useTask({
@@ -22,6 +22,12 @@ export function useTask({
         queryKey: ["tasks", projectId],
         queryFn: () => getTasksByProjectId(projectId, getAuthHeader()),
         enabled: !!projectId,
+    })
+
+    const assignedToMeQuery = useQuery({
+        queryKey: ["assignedToMe", currentUser?.userId],
+        queryFn: () => getTaskByUserId(currentUser?.userId, getAuthHeader()),
+        enabled: !!currentUser?.userId,
     })
 
     const createTaskMutation = useMutation({
@@ -48,9 +54,10 @@ export function useTask({
         onSuccess: (data) => {
             queryClient.invalidateQueries(["tasks", projectId])
             toast.success("Task updated successfully")
-            onUpdateSuccess()
+            if(onUpdateSuccess) onUpdateSuccess(data)
         },
         onError: (error) => {
+            console.error(error)
             toast.error("Failed to update task. Please try again.")
         },
     })
@@ -70,7 +77,9 @@ export function useTask({
     return {
         task: taskQuery.data,
         tasks: tasksQuery.data,
+        assignedToMe: assignedToMeQuery.data,
 
+        isAssignTaskLoading: assignedToMeQuery.isLoading,
         isTaskLoading: taskQuery.isLoading,
         isTasksLoading: tasksQuery.isLoading,
 

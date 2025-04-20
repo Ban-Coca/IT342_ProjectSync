@@ -20,8 +20,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { getPriorityColor, getStatusIcon } from "@/utils/task-utils"
 
-// Draggable Task Card Component
-function DraggableTaskCard({ task }) {
+import { useAuth } from "@/contexts/authentication-context"
+import { useQueryClient } from "@tanstack/react-query"
+import { useTask } from "@/hooks/use-task"
+import TaskViewCard from "@/components/task-view-card"
+
+function DraggableTaskCard({ task = [], onSelectTask }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: task.taskId.toString(),
     data: {
@@ -45,9 +49,13 @@ function DraggableTaskCard({ task }) {
       ref={setNodeRef}
       style={style}
       className={cn(
-        "cursor-grab active:cursor-grabbing hover:bg-accent/50 transition-colors",
+        "cursor-pointer active:cursor-grabbing hover:bg-accent/50 transition-colors",
         isDragging && "shadow-lg",
       )}
+      onClick={(e) => {
+        e.stopPropagation();
+        onSelectTask(task.taskId);
+      }}
       {...attributes}
       {...listeners}
     >
@@ -149,17 +157,29 @@ function DroppableColumn({
 }
 
 
-export function BoardTab({ tasks, onTaskUpdate }) {
+export function BoardTab({ tasks }) {
   const [activeTask, setActiveTask] = useState(null)
+  const { currentUser, getAuthHeader } = useAuth()
+  const queryClient = useQueryClient()
+  const [selectedTask, setSelectedTask] = useState(null)
+  const [isSheetOpen, setIsSheetOpen] = useState(false)
+  const tasksArray = Array.isArray(tasks) ? tasks : [];
+  const projectId = tasks?.length > 0 ? tasks[0].project?.projectId : null;
 
-  // Group tasks by status for board view
+  const { editTaskMutation } = useTask({
+    projectId,
+    currentUser,
+    queryClient,
+    getAuthHeader,
+    onUpdateSuccess: () => {}
+  })
+  
   const tasksByStatus = {
-    "To Do": tasks.filter((task) => task.status === "To Do"),
-    "In Progress": tasks.filter((task) => task.status === "In Progress"),
-    Done: tasks.filter((task) => task.status === "Done"),
+    "To Do": tasksArray?.filter((task) => task.status === "To Do"),
+    "In Progress": tasksArray?.filter((task) => task.status === "In Progress"),
+    Done: tasksArray?.filter((task) => task.status === "Done"),
   }
 
-  // Set up sensors for drag and drop
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -186,27 +206,29 @@ export function BoardTab({ tasks, onTaskUpdate }) {
     const activeId = active.id
     const overId = over.id
 
-    // Find the active container
     const activeContainer = findContainer(activeId.toString())
-    
-    // Check if we're dropping directly on a column
+   
     const isColumnDrop = ["To Do", "In Progress", "Done"].includes(over.id)
-    
-    // Determine the destination container
+   
     const overContainer = isColumnDrop 
       ? over.id.toString() 
       : findContainer(overId.toString())
     
     if (activeContainer !== overContainer && ["To Do", "In Progress", "Done"].includes(overContainer)) {
-      // Update the task status
-      const updatedTasks = tasks.map((task) =>
-        task.id.toString() === activeId.toString()
-          ? { ...task, status: overContainer }
-          : task,
-      )
-      onTaskUpdate(updatedTasks)
-    }
+      const taskToUpdate = tasks.find((task) => task.taskId.toString() === activeId.toString())
 
+      if (taskToUpdate){
+        const updateTask = {
+          ...taskToUpdate,
+          status: overContainer,
+        }
+        editTaskMutation.mutate(updateTask, {
+          onSuccess: () => {
+            queryClient.invalidateQueries(["tasks"])
+          },
+        })
+      }
+    }
     setActiveTask(null)
   }
 
@@ -218,19 +240,36 @@ export function BoardTab({ tasks, onTaskUpdate }) {
     return null
   }
 
+  function handleSelectTask(task) {
+    setSelectedTask(task)
+    setIsSheetOpen(true)
+  }
+
   return (
-    <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {Object.entries(tasksByStatus).map(([status, statusTasks]) => (
-          <DroppableColumn key={status} status={status} tasks={statusTasks}>
-            {statusTasks.map((task) => (
-              <DraggableTaskCard key={task.taskId} task={task} />
-            ))}
-          </DroppableColumn>
-        ))}
-      </div>
-      <DragOverlay>{activeTask ? <TaskCardOverlay task={activeTask} /> : null}</DragOverlay>
-    </DndContext>
+    <>
+      <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {Object.entries(tasksByStatus).map(([status, statusTasks]) => (
+            <DroppableColumn key={status} status={status} tasks={statusTasks}>
+              {statusTasks.map((task) => (
+                <DraggableTaskCard key={task.taskId} task={task} onSelectTask={handleSelectTask} />
+              ))}
+            </DroppableColumn>
+          ))}
+        </div>
+        <DragOverlay>{activeTask ? <TaskCardOverlay task={activeTask} /> : null}</DragOverlay>
+      </DndContext>
+
+      {selectedTask && (
+        <TaskViewCard
+          open={isSheetOpen}
+          onOpenChange={setIsSheetOpen}
+          taskId={selectedTask}
+          onSelectTask={handleSelectTask}
+        />
+      )}
+    </>
+    
   )
 }
 

@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { format } from "date-fns"
+import { format, set } from "date-fns"
 import { DndContext, KeyboardSensor, PointerSensor, closestCenter, useSensor, useSensors } from "@dnd-kit/core"
 import { SortableContext, sortableKeyboardCoordinates, useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
@@ -12,9 +12,10 @@ import { ClipboardX } from "lucide-react"
 import { useAuth } from "@/contexts/authentication-context"
 import { useQueryClient } from "@tanstack/react-query"
 import { useTask } from "@/hooks/use-task"
-
+import TaskViewCard from "@/components/task-view-card"
+import { toast } from 'sonner'
 // Draggable table row component
-function DraggableTableRow({ task }) {
+function DraggableTableRow({ task, onSelectTask }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: task.taskId })
 
   const style = {
@@ -22,9 +23,7 @@ function DraggableTableRow({ task }) {
     transition,
   }
   const assignee = task.assignedTo && task.assignedTo.length > 0 
-    ? task.assignedTo[0] 
-    : { name: "Unassigned", avatar: null, initials: "UN" };
-
+    ? task.assignedTo[0] : { firstName: "Unassigned", avatar: null, initials: "UN" };
   return (
     <TableRow
       ref={setNodeRef}
@@ -34,8 +33,16 @@ function DraggableTableRow({ task }) {
       {...listeners}
     >
       <TableCell>
-        <div className="font-medium">{task.title}</div>
-        <div className="text-sm text-muted-foreground hidden sm:block">{task.description}</div>
+        <div 
+          className="font-medium cursor-pointer" 
+          onClick={(e) => {
+            e.stopPropagation();
+            onSelectTask(task.taskId);
+          }}
+        >
+          <div className="font-medium">{task.title}</div>
+          <div className="text-sm text-muted-foreground hidden sm:block">{task.description}</div>
+        </div>
       </TableCell>
       <TableCell className="hidden md:table-cell">{format(task.dueDate, "MMM d, yyyy")}</TableCell>
       <TableCell className="hidden md:table-cell">
@@ -47,7 +54,7 @@ function DraggableTableRow({ task }) {
         <div className="flex items-center gap-2">
           <Avatar className="h-6 w-6">
             <AvatarImage src={assignee.avatar || "/placeholder.svg"} alt={assignee.name} />
-            <AvatarFallback>{assignee.initials || assignee.name?.charAt(0) || 'U'}</AvatarFallback>
+            <AvatarFallback>{assignee.initials || assignee.firstName?.charAt(0) || 'U'}</AvatarFallback>
           </Avatar>
           <span className="text-sm">{assignee.name}</span>
         </div>
@@ -72,7 +79,7 @@ function EmptyState({ status }) {
 }
 
 // Status table component
-function StatusTable({ status, tasks }) {
+function StatusTable({ status, tasks, onSelectTask }) {
   const isEmpty = tasks.length === 0
 
   return (
@@ -101,7 +108,7 @@ function StatusTable({ status, tasks }) {
             <SortableContext items={tasks.map((task) => task.taskId)}>
               <TableBody>
                 {tasks.map((task) => (
-                  <DraggableTableRow key={task.taskId} task={task} />
+                  <DraggableTableRow key={task.taskId} task={task} onSelectTask={onSelectTask} />
                 ))}
               </TableBody>
             </SortableContext>
@@ -116,6 +123,8 @@ export function TableTab({ tasks, projectId, setTasks }) {
   // const [tasks, setTasks] = useState(initialTasks || [])
   const { currentUser, getAuthHeader } = useAuth();
   const queryClient = useQueryClient()
+  const [selectedTask, setSelectedTask] = useState(null)
+  const [isSheetOpen, setIsSheetOpen] = useState(false)
 
   const { editTaskMutation } = useTask({
     projectId,
@@ -126,7 +135,13 @@ export function TableTab({ tasks, projectId, setTasks }) {
   })
 
   //Sensors for drag and drop
-  const pointerSensor = useSensor(PointerSensor)
+  const pointerSensor = useSensor(PointerSensor, {
+    activationConstraint: {
+      distance: 8,
+      delay: 100,  
+    },
+  });
+  
   const keyboardSensor = useSensor(KeyboardSensor, {
     coordinateGetter: sortableKeyboardCoordinates,
   })
@@ -201,13 +216,28 @@ export function TableTab({ tasks, projectId, setTasks }) {
     });
   }
 
+  function handleSelectTask(task) {
+    setSelectedTask(task)
+    setIsSheetOpen(true)
+  }
+  //TODO PASS THE SELECTED TASK ID INSTEAD OF THE TASK OBJECT
   return (
-    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-      <div>
-        {statuses.map((status) => (
-          <StatusTable key={status} status={status} tasks={tasksByStatus[status] || []} />
-        ))}
-      </div>
-    </DndContext>
+    <>
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <div>
+          {statuses.map((status) => (
+            <StatusTable key={status} status={status} tasks={tasksByStatus[status] || []} onSelectTask={handleSelectTask}/>
+          ))}
+        </div>
+      </DndContext>  
+      {selectedTask && (
+        <TaskViewCard
+          open={isSheetOpen}
+          onOpenChange={setIsSheetOpen}
+          taskId={selectedTask}
+          onSelectTask={handleSelectTask}
+        />
+      )}
+    </>
   )
 }

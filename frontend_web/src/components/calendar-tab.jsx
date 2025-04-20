@@ -8,14 +8,16 @@ import { Calendar } from "@/components/ui/calendar"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { getPriorityColor, getStatusIcon } from "@/utils/task-utils"
+import TaskViewCard from "./task-view-card"
 
-
-export function CalendarTab({ tasks }) {
+export function CalendarTab({ tasks = [] }) {
   const [date, setDate] = useState(new Date())
-
+  const [isSheetOpen, setIsSheetOpen] = useState(false)
+  const [selectedTask, setSelectedTask] = useState(null)
   // Group tasks by date for calendar view
   const tasksByDate = {}
-  tasks.forEach((task) => {
+  const tasksArray = Array.isArray(tasks) ? tasks : [];
+  tasksArray.forEach((task) => {
     const dateKey = format(task.dueDate, "yyyy-MM-dd")
     if (!tasksByDate[dateKey]) {
       tasksByDate[dateKey] = []
@@ -23,6 +25,10 @@ export function CalendarTab({ tasks }) {
     tasksByDate[dateKey].push(task)
   })
 
+  function handleSelectTask(task) {
+    setSelectedTask(task)
+    setIsSheetOpen(true)
+  }
   return (
     <div className="grid grid-cols-1 lg:grid-cols-7 gap-4">
       <div className="lg:col-span-2">
@@ -45,8 +51,9 @@ export function CalendarTab({ tasks }) {
               <div className="space-y-4">
                 {tasksByDate[format(date, "yyyy-MM-dd")].map((task) => (
                   <div
-                    key={task.id}
-                    className="flex items-start gap-3 p-3 border rounded-lg hover:bg-accent/50 transition-colors"
+                    key={task.taskId}
+                    className="flex items-start gap-3 p-3 border rounded-lg cursor-pointer hover:bg-accent/50 transition-colors"
+                    onClick={() => handleSelectTask(task.taskId)}
                   >
                     <div className="mt-0.5">{getStatusIcon(task.status)}</div>
                     <div className="flex-1">
@@ -76,6 +83,15 @@ export function CalendarTab({ tasks }) {
           </CardContent>
         </Card>
       </div>
+
+      {selectedTask && (
+        <TaskViewCard
+          open={isSheetOpen}
+          onOpenChange={setIsSheetOpen}
+          taskId={selectedTask}
+          onSelectTask={handleSelectTask}
+        />
+      )}
     </div>
   )
 }
