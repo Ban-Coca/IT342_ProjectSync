@@ -38,7 +38,7 @@ export default function DetailsView({project, onProjectUpdate}){
                         </div>
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <UsersIcon className="h-4 w-4" />
-                            <span>Owner: {project.ownerId?.firstName} {project.ownerId?.lastName}</span>
+                            <span className="flex"><p className="font-bold">Owner</p>: {project.ownerId?.firstName} {project.ownerId?.lastName}</span>
                         </div>
                     </CardContent>
                 </Card>

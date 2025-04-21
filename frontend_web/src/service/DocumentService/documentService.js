@@ -20,24 +20,23 @@ export const downloadDocument = async (documentId, header) => {
     try {
         const response = await axios.get(`${API_URL}/download/${documentId}`, {
             headers: header,
-            responseType: 'blob', // Important for binary data
+            responseType: 'blob',
         });
-        
-        // Get filename from content-disposition header if available
+
+        let filename = `document-${documentId}`;
         const contentDisposition = response.headers['content-disposition'];
-        let filename = '';
         if (contentDisposition) {
-            const filenameMatch = contentDisposition.match(/filename="(.+)"/);
-            if (filenameMatch) {
+            const filenameMatch = contentDisposition.match(/filename="([^"]+)"/);
+            if (filenameMatch && filenameMatch[1]) {
                 filename = filenameMatch[1];
             }
         }
         
         return {
-            data: response.data,
-            filename: filename || `document-${documentId}`,
-            contentType: response.headers['content-type']
+            blob: response.data,
+            filename: filename
         };
+
     } catch (error) {
         throw error.response ? error.response.data : 'Error downloading document';
     }
@@ -76,3 +75,13 @@ export const getDocumentsByProject = async (projectId, header) => {
     }
 }
 
+export const renameDocument = async (documentId, newName, header) => {
+    try {
+        const response = await axios.put(`${API_URL}/rename/${documentId}`, { newName }, {
+            headers: header
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response ? error.response.data : `Error renaming document with ID: ${documentId}`;
+    }
+}

@@ -115,8 +115,12 @@ export function UploadModal({
         // In a real app, call onUpload with the actual file
         await onUpload([file.file])
         setIsUploading(false)
+        // Reset form state after successful upload
+        setFile(null)
+        setUploadProgress(0)
+        setUploadStatus("pending")
         // Uncomment to auto-close after upload
-        // onClose()
+        onClose()
       } catch (error) {
         console.error("Upload failed:", error)
         setIsUploading(false)
@@ -180,7 +184,7 @@ export function UploadModal({
 
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-start">
-                    <div>
+                    <div className="max-w-[180px]">
                       <p className="text-sm font-medium truncate" title={file.file.name}>
                         {file.file.name}
                       </p>
