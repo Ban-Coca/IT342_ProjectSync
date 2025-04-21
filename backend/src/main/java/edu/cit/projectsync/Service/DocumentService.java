@@ -3,6 +3,7 @@ package edu.cit.projectsync.Service;
 import java.util.List;
 import java.util.UUID;
 
+import com.backblaze.b2.client.structures.*;
 import edu.cit.projectsync.Entity.ProjectEntity;
 import edu.cit.projectsync.Entity.UserEntity;
 import edu.cit.projectsync.Repository.UserRepository;
@@ -23,10 +24,6 @@ import com.backblaze.b2.client.contentSources.B2ContentSource;
 import com.backblaze.b2.client.contentSources.B2ContentTypes;
 import com.backblaze.b2.client.contentSources.B2FileContentSource;
 import com.backblaze.b2.client.exceptions.B2Exception;
-import com.backblaze.b2.client.structures.B2FileVersion;
-import com.backblaze.b2.client.structures.B2UploadFileRequest;
-import com.backblaze.b2.client.structures.B2DeleteFileVersionRequest;
-import com.backblaze.b2.client.structures.B2DownloadByIdRequest;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -138,13 +135,22 @@ public class DocumentService {
         if (document == null) {
             throw new IllegalArgumentException("Document not found");
         }
+        boolean fileFound = false;
+        B2ListFileVersionsRequest  deleteRequest = B2ListFileVersionsRequest
+                .builder(bucketId)
+                .setStartFileName(document.getFileName())
+                .setPrefix(document.getFileName())
+                .build();
 
-        B2DeleteFileVersionRequest deleteRequest = B2DeleteFileVersionRequest.builder(
-                document.getB2FileId(),
-                document.getFileName()
-        ).build();
+        for (B2FileVersion version : getB2Client().fileVersions(deleteRequest)) {
+            if (version.getFileName().equals(document.getFileName())) {
+                getB2Client().deleteFileVersion(version);
+                fileFound = true;
+            } else {
+                break;
+            }
+        }
 
-        getB2Client().deleteFileVersion(deleteRequest);
 
         documentRepository.deleteById(documentId);
     }
@@ -167,6 +173,15 @@ public class DocumentService {
 
     public boolean projectExistsById(UUID projectId) {
         return projectRepository.existsById(projectId);
+    }
+
+    public DocumentEntity renameDocument(UUID documentId, String newFileName) {
+        DocumentEntity document = getDocumentById(documentId);
+        if (document != null) {
+            document.setFileName(newFileName);
+            return documentRepository.save(document);
+        }
+        return null;
     }
 
     private File convertMultipartFileToFile(MultipartFile file) throws IOException {

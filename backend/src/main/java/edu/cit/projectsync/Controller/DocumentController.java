@@ -91,6 +91,17 @@ public class DocumentController {
         }
     }
 
+    @PutMapping("/rename/{documentId}")
+    public ResponseEntity<Object> renameDocument(@PathVariable UUID documentId, @RequestParam String newName) {
+        DocumentEntity document = documentService.getDocumentById(documentId);
+        if (document == null) {
+            return ResponseEntity.status(404).body("Document with ID " + documentId + " does not exist.");
+        }
+
+        documentService.renameDocument(documentId, newName);
+        return ResponseEntity.ok("Document renamed to " + newName);
+    }
+
     @PostMapping("/test-upload")
     public ResponseEntity<String> testUpload(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
@@ -118,10 +129,10 @@ public class DocumentController {
         }
 
         try {
-            // Delete the document from B2 and database
             documentService.deleteDocument(documentId);
             return ResponseEntity.ok("Document with ID " + documentId + " has been successfully deleted.");
         } catch (B2Exception e) {
+            log.error("B2 delete error: {}", e.getMessage(), e);
             return ResponseEntity.status(500).body("Failed to delete from B2: " + e.getMessage());
         }
     }
