@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Task Assigned - ProjectSync</title>
+  <style type="text/css">
+    /* Reset styles */
+    body, p, h1, h2, h3, h4, h5, h6 {
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.6;
+      color: #333333;
+      background-color: #f5f5f5;
+    }
+    /* Container styles */
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+    }
+    /* Header styles */
+    .header {
+      padding: 20px;
+      background-color: #1a1a1a;
+      text-align: center;
+    }
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: #ffffff;
+    }
+    /* Content styles */
+    .content {
+      padding: 30px 20px;
+    }
+    .title {
+      font-size: 24px;
+      font-weight: bold;
+      color: #1a1a1a;
+      margin-bottom: 20px;
+    }
+    .text {
+      font-size: 16px;
+      color: #555555;
+      margin-bottom: 20px;
+    }
+    /* Task card styles */
+    .task-card {
+      margin: 25px 0;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .task-header {
+      padding: 15px;
+      background-color: #e53935;
+      color: #ffffff;
+    }
+    .task-title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .task-body {
+      padding: 20px;
+    }
+    .task-details {
+      margin-bottom: 20px;
+    }
+    .detail-row {
+      display: flex;
+      margin-bottom: 10px;
+    }
+    .detail-label {
+      width: 120px;
+      font-weight: bold;
+      color: #777777;
+    }
+    .detail-value {
+      flex: 1;
+      color: #333333;
+    }
+    .task-description {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #e0e0e0;
+    }
+    .description-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #1a1a1a;
+    }
+    /* Priority badge styles */
+    .priority {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 3px;
+      font-size: 12px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    .priority-high {
+      background-color: #e53935;
+      color: white;
+    }
+    .priority-medium {
+      background-color: #ff9800;
+      color: white;
+    }
+    .priority-low {
+      background-color: #4caf50;
+      color: white;
+    }
+    /* Button styles */
+    .button-container {
+      margin: 30px 0;
+      text-align: center;
+    }
+    .button {
+      display: inline-block;
+      padding: 12px 30px;
+      background-color: #1a1a1a;
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: bold;
+      border-radius: 4px;
+    }
+    .button-secondary {
+      display: inline-block;
+      padding: 12px 30px;
+      background-color: transparent;
+      color: #1a1a1a;
+      text-decoration: none;
+      font-weight: bold;
+      border: 1px solid #1a1a1a;
+      border-radius: 4px;
+      margin-left: 10px;
+    }
+    /* Footer styles */
+    .footer {
+      padding: 20px;
+      background-color: #f5f5f5;
+      text-align: center;
+      font-size: 14px;
+      color: #777777;
+    }
+    /* Responsive styles */
+    @media screen and (max-width: 480px) {
+      .title {
+        font-size: 22px;
+      }
+      .detail-row {
+        flex-direction: column;
+      }
+      .detail-label {
+        width: 100%;
+        margin-bottom: 5px;
+      }
+      .button-container {
+        display: flex;
+        flex-direction: column;
+      }
+      .button, .button-secondary {
+        display: block;
+        text-align: center;
+        margin: 0 0 10px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="logo">ProjectSync</div>
+  </div>
+  <div class="content">
+    <h1 class="title">New Task Assigned</h1>
+    <p class="text" th:text="'Hello ' + ${userName} + ','">Hello User,</p>
+    <p class="text" th:text="'You have been assigned a new task in the &quot;' + ${projectName} + '&quot; project.'">You have been assigned a new task in the "Project" project.</p>
+
+    <div class="task-card">
+      <div class="task-header">
+        <div class="task-title" th:text="${task.title}">Task Title</div>
+      </div>
+      <div class="task-body">
+        <div class="task-details">
+          <div class="detail-row">
+            <div class="detail-label">Project:</div>
+            <div class="detail-value" th:text="${projectName}">Project Name</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Assigned by:</div>
+            <div class="detail-value" th:text="${assignedBy}">Assigner Name</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Due date:</div>
+            <div class="detail-value" th:text="${formattedDueDate}">April 25, 2025</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Priority:</div>
+            <div class="detail-value">
+                                <span class="priority"
+                                      th:with="priorityUpper=${#strings.toUpperCase(task.priority)}"
+                                      th:classappend="${priorityUpper == 'HIGH' ? 'priority-high' : (priorityUpper == 'MEDIUM' ? 'priority-medium' : 'priority-low')}"
+                                      th:text="${priorityUpper}">Priority</span>
+            </div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Status:</div>
+            <div class="detail-value" th:text="${task.status}">Not Started</div>
+          </div>
+        </div>
+
+        <div class="task-description">
+          <div class="description-title">Description:</div>
+          <p th:utext="${#strings.replace(#strings.escapeXml(task.description), '\n', '<br/>')}">Task description will appear here.</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="text">If you have any questions about this task, please contact the project manager or reply to this email.</p>
+    <p class="text">Best regards,<br>The ProjectSync Team</p>
+  </div>
+  <div class="footer">
+    <p>© 2025 ProjectSync. All rights reserved.</p>
+  </div>
+</div>
+</body>
+</html>

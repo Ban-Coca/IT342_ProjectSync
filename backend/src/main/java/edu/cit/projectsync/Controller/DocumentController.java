@@ -73,7 +73,7 @@ public class DocumentController {
     }
 
     @GetMapping("/download/{documentId}")
-    public ResponseEntity<byte[]> downloadDocument(@PathVariable UUID documentId) {
+    public ResponseEntity<?> downloadDocument(@PathVariable UUID documentId) {
         try {
             DocumentEntity document = documentService.getDocumentById(documentId);
             if (document == null) {
@@ -81,9 +81,10 @@ public class DocumentController {
             }
 
             byte[] fileData = documentService.downloadDocument(documentId);
-
+            log.info("Document downloaded: {} ({})", document.getFileName(), document.getFileType());
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType(document.getFileType()))
+                    .contentLength(fileData.length)
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + document.getFileName() + "\"")
                     .body(fileData);
         } catch (B2Exception e) {
