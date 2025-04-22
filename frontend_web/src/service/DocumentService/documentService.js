@@ -77,7 +77,7 @@ export const getDocumentsByProject = async (projectId, header) => {
 
 export const renameDocument = async (documentId, newName, header) => {
     try {
-        const response = await axios.put(`${API_URL}/rename/${documentId}`, { newName }, {
+        const response = await axios.put(`${API_URL}/rename/${documentId}?newName=${encodeURIComponent(newName)}`,{}, {
             headers: header
         });
         return response.data;

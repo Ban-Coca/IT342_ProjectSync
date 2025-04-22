@@ -20,6 +20,8 @@ import ProjectModal from "@/components/project-modal";
 import DeleteModal from "@/components/delete-modal";
 import TaskModal from "@/components/task-modal";
 import FilesTab from "../DocumentPage/FilesTab";
+import { Grid } from 'ldrs/react'
+
 export default function ProjectDetailsPage () {
     const { projectId } = useParams();
     const { currentUser, getAuthHeader } = useAuth();
@@ -117,8 +119,13 @@ export default function ProjectDetailsPage () {
     return (
         <MainLayout>
             {isProjectLoading ?  (
-                    <div className="flex justify-center items-center h-48 sm:h-64">
-                        <Loading variant="dots" size="lg" text="Fetching Project Details..." textPosition="bottom"/>
+                    <div className="flex flex-col justify-center items-center h-48 sm:h-64">
+                        <Grid
+                            size="60"
+                            speed="1.5"
+                            color="black" 
+                        />
+                        <p className="text-sm text-muted-foreground">Fetching Project...</p>
                     </div> 
                 ) : (
                 <div className="container mx-auto py-4">
@@ -163,32 +170,54 @@ export default function ProjectDetailsPage () {
                             <DetailsView project={project}/>
                         </TabsContent>
                         <TabsContent value="task" className="space-y-4">
-                            <div className="flex items-center justify-between mb-4">
-                                <h2 className="text-2xl font-bold">Tasks</h2>
-                                <Button onClick={() => setTaskDialogOpen(true)}>
-                                    Add Task
-                                </Button>
-                            </div>
+                            
                             {isTasksLoading ? (
-                                <div className="flex justify-center items-center h-48 sm:h-64">
-                                    <Loading variant="dots" size="lg" text="Fetching Tasks..." textPosition="bottom"/>
+                                <div className="flex flex-col justify-center items-center h-48 sm:h-64">
+                                    <Grid
+                                        size="60"
+                                        speed="1.5"
+                                        color="black" 
+                                    />
+                                    <p className="text-sm text-muted-foreground">Fetching Tasks...</p>
                                 </div> 
                             ) : (
-                                <TableTab 
-                                    tasks={tasks}
-                                    projectId={projectId}
-                                    setTasks={setLocalTasks} />
+                                <>
+                                    <div className="flex items-center justify-between mb-4">
+                                        <h2 className="text-2xl font-bold">Tasks</h2>
+                                        <Button onClick={() => setTaskDialogOpen(true)}>
+                                            Add Task
+                                        </Button>
+                                    </div>
+                                    <TableTab 
+                                        tasks={tasks}
+                                        projectId={projectId}
+                                        setTasks={setLocalTasks} />
+                                </>
+                                
                             )}
                             
                         </TabsContent>
                         <TabsContent value="board" className="space-y-4">
-                            <div className="flex items-center justify-between mb-4">
-                                <h2 className="text-2xl font-bold">Tasks Board</h2>
-                                <Button onClick={() => setTaskDialogOpen(true)}>
-                                    Add Task
-                                </Button>
-                            </div>
-                            <BoardTab tasks={tasks} />
+                            {isTasksLoading ? (
+                                <div className="flex flex-col justify-center items-center h-48 sm:h-64">
+                                    <Grid
+                                        size="60"
+                                        speed="1.5"
+                                        color="black" 
+                                    />
+                                    <p className="text-sm text-muted-foreground">Fetching Tasks...</p>
+                                </div> 
+                            ) : (
+                                <>
+                                    <div className="flex items-center justify-between mb-4">
+                                        <h2 className="text-2xl font-bold">Tasks Board</h2>
+                                        <Button onClick={() => setTaskDialogOpen(true)}>
+                                            Add Task
+                                        </Button>
+                                    </div>
+                                    <BoardTab tasks={tasks} />
+                                </>
+                            )}
                         </TabsContent>
                         <TabsContent value="calendar" className="space-y-4">
                             <div className="flex items-center justify-between mb-4">

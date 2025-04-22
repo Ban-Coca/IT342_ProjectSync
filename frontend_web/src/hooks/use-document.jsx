@@ -83,9 +83,10 @@ export function useDocument({
     });
 
     const renameDocumentMutation = useMutation({
-        mutationFn: ({docmentId, newName}) => {
+        mutationFn: ({documentId, newName}) => {
+            console.log('docmentId', documentId)
             return toast.promise(
-                renameDocument(docmentId, newName, getAuthHeader()),
+                renameDocument(documentId, newName, getAuthHeader()),
                 {
                     loading: 'Renaming document...',
                     success: 'Document renamed successfully',

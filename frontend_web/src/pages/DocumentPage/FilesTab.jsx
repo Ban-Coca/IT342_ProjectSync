@@ -11,24 +11,27 @@ import {UploadModal} from "@/components/upload-document"
 import { format } from "date-fns"
 import { Loading } from "@/components/loading-state"
 import { Grid } from 'ldrs/react'
-import 'ldrs/react/Grid.css'
+
 import { Input } from "@/components/ui/input"
 
-const getFileIcon = (type) => {
-    switch (type) {
-      case "pdf":
-      case "docx":
-        return <FileTextIcon className="h-10 w-10 text-blue-500" />
-      case "xlsx":
-        return <FileTextIcon className="h-10 w-10 text-green-500" />
-      case "png":
-      case "jpg":
-      case "jpeg":
-        return <ImageIcon className="h-10 w-10 text-purple-500" />
-      case "zip":
-        return <FileArchiveIcon className="h-10 w-10 text-orange-500" />
-      default:
-        return <FileIcon className="h-10 w-10 text-gray-500" />
+const getFileIcon = (name) => {
+    const fileType = name.split(".").pop()
+    switch (fileType) {
+        case "pdf":
+        case "docx":
+            return <FileTextIcon className="h-10 w-10" />
+        case "xlsx":
+            return <FileTextIcon className="h-10 w-10 " />
+        case "png":
+        case "jpg":
+        case "jpeg":
+        case "image/jpeg":
+        case "PNG":
+            return <ImageIcon className="h-10 w-10 " />
+        case "zip":
+            return <FileArchiveIcon className="h-10 w-10 " />
+        default:
+            return <FileIcon className="h-10 w-10 " />
     }
 }
 export default function FilesTab({projectId}){
@@ -98,14 +101,14 @@ export default function FilesTab({projectId}){
         setRenamingFileId(fileId)
         setNewName(fileName)
     }
-    const confirmRename = (fileId) => {
-        console.log(fileId)
-        renameDocumentMutation.mutate({ fileId, newName }, {
+    const confirmRename = (documentId) => {
+        renameDocumentMutation.mutate({ documentId, newName }, {
             onSuccess: () => {
                 queryClient.invalidateQueries(['documents', projectId])
                 setRenamingFileId(null)
             }})
     }
+
     return(
         <div className="flex flex-col gap-4">
             {isLoadingDocuments ? (
@@ -150,7 +153,7 @@ export default function FilesTab({projectId}){
                                 <Card key={file.documentId} className="overflow-hidden">
                                     <CardContent className="p-0">
                                         <div className="flex items-start p-6">
-                                            <div className="mr-4 flex-shrink-0">{getFileIcon(file.fileType)}</div>
+                                            <div className="mr-4 flex-shrink-0">{getFileIcon(file.fileName)}</div>
                                             <div className="flex-grow min-w-0">
                                                 <div className="flex justify-between items-start">
                                                     {renamingFileId === file.documentId ? (
