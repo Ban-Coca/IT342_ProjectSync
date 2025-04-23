@@ -24,4 +24,5 @@ class ForgotActivity: Activity() {
             startActivity(intent)
         }
     }
+
 }
