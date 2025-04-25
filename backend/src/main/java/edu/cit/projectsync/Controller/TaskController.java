@@ -3,6 +3,7 @@ package edu.cit.projectsync.Controller;
 import java.util.List;
 import java.util.UUID;
 
+import edu.cit.projectsync.Service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,9 @@ public class TaskController {
     @Autowired
     private ProjectService projectService;
 
+    @Autowired
+    private EmailService emailService;
+
     @PostMapping("/createtask")
     public ResponseEntity<Object> createTask(@RequestBody TaskDTO taskDTO) {
         try {
@@ -40,6 +44,10 @@ public class TaskController {
 
             // Save the task
             TaskEntity createdTask = taskService.createTask(task);
+
+            if (createdTask.getAssignedTo() != null) {
+                emailService.sendTaskAssignmentNotification(createdTask);
+            }
 
             // Map TaskEntity back to TaskDTO
             TaskDTO createdTaskDTO = TaskMapper.toDTO(createdTask);

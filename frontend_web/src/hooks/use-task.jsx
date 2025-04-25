@@ -34,7 +34,6 @@ export function useTask({
         mutationFn: (newTask) => {
             const taskWithValidAssignedTo = {
                 ...newTask,
-                
                 assignedTo: newTask.assignedTo || []
             };
             return createTask(taskWithValidAssignedTo, getAuthHeader());

@@ -20,12 +20,14 @@ public class ProjectsyncApplication {
         System.setProperty("JWT_SECRET", Objects.requireNonNull(dotenv.get("JWT_SECRET")));
         System.setProperty("JWT_EXPIRATION", Objects.requireNonNull(dotenv.get("JWT_EXPIRATION")));
         System.setProperty("google.redirect-uri", Objects.requireNonNull(dotenv.get("GOOGLE_REDIRECT_URI")));
-        System.setProperty("MAILERSEND_API_TOKEN", Objects.requireNonNull(dotenv.get("MAILERSEND_API_TOKEN")));
         System.setProperty("EMAIL_HOST", Objects.requireNonNull(dotenv.get("EMAIL_HOST")));
         System.setProperty("EMAIL_PORT", Objects.requireNonNull(dotenv.get("EMAIL_PORT")));
         System.setProperty("EMAIL_USERNAME", Objects.requireNonNull(dotenv.get("EMAIL_USERNAME")));
         System.setProperty("EMAIL_PASSWORD", Objects.requireNonNull(dotenv.get("EMAIL_PASSWORD")));
-
+        System.setProperty("BACKBLAZE_APPLICATION_KEY_ID", Objects.requireNonNull(dotenv.get("BACKBLAZE_APPLICATION_KEY_ID")));
+        System.setProperty("BACKBLAZE_APPLICATION_KEY", Objects.requireNonNull(dotenv.get("BACKBLAZE_APPLICATION_KEY")));
+        System.setProperty("BACKBLAZE_BUCKET_ID", Objects.requireNonNull(dotenv.get("BACKBLAZE_BUCKET_ID")));
+        System.setProperty("BACKBLAZE_BUCKET_NAME", Objects.requireNonNull(dotenv.get("BACKBLAZE_BUCKET_NAME")));
 		SpringApplication.run(ProjectsyncApplication.class, args);
 	}
 

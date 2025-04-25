@@ -1,6 +1,3 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 import Homepage from './pages/Homepage'
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom'
@@ -15,7 +12,9 @@ import ProjectDetailsPage from './pages/ProjectPages/ProjectDetailsPage'
 import { AuthenticationProvider, useAuth } from './contexts/authentication-context'
 import ProjectsPage from './pages/ProjectPages/ProjectsPage'
 import { Toaster } from '@/components/ui/sonner'
-import { Loading } from './components/loading-state'
+import { Grid } from 'ldrs/react'
+import 'ldrs/react/Grid.css'
+
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
   if (loading) {
@@ -27,7 +26,11 @@ const ProtectedRoute = ({ children }) => {
         height: '100vh', 
         width: '100%' 
       }}>
-        <Loading size="lg" text="Loading..." />
+        <Grid
+          size="60"
+          speed="1.5"
+          color="black" 
+        />
       </div>
     )
   }

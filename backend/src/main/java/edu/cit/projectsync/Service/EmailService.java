@@ -1,47 +1,96 @@
 package edu.cit.projectsync.Service;
 
+import edu.cit.projectsync.Entity.TaskEntity;
+import edu.cit.projectsync.Entity.UserEntity;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import com.mailersend.sdk.emails.Email;
-import com.mailersend.sdk.Recipient;
-import com.mailersend.sdk.MailerSend;
-import com.mailersend.sdk.MailerSendResponse;
-import com.mailersend.sdk.exceptions.MailerSendException;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
 
 @Service
 public class EmailService {
 
     @Autowired
-    private Environment env;
+    private JavaMailSender mailSender;
+    @Autowired
+    private TemplateEngine templateEngine;
 
-    public void sendVerificationEmail(String toEmail, String verificationCode) {
-        Email email = new Email();
+    public void sendVerificationEmail(String toEmail, String firstName, String verificationCode) throws MessagingException {
+        Context context = new Context();
+        context .setVariable("firstName", firstName);
+        context.setVariable("verificationCode", verificationCode);
 
-        // Get values from environment that were loaded from your .env
-        String apiToken = env.getProperty("MAILERSEND_API_TOKEN");
-        String templateId = env.getProperty("MAILERSEND_TEMPLATE_VERIFICATION", "zr6ke4n8rym4on12");
+        String htmlContent = templateEngine.process("password-reset", context);
 
-        email.setFrom("ProjectSync", "info@domain.com");
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+        helper.setTo(toEmail);
+        helper.setSubject("Email Verification Code");
+        helper.setText(htmlContent, true); // true indicates that the text is HTML
+        mailSender.send(message);
+    }
 
-        Recipient recipient = new Recipient(toEmail, toEmail);
-        email.addRecipient(toEmail, toEmail);
-
-        email.setTemplateId(templateId);
-
-        email.addPersonalization(recipient, "user_code", verificationCode);
-        email.addPersonalization(recipient, "user_email", toEmail);
-
-        MailerSend ms = new MailerSend();
-        ms.setToken(apiToken);
-
+    public void sendTaskAssignmentNotification(TaskEntity task) {
         try {
-            MailerSendResponse response = ms.emails().send(email);
-            System.out.println("Email sent successfully. Message ID: " + response.messageId);
-        } catch (MailerSendException e) {
-            System.err.println("Failed to send email: " + e.getMessage());
+            // Get assigned users
+            List<UserEntity> assignedUsers = task.getAssignedTo();
+            if (assignedUsers == null || assignedUsers.isEmpty()) {
+                // No users assigned, nothing to do
+                return;
+            }
+
+            // Get creator information
+            String assignedBy = "System"; // Default value
+
+            // Send email to each assigned user
+            for (UserEntity user : assignedUsers) {
+                if (user.getEmail() != null && !user.getEmail().isEmpty()) {
+                    Context context = new Context();
+                    context.setVariable("userName", user.getFirstName());
+                    context.setVariable("task", task);
+                    context.setVariable("projectName", task.getProject().getName());
+                    context.setVariable("assignedBy", assignedBy);
+                    context.setVariable("formattedDueDate", formatDate(task.getDueDate()));
+
+                    // Process the template
+                    String htmlContent = templateEngine.process("task-assignment", context);
+
+                    // Create email message
+                    MimeMessage message = mailSender.createMimeMessage();
+                    MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+                    helper.setTo(user.getEmail());
+                    helper.setSubject("New Task Assigned - ProjectSync");
+                    helper.setText(htmlContent, true);
+
+                    // Send the email
+                    mailSender.send(message);
+                }
+            }
+        } catch (Exception e) {
+            // Log error
             e.printStackTrace();
         }
     }
+
+
+    private String formatDate(LocalDate date) {
+        if (date == null) {
+            return "No due date";
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d, yyyy");
+        return date.format(formatter);
+    }
+
 }

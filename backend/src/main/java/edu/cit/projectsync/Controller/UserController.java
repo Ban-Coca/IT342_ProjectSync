@@ -329,7 +329,7 @@ public class UserController {
             codeService.createVerificationCode(user, verificationCode);
 
             // Send email with verification code
-            emailService.sendVerificationEmail(email, verificationCode);
+            emailService.sendVerificationEmail(email, user.getFirstName(), verificationCode);
 
             return ResponseEntity.ok(Map.of("message", "If your email exists in our system, you will receive a reset code"));
 

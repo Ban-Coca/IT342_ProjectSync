@@ -10,6 +10,8 @@ import { useTask } from "@/hooks/use-task";
 import { useQueryClient } from "@tanstack/react-query";
 import { Loading } from "@/components/loading-state";
 import { useNavigate } from "react-router-dom";
+import { Grid } from 'ldrs/react'
+import { Skeleton } from "@/components/ui/skeleton";
 
 function Homepage() {
     const isMobile = useIsMobile();
@@ -91,8 +93,10 @@ function Homepage() {
                     <div className="w-full h-0.5 bg-gray-300 my-2" />
                 </div>
                 {isLoading ? (
-                    <div className="flex justify-center items-center p-12">
-                        <Loading variant="spinner" size="xl" text="Loading projects..." />
+                    <div className="flex justify-center items-center gap-4">
+                        <Skeleton className="w-[calc(33.33%-1rem)] h-64"/>
+                        <Skeleton className="w-[calc(33.33%-1rem)] h-64"/>
+                        <Skeleton className="w-[calc(33.33%-1rem)] h-64"/>
                     </div>
                 ) : projectsEmpty ? (
                     <div className="flex flex-col items-center justify-center p-8 border rounded-lg bg-muted/20">
@@ -154,7 +158,12 @@ function Homepage() {
                     <h2 className="text-2xl font-bold">Your Current Tasks</h2>
                     <div className="w-full h-0.5 bg-gray-300 my-2" />
                 </div>
-                {tasksEmpty ? (
+                {isAssignTaskLoading ? (
+                    <div className="flex flex-col justify-center items-center gap-3">
+                        <Skeleton className="h-16 w-full rounded-md"/>
+                        <Skeleton className="h-16 w-full rounded-md"/>
+                    </div>
+                ) : tasksEmpty ? (
                     <div className="flex flex-col items-center justify-center p-8 border rounded-lg bg-muted/20">
                         <FileText className="h-12 w-12 text-muted-foreground mb-4" />
                         <h3 className="text-xl font-medium mb-2">No tasks available</h3>
@@ -162,8 +171,8 @@ function Homepage() {
                         You don't have any tasks assigned to you. Create a new task to get started.
                         </p>
                         <Button className="flex items-center gap-2">
-                        <Plus className="h-4 w-4" />
-                        Create New Task
+                            <Plus className="h-4 w-4" />
+                            Create New Task
                         </Button>
                     </div>
                 ) : (

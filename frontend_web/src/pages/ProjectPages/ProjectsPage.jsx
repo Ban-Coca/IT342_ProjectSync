@@ -1,31 +1,20 @@
 import MainLayout from "@/components/main-layout";
 import { Button } from "@/components/ui/button";
-import { EllipsisVertical } from "lucide-react";
 import { useAuth } from "@/contexts/authentication-context";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import ProjectModal from "@/components/project-modal";
-import { getProjectsByUserId, createProject, updateProject, deleteProject } from "@/service/ProjectService/projectService";
-import { toast } from "sonner"
-import { Loading } from "@/components/loading-state";
 import { ProjectDropdown } from "@/components/project-dropdown-fucntions";
 import DeleteModal from "@/components/delete-modal";
 import { useProject } from "@/hooks/use-project";
-import { set } from "date-fns";
-const mockUsers = [
-    { userId: "user1", name: "John Doe" },
-    { userId: "user2", name: "Jane Smith" },
-    { userId: "user3", name: "Robert Johnson" },
-    { userId: "user4", name: "Emily Davis" },
-    { userId: "user5", name: "Michael Wilson" },
-  ]
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ProjectsPage(){
     const { currentUser, getAuthHeader } = useAuth();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
-    const [users, setUsers] = useState(mockUsers)
+    const [users, setUsers] = useState()
     const [dialogOpen, setDialogOpen] = useState(false)
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
     const [currentProject, setCurrentProject] = useState(null);
@@ -102,8 +91,11 @@ export default function ProjectsPage(){
                 </div>
                 
                 {isLoading ? (
-                    <div className="flex justify-center items-center h-48 sm:h-64">
-                        <Loading size="lg" text="Loading projects..." />
+                    <div className="flex flex-col justify-center items-center h-92 sm:h-64 gap-4">
+                        <Skeleton className="h-full w-full" />
+                        <Skeleton className="h-full w-full" />
+                        <Skeleton className="h-full w-full" />
+                        <Skeleton className="h-full w-full" />
                     </div>
                 ) : (
                     <div>

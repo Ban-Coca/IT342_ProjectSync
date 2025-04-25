@@ -58,10 +58,8 @@ export function LoginForm({
       const {user, token} = response;
       login(user, token);
       // navigate("/home");
-      console.log(response);
     } catch (error) {
       setError("Login failed. Please check your credentials and try again.");
-      console.error("Login failed:", error);
     } finally {
       setLoading(false);
     }

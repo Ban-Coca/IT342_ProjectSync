@@ -162,14 +162,21 @@ export default function LandingPage() {
                 <div className="md:hidden fixed inset-0 top-[68px] bg-background z-50 p-4">
                     <div className="flex flex-col gap-4">
                         {navlinks.map((link, index) => (
-                            <Link
+                            <a
                                 key={index}
-                                to={link.url}
+                                href={link.url}
                                 className="text-lg font-medium px-4 py-2 rounded-sm hover:bg-primary hover:text-white"
-                                onClick={() => setMobileMenuOpen(false)}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    setMobileMenuOpen(false);
+                                    const element = document.querySelector(link.url);
+                                    if (element) {
+                                        element.scrollIntoView({ behavior: 'smooth' });
+                                    }
+                                }}
                             >
                                 {link.name}
-                            </Link>
+                            </a>
                         ))}
                         <div className="flex gap-2 mt-4">
                             <Button
@@ -372,93 +379,93 @@ export default function LandingPage() {
                 {/* Column 3 - Buenos Aires */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div>
-                    <h3 className="font-bold mb-4">Cebu</h3>
-                    <Link to="mailto:buenosaires@projectsync.com" className="block hover:underline mb-1">
-                        cebu@projectsync.com
-                    </Link>
-                    <p className="mb-4">+94972036672</p>
-                    <p className="mb-1">8V3C+395, 816 Katipunan St</p>
-                    <p className="mb-4">Cebu City, 6000 Cebu</p>
-                    <Link to="https://www.google.pl/maps/place/Way+Tugpahay+Siomai+Sa+Tisa/@10.3014617,123.8680489,17z/data=!3m1!4b1!4m6!3m5!1s0x33a99ea76b0a05d3:0x5d432e89c7abae88!8m2!3d10.3014617!4d123.8706238!16s%2Fg%2F11cnc827z7?entry=ttu&g_ep=EgoyMDI1MDQwMS4wIKXMDSoASAFQAw%3D%3D" 
-                    target="_blank" rel="noopener noreferrer" className="mb-4 underline">
-                        SEE ON MAP →
-                    </Link>
+                        <h3 className="font-bold mb-4">Cebu</h3>
+                        <Link to="mailto:buenosaires@projectsync.com" className="block hover:underline mb-1">
+                            cebu@projectsync.com
+                        </Link>
+                        <p className="mb-4">+94972036672</p>
+                        <p className="mb-1">8V3C+395, 816 Katipunan St</p>
+                        <p className="mb-4">Cebu City, 6000 Cebu</p>
+                        <Link to="https://www.google.pl/maps/place/Way+Tugpahay+Siomai+Sa+Tisa/@10.3014617,123.8680489,17z/data=!3m1!4b1!4m6!3m5!1s0x33a99ea76b0a05d3:0x5d432e89c7abae88!8m2!3d10.3014617!4d123.8706238!16s%2Fg%2F11cnc827z7?entry=ttu&g_ep=EgoyMDI1MDQwMS4wIKXMDSoASAFQAw%3D%3D" 
+                        target="_blank" rel="noopener noreferrer" className="mb-4 underline">
+                            SEE ON MAP →
+                        </Link>
                     </div>
 
                     {/* Newsletter */}
                     <div>
-                    <h3 className="font-bold mb-4">WANT TO BE THE SMARTEST IN YOUR OFFICE?</h3>
-                    <Link to="#" className="underline block mb-8">
-                        SIGN UP FOR OUR NEWSLETTER →
-                    </Link>
+                        <h3 className="font-bold mb-4">WANT TO BE THE SMARTEST IN YOUR OFFICE?</h3>
+                        <Link to="#" className="underline block mb-8">
+                            SIGN UP FOR OUR NEWSLETTER →
+                        </Link>
 
-                    <h4 className="mb-4">FOLLOW US</h4>
-                    <div className="flex gap-4">
-                        <Link to="#" aria-label="Behance">
-                            <div className="w-8 h-8 flex items-center justify-center">Be</div>
-                        </Link>
-                        <Link to="#" aria-label="Dribbble">
-                            <div className="w-8 h-8 flex items-center justify-center">
-                                <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                className="lucide lucide-dribbble"
-                                >
-                                <circle cx="12" cy="12" r="10" />
-                                <path d="M19.13 5.09C15.22 9.14 10 10.44 2.25 10.94" />
-                                <path d="M21.75 12.84c-6.62-1.41-12.14 1-16.38 6.32" />
-                                <path d="M8.56 2.75c4.37 6 6 9.42 8 17.72" />
-                                </svg>
-                            </div>
-                        </Link>
-                        <Link to="#" aria-label="Instagram">
-                            <div className="w-8 h-8 flex items-center justify-center">
-                                <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                className="lucide lucide-instagram"
-                                >
-                                <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                                <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-                                </svg>
-                            </div>
-                        </Link>
-                        <Link to="#" aria-label="LinkedIn">
-                            <div className="w-8 h-8 flex items-center justify-center">
-                                <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                className="lucide lucide-linkedin"
-                                >
-                                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-                                <rect width="4" height="12" x="2" y="9" />
-                                <circle cx="4" cy="4" r="2" />
-                                </svg>
-                            </div>
-                        </Link>
-                    </div>
+                        <h4 className="mb-4">FOLLOW US</h4>
+                        <div className="flex gap-4">
+                            <Link to="#" aria-label="Behance">
+                                <div className="w-8 h-8 flex items-center justify-center">Be</div>
+                            </Link>
+                            <Link to="#" aria-label="Dribbble">
+                                <div className="w-8 h-8 flex items-center justify-center">
+                                    <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className="lucide lucide-dribbble"
+                                    >
+                                    <circle cx="12" cy="12" r="10" />
+                                    <path d="M19.13 5.09C15.22 9.14 10 10.44 2.25 10.94" />
+                                    <path d="M21.75 12.84c-6.62-1.41-12.14 1-16.38 6.32" />
+                                    <path d="M8.56 2.75c4.37 6 6 9.42 8 17.72" />
+                                    </svg>
+                                </div>
+                            </Link>
+                            <Link to="#" aria-label="Instagram">
+                                <div className="w-8 h-8 flex items-center justify-center">
+                                    <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className="lucide lucide-instagram"
+                                    >
+                                    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+                                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                                    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+                                    </svg>
+                                </div>
+                            </Link>
+                            <Link to="#" aria-label="LinkedIn">
+                                <div className="w-8 h-8 flex items-center justify-center">
+                                    <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className="lucide lucide-linkedin"
+                                    >
+                                    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                                    <rect width="4" height="12" x="2" y="9" />
+                                    <circle cx="4" cy="4" r="2" />
+                                    </svg>
+                                </div>
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </div>
