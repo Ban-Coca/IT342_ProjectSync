@@ -37,7 +37,12 @@ export function CalendarTab({ tasks = [] }) {
             <CardTitle className="text-lg">Calendar</CardTitle>
           </CardHeader>
           <CardContent>
-            <Calendar mode="single" selected={date} onSelect={setDate} className="rounded-md border" initialFocus />
+            <Calendar 
+              mode="single" 
+              selected={date} 
+              onSelect={setDate} 
+              className="rounded-md border shadow-sm" 
+              initialFocus />
           </CardContent>
         </Card>
       </div>
@@ -77,7 +82,6 @@ export function CalendarTab({ tasks = [] }) {
                 <CalendarIcon className="h-12 w-12 text-muted-foreground/50 mb-4" />
                 <h3 className="font-medium text-lg">No tasks for this day</h3>
                 <p className="text-muted-foreground">Select another date or add a new task</p>
-                <Button className="mt-4">Add Task</Button>
               </div>
             )}
           </CardContent>

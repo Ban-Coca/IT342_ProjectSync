@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { requestNotificationPermission } from '@/service/firebase/firebaseService';
 const AuthenticationContext = createContext(null);
 
 export const AuthenticationProvider = ({ children }) => {
@@ -7,6 +8,7 @@ export const AuthenticationProvider = ({ children }) => {
     const [token, setToken] = useState(localStorage.getItem('token') || null);
     const [isAuthenticated, setIsAuthenticated] = useState(localStorage.getItem('isAuthenticated') === 'true');
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
     
     useEffect(() => {
         const initializeAuth = () => {
@@ -31,7 +33,7 @@ export const AuthenticationProvider = ({ children }) => {
         initializeAuth();
     }, []);
     
-    const login = (userData, authToken) => {
+    const login = async (userData, authToken) => {
         
         setCurrentUser(userData);
         setToken(authToken);
@@ -42,8 +44,8 @@ export const AuthenticationProvider = ({ children }) => {
         localStorage.setItem('token', authToken);
         localStorage.setItem('isAuthenticated', 'true');
       
-       
-        const navigate = useNavigate();
+        await requestNotificationPermission(userData.userId);
+
         navigate('/home');
     };
     

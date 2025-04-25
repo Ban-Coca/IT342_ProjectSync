@@ -45,7 +45,6 @@ export function useDocument({
         onSuccess: (result) => {
             
             const url = window.URL.createObjectURL(result.blob);
-
             const link = document.createElement('a');
             link.href = url;
             link.setAttribute('download', result.filename);
@@ -55,7 +54,7 @@ export function useDocument({
             setTimeout(() => {
                 link.remove();
                 window.URL.revokeObjectURL(url);
-            }, 100);    
+            }, 5000);    
         },
     });
     
