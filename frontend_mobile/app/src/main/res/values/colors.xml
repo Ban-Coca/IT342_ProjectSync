@@ -12,4 +12,17 @@
     <color name="textPrimary">#212121</color>
     <color name="textSecondary">#666666</color>
     <color name="divider">#E0E0E0</color>
+    <color name="gray_dark">#424242</color>
+    <color name="gray_light">#E0E0E0</color>
+    <color name="text_primary">#1D1B20</color>
+    <color name="gray_medium">#716E6E</color>
+    <color name="blue_dark">#18A0FB</color>
+    <color name="green_dark">#4DDB92</color>
+    <color name="yellow_dark">#B58B00</color>
+    <color name="priority_high_bg">#FFCDD2</color>
+    <color name="priority_high_text">#C62828</color>
+    <color name="priority_medium_bg">#FFF9C4</color>
+    <color name="priority_medium_text">#F57F17</color>
+    <color name="priority_low_bg">#C8E6C9</color>
+    <color name="priority_low_text">#2E7D32</color>
 </resources>
