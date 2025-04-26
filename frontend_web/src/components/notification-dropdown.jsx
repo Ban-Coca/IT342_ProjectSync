@@ -137,8 +137,8 @@ export function NotificationDropdown() {
                                 className="h-5 w-5"
                                 onClick={() => markAsRead(notification.id)}
                                 >
-                                <Check className="h-3 w-3" />
-                                <span className="sr-only">Mark as read</span>
+                                  <Check className="h-3 w-3" />
+                                  <span className="sr-only">Mark as read</span>
                                 </Button>
                             )}
                             </div>

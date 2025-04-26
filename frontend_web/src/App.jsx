@@ -16,6 +16,7 @@ import 'ldrs/react/Grid.css'
 import { useEffect } from 'react'
 import { setupMessageListener } from './service/firebase/firebaseService'
 import NotificationsPage from './pages/Notification'
+import Dashboard from './pages/Dashboard'
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
   if (loading) {
@@ -144,6 +145,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <NotificationsPage/>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard/>
               </ProtectedRoute>
             }
           />

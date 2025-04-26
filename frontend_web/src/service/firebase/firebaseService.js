@@ -77,7 +77,6 @@ export const setupMessageListener = () => {
     const title = payload.notification?.title || 'New Notification';
     const body = payload.notification?.body || 'New update in ProjectSync';
     
-    // Use try/catch to handle potential toast issues
     try {
       toast.message(title, {
         description: body,
@@ -86,7 +85,7 @@ export const setupMessageListener = () => {
       notificationSound.play().catch((error) => {
         console.error('Failed to play notification sound:', error);
       });
-      // Create a fallback browser notification if toast fails
+      
       if ('Notification' in window && Notification.permission === 'granted') {
         new Notification(title, {
           body: body,

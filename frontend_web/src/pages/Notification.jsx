@@ -1,16 +1,20 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
-import { Bell, Check, CheckCheck, Clock, Info, AlertTriangle, CheckCircle, AlertCircle, Loader2 } from "lucide-react"
+import { Bell, Check, CheckCheck, Clock, Info, AlertTriangle, CheckCircle, AlertCircle, Loader2, ChevronLeft, ChevronRight } from "lucide-react"
 import MainLayout from "@/components/main-layout"
 import { useNotification } from "@/hooks/use-notification"
 import { useAuth } from "@/contexts/authentication-context"
 import { useQueryClient } from "@tanstack/react-query"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useState } from "react"
 
 export default function NotificationsPage() {
     const { currentUser, getAuthHeader } = useAuth()
     const queryClient = useQueryClient()
+    const [currentPage, setCurrentPage] = useState(0)
+    const [pageSize, setPageSize] = useState(10)
+
     const { 
         notifications, 
         unread, 
@@ -60,6 +64,23 @@ export default function NotificationsPage() {
     const formattedNotifications = formatNotifications(notifications?.content || []);
     const formattedUnread = formatNotifications(unread || []);
 
+    const totalPages = notifications?.totalPages || 1;
+    const totalElements = notifications?.totalElements || 0;
+    const isFirstPage = currentPage === 0;
+    const isLastPage = currentPage === totalPages - 1 || totalPages === 0;
+
+    const handlePreviousPage = () => {
+        if (!isFirstPage) {
+            setCurrentPage(prev => prev - 1);
+        }
+    };
+
+    const handleNextPage = () => {
+        if (!isLastPage) {
+            setCurrentPage(prev => prev + 1);
+        }
+    };
+
     return (
         <MainLayout>
             <div className="space-y-6 py-6">
@@ -69,23 +90,19 @@ export default function NotificationsPage() {
                         <p className="text-muted-foreground">View and manage your notifications</p>
                     </div>
                     <div className="flex items-center gap-2">
-                    <Button 
-                        variant="outline" 
-                        size="sm" 
-                        onClick={handleMarkAllAsRead}
-                        disabled={markAllAsReadMutation.isPending}
-                    >
-                        {markAllAsReadMutation.isPending ? (
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        ) : (
-                            <CheckCheck className="mr-2 h-4 w-4" />
-                        )}
-                        Mark all as read
-                    </Button>
-                    <Button variant="outline" size="sm">
-                        <Clock className="mr-2 h-4 w-4" />
-                        Clear history
-                    </Button>
+                      <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={handleMarkAllAsRead}
+                          disabled={markAllAsReadMutation.isPending}
+                      >
+                          {markAllAsReadMutation.isPending ? (
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          ) : (
+                              <CheckCheck className="mr-2 h-4 w-4" />
+                          )}
+                          Mark all as read
+                      </Button>
                     </div>
                 </div>
 
@@ -116,6 +133,38 @@ export default function NotificationsPage() {
                                 ) : (
                                     <div className="p-4 text-center text-muted-foreground">
                                         No notifications to display
+                                    </div>
+                                )}
+
+                                {!isLoadingNotifications && totalElements > 0 && (
+                                    <div className="flex items-center justify-between p-4 border-t">
+                                        <p className="text-sm text-muted-foreground">
+                                            Showing {Math.min(currentPage * pageSize + 1, totalElements)} - 
+                                            {Math.min((currentPage + 1) * pageSize, totalElements)} of {totalElements}
+                                        </p>
+                                        <div className="flex items-center gap-2">
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={handlePreviousPage}
+                                                disabled={isFirstPage}
+                                            >
+                                                <ChevronLeft className="h-4 w-4" />
+                                                <span className="sr-only">Previous page</span>
+                                            </Button>
+                                            <div className="text-sm">
+                                                Page {currentPage + 1} of {totalPages}
+                                            </div>
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={handleNextPage}
+                                                disabled={isLastPage}
+                                            >
+                                                <ChevronRight className="h-4 w-4" />
+                                                <span className="sr-only">Next page</span>
+                                            </Button>
+                                        </div>
                                     </div>
                                 )}
                             </CardContent>
@@ -196,13 +245,8 @@ function NotificationItem({ icon, title, description, time, type, read, onMarkAs
               size="icon" 
               className="h-6 w-6" 
               onClick={onMarkAsRead}
-              disabled={readNotificationMutation?.isPending}
             >
-              {readNotificationMutation?.isPending ? (
-                <Loader2 className="h-3 w-3 animate-spin" />
-              ) : (
-                <Check className="h-3 w-3" />
-              )}
+              <Check className="h-3 w-3" />
               <span className="sr-only">Mark as read</span>
             </Button>
           )}
