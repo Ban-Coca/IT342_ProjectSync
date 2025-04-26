@@ -16,6 +16,7 @@ export default function TaskModal({
     onSubmit,
     task = null,
     teamMembers = [],
+    projectOwner = null,
 }) {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -29,10 +30,16 @@ export default function TaskModal({
 
     const isEditMode = !!task;
 
+    const allAssignableMembers = [...teamMembers];
+    
+    // Add project owner to assignable members if provided and not already included
+    if (projectOwner && !allAssignableMembers.some(member => member.userId === projectOwner.userId)) {
+        allAssignableMembers.push(projectOwner);
+    }
 
     const filteredTeamMembers = searchTerm.trim() === '' ? 
         [] : 
-        teamMembers.filter(member => 
+        allAssignableMembers.filter(member => 
             (member.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) || 
              member.lastName?.toLowerCase().includes(searchTerm.toLowerCase())) &&
             !assignedTo.some(assigned => assigned.userId === member.userId)
@@ -96,7 +103,7 @@ export default function TaskModal({
     const assignUser = (user) => {
         setAssignedTo(prev => [...prev, user]);
         setSearchTerm('');
-        setIsDropdownOpen(false);
+        
     };
     
     const removeUser = (userId) => {
@@ -144,7 +151,8 @@ export default function TaskModal({
                                 id="dueDate" 
                                 type="date" 
                                 value={dueDate} 
-                                onChange={(e) => setDueDate(e.target.value)} 
+                                onChange={(e) => setDueDate(e.target.value)}
+                                min={new Date().toISOString().split('T')[0]}
                             />
                         </div>
                         
