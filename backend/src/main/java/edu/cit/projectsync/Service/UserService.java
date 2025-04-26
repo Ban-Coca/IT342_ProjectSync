@@ -107,4 +107,7 @@ public class UserService {
 	public List<UserEntity> searchUsers(String keyword) {
 		return userRepository.searchUsers(keyword);
 	}
+	public UserEntity findByDeviceToken(String deviceToken) {
+		return userRepository.findByDeviceToken(deviceToken);
+	}
 }
