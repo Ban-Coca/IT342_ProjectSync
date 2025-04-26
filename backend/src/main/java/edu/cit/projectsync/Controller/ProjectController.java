@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import edu.cit.projectsync.Service.EmailService;
+import edu.cit.projectsync.Service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +26,10 @@ public class ProjectController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private EmailService emailService;
+    @Autowired
+    private NotificationService notificationService;
 
     @PostMapping("/createproject")
     public ResponseEntity<Object> createProject(@RequestBody ProjectDTO projectDTO) {
@@ -44,6 +50,17 @@ public class ProjectController {
 
             // Save the project
             ProjectEntity createdProject = projectService.createProject(project);
+
+            if (createdProject.getTeamMembers() != null && !createdProject.getTeamMembers().isEmpty()) {
+                try {
+                    emailService.sendProjectAdditionEmail(createdProject);
+                    notificationService.sendProjectAdditionNotification(createdProject);
+                } catch (Exception e) {
+                    // Log the error but don't prevent project creation
+                    System.err.println("Failed to send notifications: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
 
             // Map the saved ProjectEntity back to ProjectDTO
             ProjectDTO createdProjectDTO = ProjectMapper.toDTO(createdProject);
