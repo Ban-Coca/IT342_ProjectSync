@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <!-- You can adjust the corner radius as needed -->
+    <corners android:radius="10dp" />
+
+    <!-- Transparent background -->
+    <solid android:color="@android:color/transparent" />
+
+    <!-- Optional: Add padding inside the shape -->
+    <padding
+        android:left="6dp"
+        android:right="6dp"
+        android:top="2dp"
+        android:bottom="2dp" />
+
+    <!-- The outline/border -->
+    <stroke
+        android:width="2dp"
+        android:color="#808080" />
+</shape>
