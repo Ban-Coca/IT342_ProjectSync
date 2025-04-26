@@ -143,7 +143,10 @@ export default function ProjectModal({
       setTeamMembers([...teamMembers, newMember]);
     }
     setSearchTerm('');
-    setIsDropdownOpen(false);
+    const inputElement = document.getElementById('teamMembers');
+    if (inputElement) {
+      inputElement.focus();
+    }
   };
 
   const handleTeamMemberChange = (userId) => {
@@ -294,7 +297,7 @@ export default function ProjectModal({
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     onFocus={() => setIsDropdownOpen(true)}
-                    onBlur={() => setTimeout(() => setIsDropdownOpen(false), 200)}
+                    onBlur={() => setTimeout(() => setIsDropdownOpen(false), 300)}
                     aria-autocomplete="list"
                     aria-controls="user-search-results"
                     aria-expanded={isDropdownOpen}

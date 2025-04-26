@@ -39,11 +39,6 @@ const data = {
         icon: ClipboardList,
       },
       {
-        title: "Calendar",
-        url: "/calendar",
-        icon: Calendar,
-      },
-      {
         title: "Dashboard",
         url: "/dashboard",
         icon: LayoutDashboard,
@@ -61,7 +56,9 @@ export default function AppSidebar() {
     if (path === "/" && location.pathname === "/") {
       return true
     }
-
+    if (location.pathname === "/notifications") {
+      return path === "/home";
+    }
     if (path !== "/" && location.pathname.startsWith(path)) {
       return true
     }

@@ -38,6 +38,7 @@ public class UserEntity {
     private Date createdAt;
     private Date lastLogin;
     private Date updatedAt;
+    private String deviceToken;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ProjectEntity> projects = new ArrayList<>();
@@ -50,6 +51,9 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "uploadedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<DocumentEntity> documents = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<NotificationEntity> notifications = new ArrayList<>();
 
     // Default constructor
     public UserEntity() {}
@@ -165,5 +169,20 @@ public class UserEntity {
 
     public void setDocuments(List<DocumentEntity> documents) {
         this.documents = documents;
+    }
+
+    public String getDeviceToken() {
+        return deviceToken;
+    }
+    public void setDeviceToken(String deviceToken) {
+        this.deviceToken = deviceToken;
+    }
+
+    public List<NotificationEntity> getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(List<NotificationEntity> notifications) {
+        this.notifications = notifications;
     }
 }

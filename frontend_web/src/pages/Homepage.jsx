@@ -115,7 +115,7 @@ function Homepage() {
                         <div className={`flex gap-4 ${isMobile ? "flex-col" : "overflow-x-auto"} pb-4`}>
                             {currentProjects.map((project) => (
                                 <Card
-                                key={project.id}
+                                key={project.projectId}
                                 className={`${
                                     isMobile ? "w-full" : "w-[calc(33.33%-1rem)]"
                                 } h-52 transition-transform duration-200 hover:shadow-lg hover:bg-muted/50 hover:border-primary/50 cursor-pointer`}

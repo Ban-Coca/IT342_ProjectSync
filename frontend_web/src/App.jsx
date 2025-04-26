@@ -9,12 +9,14 @@ import PasswordReset from './pages/AuthenticationPages/PasswordReset'
 import TaskPage from './pages/TaskPage'
 import LandingPage from './pages/LandingPage'
 import ProjectDetailsPage from './pages/ProjectPages/ProjectDetailsPage'
-import { AuthenticationProvider, useAuth } from './contexts/authentication-context'
+import { useAuth } from './contexts/authentication-context'
 import ProjectsPage from './pages/ProjectPages/ProjectsPage'
-import { Toaster } from '@/components/ui/sonner'
 import { Grid } from 'ldrs/react'
 import 'ldrs/react/Grid.css'
-
+import { useEffect } from 'react'
+import { setupMessageListener } from './service/firebase/firebaseService'
+import NotificationsPage from './pages/Notification'
+import Dashboard from './pages/Dashboard'
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
   if (loading) {
@@ -52,10 +54,12 @@ const RedirectIfAuthenticated = ({ children }) => {
 };
 function App() {
   return (
-    <AuthenticationProvider>
-      <Toaster richColors/>
-      <Router>
-        <Routes>
+    useEffect(() => {
+      setupMessageListener()
+      console.log('Firebase message listener set up')
+    }, []),
+    <>
+      <Routes>
           <Route 
             path="/" 
             element={
@@ -136,10 +140,25 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/notifications"
+            element={
+              <ProtectedRoute>
+                <NotificationsPage/>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard/>
+              </ProtectedRoute>
+            }
+          />
         </Routes>
-      </Router>
-    </AuthenticationProvider>
-    
+    </>
+        
   )
 }
 

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import edu.cit.projectsync.Service.EmailService;
+import edu.cit.projectsync.Service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,9 @@ public class TaskController {
 
     @Autowired
     private TaskService taskService;
+
+    @Autowired
+    private NotificationService notificationService;
 
     @Autowired
     private ProjectService projectService;
@@ -47,6 +51,7 @@ public class TaskController {
 
             if (createdTask.getAssignedTo() != null) {
                 emailService.sendTaskAssignmentNotification(createdTask);
+                notificationService.sendTaskNotification(createdTask);
             }
 
             // Map TaskEntity back to TaskDTO

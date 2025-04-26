@@ -130,15 +130,15 @@ export default function LandingPage() {
 
                 {/* Desktop Navigation */}
                 <div className="hidden md:flex gap-6 lg:gap-10 font-bold">
-                {navlinks.map((link, index) => (
-                    <Link
-                        key={index}
-                        to={link.url}
-                        className="text-base px-4 py-1 rounded-sm hover:bg-primary hover:text-white transition-colors"
-                    >
-                        {link.name}
-                    </Link>
-                ))}
+                    {navlinks.map((link, index) => (
+                        <a
+                            key={index}
+                            href={link.url}
+                            className="text-base px-4 py-1 rounded-sm hover:bg-primary hover:text-white transition-colors"
+                        >
+                            {link.name}
+                        </a>
+                    ))}
                 </div>
 
                 {/* Desktop Buttons */}
@@ -162,20 +162,12 @@ export default function LandingPage() {
                 <div className="md:hidden fixed inset-0 top-[68px] bg-background z-50 p-4">
                     <div className="flex flex-col gap-4">
                         {navlinks.map((link, index) => (
-                            <a
-                                key={index}
-                                href={link.url}
-                                className="text-lg font-medium px-4 py-2 rounded-sm hover:bg-primary hover:text-white"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    setMobileMenuOpen(false);
-                                    const element = document.querySelector(link.url);
-                                    if (element) {
-                                        element.scrollIntoView({ behavior: 'smooth' });
-                                    }
-                                }}
+                        <a
+                            key={index}
+                            href={link.url}
+                            className="text-base px-4 py-1 rounded-sm hover:bg-primary hover:text-white transition-colors"
                             >
-                                {link.name}
+                            {link.name}
                             </a>
                         ))}
                         <div className="flex gap-2 mt-4">
@@ -214,7 +206,7 @@ export default function LandingPage() {
                     <p className="text-base md:text-lg text-muted-foreground mt-4 md:mt-6">
                         With ProjectSync, organize tasks, collaborate with your team, and stay on top of deadlines effortlessly
                     </p>
-                    <Button size="lg" className="mt-6 md:mt-8 font-medium">
+                    <Button size="lg" className="mt-6 md:mt-8 font-medium" onClick={() => navigate("/signup")}>
                         Get Started
                     </Button>
                 </div>
