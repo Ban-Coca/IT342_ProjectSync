@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<transitionSet xmlns:android="http://schemas.android.com/apk/res/android">
+    <changeBounds
+        android:duration="400"
+        android:interpolator="@android:interpolator/fast_out_slow_in" />
+    <changeTransform
+        android:duration="400"
+        android:interpolator="@android:interpolator/fast_out_slow_in" />
+    <changeClipBounds
+        android:duration="400"
+        android:interpolator="@android:interpolator/fast_out_slow_in" />
+    <changeImageTransform
+        android:duration="400"
+        android:interpolator="@android:interpolator/fast_out_slow_in" />
+</transitionSet>
