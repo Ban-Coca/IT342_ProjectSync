@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- res/layout/item_task.xml -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="12dp">
+    android:padding="12dp"
+    android:gravity="center_vertical"
+    android:background="@color/white">
 
     <!-- Task Name and Description -->
     <LinearLayout
@@ -14,7 +18,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/task_name"
+            android:id="@+id/task_taskName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Designing new landing page"
@@ -23,7 +27,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/task_description"
+            android:id="@+id/task_taskDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Create wireframes and mockups for the new landing page"
@@ -35,21 +39,28 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:layout_weight="0.9"
         android:gravity="center">
 
         <ImageView
-            android:id="@+id/status_icon"
-            android:layout_width="20dp"
+            android:id="@+id/task_taskStatus_icon"
+            android:layout_width="18dp"
             android:layout_height="20dp"
+            android:layout_marginRight="5dp"
             android:src="@drawable/ic_status_todo" />
+        <TextView
+            android:id="@+id/task_taskStatus_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:text="To-Do"/>
     </LinearLayout>
 
     <!-- Due Date -->
     <TextView
-        android:id="@+id/due_date"
+        android:id="@+id/task_taskDueDate"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="80dp"
         android:layout_weight="1"
         android:gravity="center"
         android:text="April 10, 2025"
@@ -64,7 +75,7 @@
         android:gravity="center">
 
         <TextView
-            android:id="@+id/priority"
+            android:id="@+id/task_priority"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_priority_high"
@@ -84,7 +95,7 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/assignee_initials"
+            android:id="@+id/task_assignee_initials"
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:background="@drawable/circle_gray"
@@ -95,7 +106,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/assignee_name"
+            android:id="@+id/task_assignee_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"

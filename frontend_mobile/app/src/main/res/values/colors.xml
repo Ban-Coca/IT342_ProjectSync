@@ -25,4 +25,18 @@
     <color name="priority_medium_text">#F57F17</color>
     <color name="priority_low_bg">#C8E6C9</color>
     <color name="priority_low_text">#2E7D32</color>
+    <color name="purple_500">#6200EE</color>
+    <color name="purple_700">#3700B3</color>
+    <color name="teal_200">#03DAC5</color>
+    <color name="teal_700">#018786</color>
+    <color name="purple_200">#BB86FC</color>
+    <color name="green">#008000</color>
+    <color name="gray">#808080</color>
+    <color name="red">#FF0000</color>
+    <color name="status_todo_bg">#CAC5C6</color>
+    <color name="status_todo_text">#A19E9C</color>
+    <color name="status_in_progress_bg">#F3E8C5</color>
+    <color name="status_in_progress_text">#FFA000</color>
+    <color name="status_done_bg">#D1F8D4</color>
+    <color name="status_done_text">#4CAF50</color>      <!-- Green text -->
 </resources>

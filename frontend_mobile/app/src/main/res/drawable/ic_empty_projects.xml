@@ -1,4 +1,57 @@
-<?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
 
-</selector>
+    <!-- Background Circle -->
+    <path
+        android:pathData="M60,60m-54,0a54,54 0,1 1,108 0a54,54 0,1 1,-108 0"
+        android:fillColor="#F5F7FA"/>
+
+    <!-- Folder Base -->
+    <path
+        android:pathData="M30,42L50,42L56,48L90,48L90,84L30,84Z"
+        android:fillColor="#E2E8F0"/>
+
+    <!-- Folder Front -->
+    <path
+        android:pathData="M30,48L90,48L90,84L30,84Z"
+        android:fillColor="#CBD5E1"/>
+
+    <!-- Folder Tab -->
+    <path
+        android:pathData="M50,42L56,48L50,48Z"
+        android:fillColor="#94A3B8"/>
+
+    <!-- Document 1 -->
+    <path
+        android:pathData="M45,56L75,56L75,76L45,76Z"
+        android:fillColor="#FFFFFF"/>
+
+    <!-- Document Lines -->
+    <path
+        android:pathData="M50,62L70,62"
+        android:strokeWidth="2"
+        android:strokeColor="#94A3B8"
+        android:strokeLineCap="round"/>
+
+    <path
+        android:pathData="M50,68L65,68"
+        android:strokeWidth="2"
+        android:strokeColor="#94A3B8"
+        android:strokeLineCap="round"/>
+
+    <!-- Plus Sign (for new project) -->
+    <path
+        android:pathData="M95,35L95,45"
+        android:strokeWidth="4"
+        android:strokeColor="#64748B"
+        android:strokeLineCap="round"/>
+
+    <path
+        android:pathData="M90,40L100,40"
+        android:strokeWidth="4"
+        android:strokeColor="#64748B"
+        android:strokeLineCap="round"/>
+</vector>

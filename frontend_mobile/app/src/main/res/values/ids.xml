@@ -1,3 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <item name="calendar_container" type="id" />
+    <item name="btn_prev_month" type="id" />
+    <item name="tv_month_year" type="id" />
+    <item name="btn_next_month" type="id" />
 </resources>
