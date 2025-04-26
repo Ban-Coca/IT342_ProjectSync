@@ -34,15 +34,24 @@ function DraggableTaskCard({ task = [], onSelectTask }) {
     },
   })
 
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-    zIndex: isDragging ? 1 : 0,
-  }
-  const assignee = task.assignedTo && task.assignedTo.length > 0 
-    ? task.assignedTo[0] 
-    : { name: "Unassigned", avatar: null, initials: "UN" };
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+      opacity: isDragging ? 0.5 : 1,
+      zIndex: isDragging ? 1 : 0,
+    }
+    const assignee = task.assignedTo && task.assignedTo.length > 0 
+      ? task.assignedTo[0] 
+      : { name: "Unassigned", avatar: null, initials: "UN" };
+
+    const initials = assignee.name === "Unassigned" 
+    ? "UN" 
+    : assignee.firstName
+        .split(' ')
+        .map(part => part.charAt(0))
+        .join('')
+        .substring(0, 2)
+        .toUpperCase();
 
   return (
     <Card
@@ -76,7 +85,7 @@ function DraggableTaskCard({ task = [], onSelectTask }) {
         <div className="flex justify-end mt-2">
           <Avatar className="h-5 w-5">
             <AvatarImage src={assignee.avatar} alt={assignee.name} />
-            <AvatarFallback className="text-[10px]">{assignee.initials}</AvatarFallback>
+            <AvatarFallback className="text-[10px]">{initials}</AvatarFallback>
           </Avatar>
         </div>
       </CardContent>

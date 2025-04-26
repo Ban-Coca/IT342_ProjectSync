@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { format, set } from "date-fns"
+import { format } from "date-fns"
 import { DndContext, KeyboardSensor, PointerSensor, closestCenter, useSensor, useSensors } from "@dnd-kit/core"
 import { SortableContext, sortableKeyboardCoordinates, useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
@@ -14,6 +14,9 @@ import { useQueryClient } from "@tanstack/react-query"
 import { useTask } from "@/hooks/use-task"
 import TaskViewCard from "@/components/task-view-card"
 import { toast } from 'sonner'
+import { Switch } from "@/components/ui/switch"
+import { Label } from "@/components/ui/label"
+import { EyeOffIcon, EyeIcon } from "lucide-react"
 // Draggable table row component
 function DraggableTableRow({ task, onSelectTask }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: task.taskId })
@@ -125,6 +128,7 @@ export function TableTab({ tasks, projectId, setTasks }) {
   const queryClient = useQueryClient()
   const [selectedTask, setSelectedTask] = useState(null)
   const [isSheetOpen, setIsSheetOpen] = useState(false)
+  const [showDoneTasks, setShowDoneTasks] = useState(false);
 
   const { editTaskMutation } = useTask({
     projectId,
@@ -148,7 +152,9 @@ export function TableTab({ tasks, projectId, setTasks }) {
 
   const sensors = useSensors(pointerSensor, keyboardSensor)
 
-  if (!tasks || tasks.length === 0) {
+  const filteredTasks = tasks ? (showDoneTasks ? tasks : tasks.filter(task => task.status !== "Done")) : [];
+  
+  if (!filteredTasks || filteredTasks.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16">
         <ClipboardX className="h-16 w-16 text-muted-foreground mb-4" />
@@ -161,7 +167,7 @@ export function TableTab({ tasks, projectId, setTasks }) {
   }
 
   // Group tasks by status
-  const tasksByStatus = tasks.reduce((acc, task) => {
+  const tasksByStatus = filteredTasks.reduce((acc, task) => {
     if (!acc[task.status]) {
       acc[task.status] = []
     }
@@ -223,6 +229,20 @@ export function TableTab({ tasks, projectId, setTasks }) {
   //TODO PASS THE SELECTED TASK ID INSTEAD OF THE TASK OBJECT
   return (
     <>
+      <div className="flex items-center justify-end space-x-2 mb-4">
+        <div className="flex items-center space-x-2">
+          {showDoneTasks ? <EyeIcon className="h-4 w-4" /> : <EyeOffIcon className="h-4 w-4" />}
+          <Label htmlFor="show-done-tasks" className="text-sm">
+            {showDoneTasks ? "Showing completed tasks" : "Hiding completed tasks"}
+          </Label>
+        </div>
+        <Switch
+          id="show-done-tasks"
+          checked={showDoneTasks}
+          onCheckedChange={setShowDoneTasks}
+        />
+      </div>
+
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <div>
           {statuses.map((status) => (

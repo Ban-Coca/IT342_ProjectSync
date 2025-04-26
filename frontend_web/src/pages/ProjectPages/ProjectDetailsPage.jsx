@@ -255,6 +255,7 @@ export default function ProjectDetailsPage () {
                 onSubmit={handleCreateTask}
                 task={null}
                 teamMembers={ project.teamMemberIds|| []}
+                projectOwner={project.ownerId?.userId}
             />
         </MainLayout>
     )

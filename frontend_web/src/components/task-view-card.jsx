@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { format } from "date-fns"
 import { CalendarIcon, CheckCircle2Icon, Flag, Users, PencilIcon, Save, X } from "lucide-react"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet"
@@ -44,7 +44,9 @@ export default function TaskViewCard({ open, taskId, onOpenChange }) {
     const { project } = useProject({ projectId: task?.project?.projectId, getAuthHeader, currentUser })
     const [editedTask, setEditedTask] = useState(task ? { ...task } : {})
     const [selectedDate, setSelectedDate] = useState(task?.dueDate ? new Date(task.dueDate) : null)    
-    const formattedDate = task?.dueDate ? format(new Date(task.dueDate), "MMM d, yyyy") : "No due date"
+    const formattedDate = useMemo(() => {
+        return task?.dueDate ? format(new Date(task.dueDate), "MMM d, yyyy") : "No due date";
+      }, [task?.dueDate]);
 
     const [searchTerm, setSearchTerm] = useState('');
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -172,16 +174,17 @@ export default function TaskViewCard({ open, taskId, onOpenChange }) {
                                 <div className="flex-1">
                                     <p className="text-sm font-medium">Due Date</p>
                                     {isEditMode ? (
-                                    <Popover>
-                                        <PopoverTrigger asChild>
-                                        <Button variant="outline" className="mt-1 w-full justify-start text-left font-normal">
-                                            {selectedDate ? format(selectedDate, "MMM d, yyyy") : "Select a date"}
-                                        </Button>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-auto p-0">
-                                        <Calendar mode="single" selected={selectedDate} onSelect={handleDateSelect} initialFocus />
-                                        </PopoverContent>
-                                    </Popover>
+                                        <Input 
+                                            id="dueDate" 
+                                            type="date" 
+                                            value={selectedDate instanceof Date ? selectedDate.toISOString().split('T')[0] : selectedDate}
+                                            onChange={(e) => {
+                                                const newDate = e.target.value;
+                                                setSelectedDate(newDate);
+                                                handleInputChange("dueDate", newDate);
+                                            }}
+                                            min={new Date().toISOString().split('T')[0]}
+                                        />
                                     ) : (
                                         <p className="text-sm text-slate-500">{formattedDate}</p>
                                     )}

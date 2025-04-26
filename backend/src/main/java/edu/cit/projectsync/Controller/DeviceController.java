@@ -49,4 +49,30 @@ public class DeviceController {
                     .body("Failed to register device: " + e.getMessage());
         }
     }
+    @PostMapping("/revoke-device")
+    public ResponseEntity<String> revokeDevice(@RequestBody DeviceRegistrationRequest request) {
+        try {
+            // Find user by the provided userId
+            UserEntity user = userService.findById(request.getUserId());
+
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            }
+
+            // Check if the token matches the user's current token
+            if (request.getToken() != null && request.getToken().equals(user.getDeviceToken())) {
+                // Clear the device token
+                user.setDeviceToken(null);
+                userService.postUserRecord(user);
+                log.info("Revoked device token for user: " + request.getUserId());
+                return ResponseEntity.ok("Device token revoked successfully");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Token mismatch or not provided");
+            }
+        } catch (Exception e) {
+            log.error("Error revoking device token: " + e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to revoke device token: " + e.getMessage());
+        }
+    }
 }

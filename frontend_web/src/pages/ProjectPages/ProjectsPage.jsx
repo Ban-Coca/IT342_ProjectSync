@@ -9,7 +9,7 @@ import { ProjectDropdown } from "@/components/project-dropdown-fucntions";
 import DeleteModal from "@/components/delete-modal";
 import { useProject } from "@/hooks/use-project";
 import { Skeleton } from "@/components/ui/skeleton";
-
+import { ChevronLeft, ChevronRight } from "lucide-react";
 export default function ProjectsPage(){
     const { currentUser, getAuthHeader } = useAuth();
     const navigate = useNavigate();
@@ -19,6 +19,10 @@ export default function ProjectsPage(){
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
     const [currentProject, setCurrentProject] = useState(null);
     const [projectToDelete, setProjectToDelete] = useState(null);
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const projectsPerPage = 5;
+
     const {
         projects,
         isLoading,
@@ -34,7 +38,25 @@ export default function ProjectsPage(){
         onUpdateSuccess: () => {setDialogOpen(false);},
         onDeleteSuccess: () => {setDeleteDialogOpen(false);},
     });
+
+    const totalPages = projects ? Math.ceil(projects.length / projectsPerPage) : 0;
+    const indexOfLastProject = currentPage * projectsPerPage;
+    const indexOfFirstProject = indexOfLastProject - projectsPerPage;
+    const currentProjects = projects ? projects.slice(indexOfFirstProject, indexOfLastProject) : [];
     
+    // Pagination handlers
+    const goToNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+    
+    const goToPreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
     const handleCreateProject = (project) => {
         const projectWithOwner = {
             ...project,
@@ -99,33 +121,64 @@ export default function ProjectsPage(){
                     </div>
                 ) : (
                     <div>
-                        {projects.length > 0 ? (
-                            <div className="flex flex-col gap-3 md:gap-4">
-                                {projects.map((project) => (
-                                    <div
-                                    key={project.projectId}
-                                    className="flex flex-col sm:flex-row justify-between border rounded-md p-3 sm:p-4 hover:bg-muted/50 transition duration-300 ease-in-out cursor-pointer"
-                                    >
-                                        <div 
-                                            className="mb-2 sm:mb-0 flex-grow cursor-pointer"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                navigate(`/projects/${project.projectId}`);
-                                            }}                                        
+                        {projects && projects.length > 0 ? (
+                            <>
+                                <div className="flex flex-col gap-3 md:gap-4">
+                                    {currentProjects.map((project) => (
+                                        <div
+                                        key={project.projectId}
+                                        className="flex flex-col sm:flex-row justify-between border rounded-md p-3 sm:p-4 hover:bg-muted/50 transition duration-300 ease-in-out cursor-pointer"
                                         >
-                                            <h2 className="text-base sm:text-lg font-bold">{project.name}</h2>
-                                            <p className="text-xs sm:text-sm text-muted-foreground">{project.description}</p>
+                                            <div 
+                                                className="mb-2 sm:mb-0 flex-grow cursor-pointer"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    navigate(`/projects/${project.projectId}`);
+                                                }}                                        
+                                            >
+                                                <h2 className="text-base sm:text-lg font-bold">{project.name}</h2>
+                                                <p className="text-xs sm:text-sm text-muted-foreground">{project.description}</p>
+                                            </div>
+                                            <div className="flex items-center self-end sm:self-auto gap-2">
+                                                <ProjectDropdown 
+                                                    project={project} 
+                                                    onEdit={() => handleEditButton(project)} 
+                                                    onDelete={() => handleDeleteButton(project)}
+                                                />
+                                            </div>
                                         </div>
-                                        <div className="flex items-center self-end sm:self-auto gap-2">
-                                            <ProjectDropdown 
-                                                project={project} 
-                                                onEdit={() => handleEditButton(project)} 
-                                                onDelete={() => handleDeleteButton(project)}
-                                            />
-                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Pagination Controls */}
+                                {totalPages > 1 && (
+                                    <div className="flex justify-between items-center mt-6 p-2">
+                                        <Button 
+                                            variant="outline" 
+                                            size="sm" 
+                                            onClick={goToPreviousPage}
+                                            disabled={currentPage === 1}
+                                            className="flex items-center gap-1"
+                                        >
+                                            <ChevronLeft className="h-4 w-4" /> Previous
+                                        </Button>
+                                        
+                                        <span className="text-sm text-muted-foreground">
+                                            Page {currentPage} of {totalPages}
+                                        </span>
+                                        
+                                        <Button 
+                                            variant="outline" 
+                                            size="sm" 
+                                            onClick={goToNextPage}
+                                            disabled={currentPage === totalPages}
+                                            className="flex items-center gap-1"
+                                        >
+                                            Next <ChevronRight className="h-4 w-4" />
+                                        </Button>
                                     </div>
-                                ))}
-                            </div>
+                                )}
+                            </>
                         ) : (
                             <div className="flex items-center justify-center h-48 sm:h-64 border rounded-md flex-col gap-3 sm:gap-4 p-4 sm:p-6 text-center">
                                 <p className="text-sm sm:text-base text-muted-foreground max-w-md">

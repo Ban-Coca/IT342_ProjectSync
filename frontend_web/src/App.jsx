@@ -16,7 +16,8 @@ import 'ldrs/react/Grid.css'
 import { useEffect } from 'react'
 import { setupMessageListener } from './service/firebase/firebaseService'
 import NotificationsPage from './pages/Notification'
-import Dashboard from './pages/Dashboard'
+import DashboardPage from './pages/Dashboard'
+import NotFoundPage from './pages/errors/404'
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
   if (loading) {
@@ -56,7 +57,6 @@ function App() {
   return (
     useEffect(() => {
       setupMessageListener()
-      console.log('Firebase message listener set up')
     }, []),
     <>
       <Routes>
@@ -152,11 +152,13 @@ function App() {
             path="/dashboard"
             element={
               <ProtectedRoute>
-                <Dashboard/>
+                <DashboardPage/>
               </ProtectedRoute>
             }
           />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
+        
     </>
         
   )
