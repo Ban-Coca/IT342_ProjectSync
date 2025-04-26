@@ -7,6 +7,7 @@ import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import edu.cit.projectsync.Controller.DocumentController;
 import edu.cit.projectsync.Entity.NotificationEntity;
+import edu.cit.projectsync.Entity.ProjectEntity;
 import edu.cit.projectsync.Entity.TaskEntity;
 import edu.cit.projectsync.Repository.NotificationRepository;
 import org.slf4j.Logger;
@@ -90,6 +91,57 @@ public class NotificationService {
         } catch (FirebaseMessagingException e) {
             log.error("Error sending task notification: " + e.getMessage(), e);
             // You might want to throw this exception to be caught by the calling method
+        } catch (Exception e) {
+            log.error("Unexpected error in notification service: " + e.getMessage(), e);
+        }
+    }
+
+    @Transactional
+    public void sendProjectAdditionNotification(ProjectEntity project){
+        try {
+            if (project.getTeamMembers() == null || project.getTeamMembers().isEmpty()) {
+                log.info("No users assigned to project. Skipping notification.");
+                return;
+            }
+
+            String title = "New Project Added: " + project.getName();
+            String body = "You've been added to a new project.";
+
+            // Save notification to database
+            for (UserEntity user : project.getTeamMembers()) {
+                NotificationEntity notification = new NotificationEntity(
+                        title,
+                        body,
+                        user,
+                        "PROJECT_ADDED",
+                        project.getProjectId()
+                );
+                repository.save(notification);
+
+                String deviceToken = user.getDeviceToken();
+
+                if (deviceToken == null || deviceToken.isEmpty()) {
+                    log.info("User doesn't have a registered device token. Skipping notification.");
+                    continue;
+                }
+
+                // Create notification message targeting specific device
+                Message message = Message.builder()
+                        .setNotification(Notification.builder()
+                                .setTitle(title)
+                                .setBody(body)
+                                .build())
+                        .setToken(deviceToken) // Send to specific device token instead of topic
+                        .build();
+
+                log.info("Sending project addition notification to user ID: " + user.getUserId());
+
+                // Send the message
+                String response = FirebaseMessaging.getInstance(firebaseApp).send(message);
+                log.info("Successfully sent notification: " + response);
+            }
+        } catch (FirebaseMessagingException e) {
+            log.error("Error sending project addition notification: " + e.getMessage(), e);
         } catch (Exception e) {
             log.error("Unexpected error in notification service: " + e.getMessage(), e);
         }

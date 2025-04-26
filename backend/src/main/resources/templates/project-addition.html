@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>You've Been Added to a Project - ProjectSync</title>
+    <style type="text/css">
+        /* Reset styles */
+        body, p, h1, h2, h3, h4, h5, h6 {
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.6;
+            color: #333333;
+            background-color: #f5f5f5;
+        }
+        /* Container styles */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+        }
+        /* Header styles */
+        .header {
+            padding: 20px;
+            background-color: #1a1a1a;
+            text-align: center;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffffff;
+        }
+        /* Content styles */
+        .content {
+            padding: 30px 20px;
+        }
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1a1a1a;
+            margin-bottom: 20px;
+        }
+        .text {
+            font-size: 16px;
+            color: #555555;
+            margin-bottom: 20px;
+        }
+        /* Project card styles */
+        .project-card {
+            margin: 25px 0;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .project-header {
+            padding: 15px;
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+        .project-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .project-meta {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #cccccc;
+        }
+        .project-body {
+            padding: 20px;
+        }
+        .project-details {
+            margin-bottom: 15px;
+        }
+        .detail-label {
+            font-weight: bold;
+            color: #1a1a1a;
+        }
+        .detail-value {
+            color: #555555;
+        }
+        .team-member {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .member-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            margin-right: 10px;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            color: #777777;
+        }
+        .member-name {
+            font-weight: bold;
+        }
+        .member-role {
+            font-size: 14px;
+            color: #777777;
+        }
+        /* Role badge styles */
+        .role {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+        .role-member {
+            background-color: #4caf50;
+            color: white;
+        }
+        .role-admin {
+            background-color: #2196f3;
+            color: white;
+        }
+        .role-manager {
+            background-color: #9c27b0;
+            color: white;
+        }
+        /* Button styles */
+        .button-container {
+            margin: 30px 0;
+            text-align: center;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 4px;
+        }
+        /* Footer styles */
+        .footer {
+            padding: 20px;
+            background-color: #f5f5f5;
+            text-align: center;
+            font-size: 14px;
+            color: #777777;
+        }
+        /* Responsive styles */
+        @media screen and (max-width: 480px) {
+            .title {
+                font-size: 22px;
+            }
+            .button {
+                display: block;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="logo">ProjectSync</div>
+    </div>
+    <div class="content">
+        <h1 class="title">You've Been Added to a Project</h1>
+        <p class="text" th:text="'Hello ' + ${userName} + ','">Hello User,</p>
+        <p class="text">You have been added to a new project in ProjectSync. Here are the details:</p>
+
+        <div class="project-card">
+            <div class="project-header">
+                <div class="project-title" th:text="${project.name}">Website Redesign</div>
+                <div class="project-meta" th:text="'Start date: ' + ${#temporals.format(project.startDate, 'MMMM d, yyyy')} + ' • Deadline: ' + ${#temporals.format(project.endDate, 'MMMM d, yyyy')}">Start date: April 10, 2025 • Deadline: May 30, 2025</div>
+            </div>
+            <div class="project-body">
+                <div class="project-details">
+                    <p class="detail-label">Project Manager:</p>
+                    <p class="detail-value" th:text="${project.owner.getFirstName()}">Sarah Johnson</p>
+                </div>
+
+                <div class="project-details">
+                    <p class="detail-label">Project Description:</p>
+                    <p class="detail-value" th:text="${project.description}">Redesigning the company website with a focus on improved user experience and modern aesthetics. The project includes new layouts, responsive design, and updated content.</p>
+                </div>
+
+                <div class="project-details">
+                    <p class="detail-label">Team Members:</p>
+                    <div class="team-members">
+                        <div class="team-member" th:each="member : ${project.teamMembers}">
+                            <div>
+                                <span class="member-name" th:text="${member.firstName}"></span>
+                            </div>
+                        </div>
+                        <div class="team-member" th:if="${showCurrentUser}">
+                            <div class="member-avatar" th:text="${#strings.substring(userName, 0, 1)} + (${userLastName} ? ${#strings.substring(userLastName, 0, 1)} : '')"></div>
+                            <div>
+                                <span class="member-name">You</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<!--        <div class="button-container">-->
+<!--            <a href="#" th:href="${projectUrl}" class="button">View Project</a>-->
+<!--        </div>-->
+
+        <p class="text">You can access the project right away and start collaborating with your team. If you have any questions, please contact your project manager.</p>
+        <p class="text">Welcome aboard!</p>
+        <p class="text">Best regards,<br>The ProjectSync Team</p>
+    </div>
+    <div class="footer">
+        <p th:text="'© ' + ${#calendars.format(#calendars.createNow(), 'yyyy')} + ' ProjectSync. All rights reserved.'">© 2025 ProjectSync. All rights reserved.</p>
+    </div>
+</div>
+</body>
+</html>
