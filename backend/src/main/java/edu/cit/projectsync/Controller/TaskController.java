@@ -17,7 +17,6 @@ import edu.cit.projectsync.Service.TaskService;
 
 @RestController
 @RequestMapping("/api/tasks")
-@CrossOrigin(origins = "http://localhost:5173")
 public class TaskController {
 
     @Autowired

@@ -19,7 +19,7 @@ public class ProjectsyncApplication {
         System.setProperty("GOOGLE_CLIENT_SECRET", Objects.requireNonNull(dotenv.get("GOOGLE_CLIENT_SECRET")));
         System.setProperty("JWT_SECRET", Objects.requireNonNull(dotenv.get("JWT_SECRET")));
         System.setProperty("JWT_EXPIRATION", Objects.requireNonNull(dotenv.get("JWT_EXPIRATION")));
-        System.setProperty("google.redirect-uri", Objects.requireNonNull(dotenv.get("GOOGLE_REDIRECT_URI")));
+        System.setProperty("GOOGLE_REDIRECT_URI", Objects.requireNonNull(dotenv.get("GOOGLE_REDIRECT_URI")));
         System.setProperty("EMAIL_HOST", Objects.requireNonNull(dotenv.get("EMAIL_HOST")));
         System.setProperty("EMAIL_PORT", Objects.requireNonNull(dotenv.get("EMAIL_PORT")));
         System.setProperty("EMAIL_USERNAME", Objects.requireNonNull(dotenv.get("EMAIL_USERNAME")));

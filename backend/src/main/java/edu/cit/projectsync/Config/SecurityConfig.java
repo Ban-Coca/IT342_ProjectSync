@@ -1,5 +1,7 @@
 package edu.cit.projectsync.Config;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import edu.cit.projectsync.Service.UserService;
@@ -41,7 +43,12 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173")); // Add allowed origins
+        configuration.setAllowedOrigins(List.of(
+                "http://localhost:5173",
+                "https://www.project-sync.xyz",
+                "https://project-sync.xyz",
+                "it-342-project-sync.vercel.app"
+        )); // Add allowed origins
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Add allowed HTTP methods
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type")); // Add allowed headers
         configuration.setAllowCredentials(true); // Allow credentials (e.g., cookies)
@@ -55,4 +62,5 @@ public class SecurityConfig {
     public JwtAuthenticationFilter jwtAuthenticationFilter(UserService userService) {
         return new JwtAuthenticationFilter(userService);
     }
+
 }

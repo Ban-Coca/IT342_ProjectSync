@@ -18,7 +18,6 @@ import edu.cit.projectsync.Service.UserService;
 
 @RestController
 @RequestMapping("/api/projects")
-@CrossOrigin(origins = "http://localhost:5173")
 public class ProjectController {
 
     @Autowired
