@@ -1,0 +1,80 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+
+    <!-- Background Circle -->
+    <path
+        android:pathData="M60,60m-54,0a54,54 0,1 1,108 0a54,54 0,1 1,-108 0"
+        android:fillColor="#F5F7FA"/>
+
+    <!-- Clipboard Base -->
+    <path
+        android:pathData="M40,30L80,30L80,90L40,90Z"
+        android:fillColor="#E2E8F0"/>
+
+    <!-- Clipboard Top -->
+    <path
+        android:pathData="M40,30L80,30L80,40L40,40Z"
+        android:fillColor="#CBD5E1"/>
+
+    <!-- Clipboard Clip -->
+    <path
+        android:pathData="M55,25L65,25L65,35L55,35Z"
+        android:fillColor="#94A3B8"/>
+
+    <!-- Task Item 1 -->
+    <path
+        android:pathData="M45,50L75,50L75,60L45,60Z"
+        android:fillColor="#FFFFFF"/>
+
+    <!-- Task Item 1 Checkbox -->
+    <path
+        android:pathData="M50,55m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0"
+        android:strokeWidth="2"
+        android:strokeColor="#94A3B8"/>
+
+    <!-- Task Item 1 Line -->
+    <path
+        android:pathData="M58,55L70,55"
+        android:strokeWidth="2"
+        android:strokeColor="#94A3B8"
+        android:strokeLineCap="round"/>
+
+    <!-- Task Item 2 -->
+    <path
+        android:pathData="M45,65L75,65L75,75L45,75Z"
+        android:fillColor="#FFFFFF"/>
+
+    <!-- Task Item 2 Checkbox -->
+    <path
+        android:pathData="M50,70m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0"
+        android:strokeWidth="2"
+        android:strokeColor="#94A3B8"/>
+
+    <!-- Task Item 2 Line -->
+    <path
+        android:pathData="M58,70L70,70"
+        android:strokeWidth="2"
+        android:strokeColor="#94A3B8"
+        android:strokeLineCap="round"/>
+
+    <!-- Task Item 3 -->
+    <path
+        android:pathData="M45,80L75,80L75,90L45,90Z"
+        android:fillColor="#FFFFFF"/>
+
+    <!-- Task Item 3 Checkbox -->
+    <path
+        android:pathData="M50,85m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0"
+        android:strokeWidth="2"
+        android:strokeColor="#94A3B8"/>
+
+    <!-- Task Item 3 Line -->
+    <path
+        android:pathData="M58,85L70,85"
+        android:strokeWidth="2"
+        android:strokeColor="#94A3B8"
+        android:strokeLineCap="round"/>
+</vector>
