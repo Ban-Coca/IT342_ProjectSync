@@ -106,7 +106,7 @@ public class DashboardController {
                     LocalDate dueDate = task.getDueDate();
                     return dueDate != null &&
                             dueDate.isBefore(today) &&
-                            !"Completed".equalsIgnoreCase(task.getStatus());
+                            !"Done".equalsIgnoreCase(task.getStatus());
                 })
                 .map(task -> {
                     Map<String, Object> taskData = new HashMap<>();
@@ -131,7 +131,7 @@ public class DashboardController {
                     List<TaskEntity> projectTasks = project.getTasks();
                     long totalTasks = projectTasks.size();
                     long completedTasks = projectTasks.stream()
-                            .filter(task -> "Completed".equalsIgnoreCase(task.getStatus()))
+                            .filter(task -> "Done".equalsIgnoreCase(task.getStatus()))
                             .count();
 
                     double progressPercentage = totalTasks > 0 ?
@@ -198,7 +198,7 @@ public class DashboardController {
                         List<TaskEntity> memberTasks = member.getTasks();
                         long totalAssignedTasks = memberTasks.size();
                         long completedTasks = memberTasks.stream()
-                                .filter(task -> "Completed".equalsIgnoreCase(task.getStatus()))
+                                .filter(task -> "Done".equalsIgnoreCase(task.getStatus()))
                                 .count();
 
                         double completionRate = totalAssignedTasks > 0 ?
