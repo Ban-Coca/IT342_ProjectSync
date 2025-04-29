@@ -15,7 +15,6 @@ import edu.cit.projectsync.api.TaskApi
 import edu.cit.projectsync.api.TaskRetrofitClient
 import edu.cit.projectsync.models.Project
 import edu.cit.projectsync.models.Task
-import edu.cit.projectsync.util.TokenManager
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -23,7 +22,6 @@ import java.util.UUID
 
 class ProjectBoardFragment : Fragment() {
 
-    private lateinit var tokenManager: TokenManager
     private lateinit var todoContainer: LinearLayout
     private lateinit var inProgressContainer: LinearLayout
     private lateinit var doneContainer: LinearLayout
@@ -31,7 +29,7 @@ class ProjectBoardFragment : Fragment() {
     private lateinit var inProgressTaskCount: TextView
     private lateinit var doneTaskCount: TextView
     private var fetchTasksCall: Call<List<Task>>? = null
-    private val tasks = mutableListOf<Task>() // Store tasks locally for updates
+    private val tasks = mutableListOf<Task>()
     private lateinit var project: Project
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,9 +44,6 @@ class ProjectBoardFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_tasks_board, container, false)
-
-        // Initialize TokenManager
-        tokenManager = TokenManager(requireContext())
 
         // Initialize views
         todoContainer = view.findViewById(R.id.todoBoard_task_container)

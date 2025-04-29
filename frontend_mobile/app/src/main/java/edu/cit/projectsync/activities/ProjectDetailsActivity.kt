@@ -10,7 +10,10 @@ import edu.cit.projectsync.R
 import edu.cit.projectsync.api.ProjectApi
 import edu.cit.projectsync.api.ProjectRetrofitClient
 import edu.cit.projectsync.fragments.ProjectBoardFragment
+import edu.cit.projectsync.fragments.ProjectCalendarFragment
+import edu.cit.projectsync.fragments.ProjectFilesFragment
 import edu.cit.projectsync.fragments.ProjectOverviewFragment
+import edu.cit.projectsync.fragments.ProjectTableFragment
 import edu.cit.projectsync.models.Project
 import java.util.UUID
 import retrofit2.Call
@@ -127,8 +130,7 @@ class ProjectDetailsActivity : BaseActivity() {
 
         tabTable.setOnClickListener {
             highlightTab(tabTable)
-            Toast.makeText(this, "Table tab clicked", Toast.LENGTH_SHORT).show()
-            // Add navigation logic for the Table tab here
+            loadFragment(ProjectTableFragment.newInstance(project))
         }
 
         tabBoard.setOnClickListener {
@@ -138,14 +140,12 @@ class ProjectDetailsActivity : BaseActivity() {
 
         tabCalendar.setOnClickListener {
             highlightTab(tabCalendar)
-            Toast.makeText(this, "Calendar tab clicked", Toast.LENGTH_SHORT).show()
-            // Add navigation logic for the Calendar tab here
+            loadFragment(ProjectCalendarFragment.newInstance(project))
         }
 
         tabFiles.setOnClickListener {
             highlightTab(tabFiles)
-            Toast.makeText(this, "Files tab clicked", Toast.LENGTH_SHORT).show()
-            // Add navigation logic for the Files tab here
+            loadFragment(ProjectFilesFragment.newInstance())
         }
 
         // Set default tab highlight (e.g., Overview tab)
