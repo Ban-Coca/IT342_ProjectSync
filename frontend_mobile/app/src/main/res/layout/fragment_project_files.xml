@@ -10,8 +10,10 @@
 
     <!-- Header -->
     <include
-        layout="@layout/layout_header"
         android:id="@+id/header"
+        layout="@layout/layout_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent" />
 
     <View
@@ -66,6 +68,7 @@
                         android:textColor="@color/gray_medium"
                         android:textSize="16sp" />
                 </LinearLayout>
+
                 <androidx.cardview.widget.CardView
                     android:id="@+id/filter_dropdown"
                     android:layout_width="0dp"
@@ -303,8 +306,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="Project_Requirements.docx"
                                     android:textColor="@color/black"
-                                    android:textSize="16sp"
-                                    android:textStyle="" />
+                                    android:textSize="16sp" />
 
                                 <TextView
                                     android:layout_width="wrap_content"
@@ -358,8 +360,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="Budget_Q2_2025.xlsx"
                                     android:textColor="@color/black"
-                                    android:textSize="16sp"
-                                    android:textStyle="" />
+                                    android:textSize="16sp" />
 
                                 <TextView
                                     android:layout_width="wrap_content"
@@ -413,8 +414,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="Design_Mockup.png"
                                     android:textColor="@color/black"
-                                    android:textSize="16sp"
-                                    android:textStyle="" />
+                                    android:textSize="16sp" />
 
                                 <TextView
                                     android:layout_width="wrap_content"
@@ -468,8 +468,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="Source_Code_v1.2.zip"
                                     android:textColor="@color/black"
-                                    android:textSize="16sp"
-                                    android:textStyle="" />
+                                    android:textSize="16sp" />
 
                                 <TextView
                                     android:layout_width="wrap_content"
@@ -493,8 +492,10 @@
 
     <!-- Bottom Navigation -->
     <include
-        layout="@layout/bottom_navigation"
         android:id="@+id/bottom_navigation"
+        layout="@layout/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

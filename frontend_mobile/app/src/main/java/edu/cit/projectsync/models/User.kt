@@ -1,12 +1,12 @@
-package edu.cit.projectsync.model
+package edu.cit.projectsync.models
 
 import java.util.*
 
 data class User(
     val userId: UUID? = null,
     val email: String,
-    val firstName: String? = null,
-    val lastName: String? = null,
+    var firstName: String? = null,
+    var lastName: String? = null,
     val password: String? = null,
     val provider: String? = null,
     val isActive: Boolean = true,

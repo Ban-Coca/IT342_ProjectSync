@@ -1,6 +1,6 @@
 package edu.cit.projectsync.api
 
-import edu.cit.projectsync.model.User
+import edu.cit.projectsync.models.User
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
