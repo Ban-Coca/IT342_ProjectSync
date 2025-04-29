@@ -11,4 +11,20 @@ export const searchUsers = async (keyword, header) => {
     }
 }
 
-export default searchUsers;
+export const updateUserProfile = async (userData, userId, updatePassword = false, header) => {
+    try {
+        const response = await axios.put(
+            `${API_URL}/update-profile?userId=${userId}&updatePassword=${updatePassword}`, 
+            userData, 
+            {headers: header}
+        );
+        return response.data;
+    } catch (error) {
+        throw error.response ? error.response.data : 'Error updating user profile';
+    }
+}
+
+export default {
+    searchUsers,
+    updateUserProfile
+};

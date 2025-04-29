@@ -18,6 +18,9 @@ import { setupMessageListener } from './service/firebase/firebaseService'
 import NotificationsPage from './pages/Notification'
 import DashboardPage from './pages/Dashboard'
 import NotFoundPage from './pages/errors/404'
+import ProfilePage from './pages/UserManagement'
+
+
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
   if (loading) {
@@ -153,6 +156,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <DashboardPage/>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <ProfilePage/>
               </ProtectedRoute>
             }
           />

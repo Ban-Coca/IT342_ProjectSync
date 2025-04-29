@@ -198,9 +198,12 @@ public class UserController {
             return ResponseEntity.badRequest().body("Error creating user: " + e.getMessage());
         }
     }
-    
+
     @PutMapping("/update-profile")
-    public ResponseEntity<?> updateProfile(@RequestBody UserEntity updatedUserDetails, @RequestParam("userId") UUID userId) {
+    public ResponseEntity<?> updateProfile(
+            @RequestBody UserEntity updatedUserDetails,
+            @RequestParam("userId") UUID userId,
+            @RequestParam(value = "updatePassword", defaultValue = "false") boolean updatePassword) {
         try {
             logger.info("Received profile update request for user: {}", userId);
 
@@ -213,7 +216,16 @@ public class UserController {
             // Update user details
             user.setFirstName(updatedUserDetails.getFirstName());
             user.setLastName(updatedUserDetails.getLastName());
+            user.setEmail(updatedUserDetails.getEmail());
             user.setIsActive(updatedUserDetails.IsActive());
+
+            // Update password if requested and provided
+            if (updatePassword && updatedUserDetails.getPassword() != null && !updatedUserDetails.getPassword().isEmpty()) {
+                // Encrypt the new password
+                String encryptedPassword = passwordEncoder.encode(updatedUserDetails.getPassword());
+                user.setPassword(encryptedPassword);
+                logger.info("Password updated for user: {}", userId);
+            }
 
             // Save updated user
             UserEntity updatedUser = userv.postUserRecord(user);
