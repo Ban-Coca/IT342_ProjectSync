@@ -2,11 +2,9 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    tools:context=".activities.TasksActivity">
+    android:background="@color/white">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -90,16 +88,17 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- Task Tab Section -->
-        <FrameLayout
+        <LinearLayout
             android:id="@+id/task_tab"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginHorizontal="16dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:background="@color/white"
-            app:layout_constraintTop_toBottomOf="@id/visibility_section"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/visibility_section">
+            <include
+                layout="@layout/fragment_tasks_table" />
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>

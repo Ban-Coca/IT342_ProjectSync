@@ -98,7 +98,7 @@ class TasksTableFragment : Fragment() {
         recyclerView.visibility = View.VISIBLE
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = TaskBoardAdapter(requireContext(), tasks) { task ->
-            Toast.makeText(requireContext(), "Clicked on task: ${task.title}", Toast.LENGTH_SHORT).show()
+
         }
     }
 

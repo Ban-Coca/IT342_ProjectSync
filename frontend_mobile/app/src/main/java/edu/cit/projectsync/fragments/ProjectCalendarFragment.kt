@@ -15,15 +15,18 @@ import edu.cit.projectsync.R
 import edu.cit.projectsync.adapters.CalendarAdapter
 import edu.cit.projectsync.api.TaskApi
 import edu.cit.projectsync.api.TaskRetrofitClient
+import edu.cit.projectsync.models.Project
 import edu.cit.projectsync.models.Task
 import edu.cit.projectsync.util.TokenManager
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Locale
+import java.util.UUID
 
-class TasksCalendarFragment : Fragment() {
+class ProjectCalendarFragment : Fragment() {
 
     private lateinit var tokenManager: TokenManager
     private lateinit var calendarGrid: GridLayout
@@ -35,7 +38,15 @@ class TasksCalendarFragment : Fragment() {
     private var tasks: List<Task> = emptyList()
     private val taskMap = mutableMapOf<String, MutableList<Task>>() // Map tasks by deadline
     private val calendar = Calendar.getInstance()
-    private var selectedDayView: TextView? = null // Track the currently selected day view
+    private var selectedDayView: TextView? = null
+    private lateinit var project: Project
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            project = it.getSerializable(ProjectCalendarFragment.ARG_PROJECT) as Project // Retrieve the Project object
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,9 +66,6 @@ class TasksCalendarFragment : Fragment() {
         taskRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         taskRecyclerView.adapter = taskAdapter
 
-        // Initialize TokenManager
-        tokenManager = TokenManager(requireContext())
-
         // Set up month navigation
         view.findViewById<View>(R.id.btn_prev_month).setOnClickListener {
             calendar.add(Calendar.MONTH, -1)
@@ -68,18 +76,28 @@ class TasksCalendarFragment : Fragment() {
             updateCalendar()
         }
 
-        val user = tokenManager.getUser()
-        val userId = user?.userId
-
         // Fetch tasks assigned to the user
-        fetchTasksAssignedToUser(userId.toString())
+        fetchTasksAssignedToProject(project.projectId)
 
+        // Inflate the layout for this fragment
         return view
     }
 
-    private fun fetchTasksAssignedToUser(userId: String) {
+    companion object {
+        const val ARG_PROJECT = "arg_project" // Key for passing the Project object
+
+        fun newInstance(project: Project): ProjectCalendarFragment {
+            val fragment = ProjectCalendarFragment()
+            val args = Bundle()
+            args.putSerializable(ARG_PROJECT, project) // Pass the Project object as a Serializable
+            fragment.arguments = args
+            return fragment
+        }
+    }
+
+    private fun fetchTasksAssignedToProject(projectId: UUID) {
         val taskApi = TaskRetrofitClient.create(TaskApi::class.java)
-        taskApi.getTasksAssignedToUser(userId).enqueue(object : Callback<List<Task>> {
+        taskApi.getTasksByProjectId(projectId).enqueue(object : Callback<List<Task>> {
 
             override fun onResponse(call: Call<List<Task>>, response: Response<List<Task>>) {
                 if (response.isSuccessful) {

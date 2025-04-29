@@ -1,30 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/task_calendar_container"
+    android:id="@+id/task_calendar_tab"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_margin="1dp"
-    android:background="@color/white"
-    app:cardElevation="4dp">
+    android:layout_height="580dp"
+    android:fillViewport="true"
+    android:background="@color/white">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp">
 
         <!-- Calendar Section -->
         <LinearLayout
             android:id="@+id/task_calendar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/task_calender_task"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="match_parent"
@@ -73,110 +67,49 @@
 
             <!-- Calendar Grid -->
             <GridLayout
+                android:id="@+id/task_calendar_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:columnCount="7"
-                android:rowCount="7">
-
-                <!-- Days of Week -->
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:gravity="center"
-                    android:padding="8dp"
-                    android:text="Sun"
-                    android:textColor="@color/gray_medium"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:gravity="center"
-                    android:padding="8dp"
-                    android:text="Mon"
-                    android:textColor="@color/gray_medium"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:gravity="center"
-                    android:padding="8dp"
-                    android:text="Tues"
-                    android:textColor="@color/gray_medium"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:gravity="center"
-                    android:padding="8dp"
-                    android:text="Wed"
-                    android:textColor="@color/gray_medium"
-                    android:textSize="14sp" />
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:gravity="center"
-                    android:padding="8dp"
-                    android:text="Thu"
-                    android:textColor="@color/gray_medium"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:gravity="center"
-                    android:padding="8dp"
-                    android:text="Fri"
-                    android:textColor="@color/gray_medium"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:gravity="center"
-                    android:padding="8dp"
-                    android:text="Sat"
-                    android:textColor="@color/gray_medium"
-                    android:textSize="14sp" />
-                <!-- Add other days dynamically -->
-            </GridLayout>
+                android:rowCount="7"
+                android:padding="16dp" />
         </LinearLayout>
 
         <!-- Tasks for Selected Date -->
         <LinearLayout
-            android:id="@+id/task_calender_task"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp"
-            app:layout_constraintTop_toBottomOf="@id/task_calendar"
-           >
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tv_tasks_for_date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
+                android:layout_marginBottom="16dp"
                 android:text="Tasks for April 6, 2025"
                 android:textColor="@color/black"
-                android:textSize="24sp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
+            <!-- RecyclerView for Tasks -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/task_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:scrollbars="vertical" />
+
+            <!-- Empty State -->
             <LinearLayout
+                android:id="@+id/calendar_noTask"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:padding="24dp">
+                android:padding="24dp"
+                android:visibility="gone">
 
                 <ImageView
                     android:layout_width="64dp"
@@ -201,19 +134,7 @@
                     android:text="Select another date or add a new task"
                     android:textColor="@color/gray_medium"
                     android:textSize="16sp" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_add_task_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/rounded_button_black"
-                    android:paddingHorizontal="16dp"
-                    android:paddingVertical="12dp"
-                    android:text="Add Task"
-                    android:textColor="@color/white"
-                    app:backgroundTint="@color/black"
-                    app:cornerRadius="24dp" />
             </LinearLayout>
         </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 </ScrollView>

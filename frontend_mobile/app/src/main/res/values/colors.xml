@@ -10,9 +10,12 @@
     <color name="statusPending">#FCE391</color>
     <color name="navSelected">#808080</color>
     <color name="textPrimary">#212121</color>
+    <color name="selected_day_background">#FFEB3B</color> <!-- Yellow background -->
     <color name="textSecondary">#666666</color>
     <color name="divider">#E0E0E0</color>
     <color name="drag_highlight">#FFDDDDDD</color>
+    <color name="task_highlight_color">#FFEB3B</color> <!-- Yellow background -->
+    <color name="task_highlight_stroke_color">#FFC107</color> <!-- Amber border -->
     <color name="gray_dark">#424242</color>
     <color name="gray_light">#E0E0E0</color>
     <color name="text_primary">#1D1B20</color>
