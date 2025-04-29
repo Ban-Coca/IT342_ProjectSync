@@ -44,4 +44,6 @@
     <string name="spreadsheet" />
     <string name="image" />
     <string name="archive" />
+    <string name="select_status" />
+    <string name="set_priority" />
 </resources>
