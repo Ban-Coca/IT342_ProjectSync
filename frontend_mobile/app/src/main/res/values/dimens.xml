@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="profile_dropdown_width">200dp</dimen>
+    <dimen name="board_column_width">300dp</dimen>
+    <dimen name="board_header_padding">16dp</dimen>
+    <dimen name="board_min_height">500dp</dimen>
 </resources>

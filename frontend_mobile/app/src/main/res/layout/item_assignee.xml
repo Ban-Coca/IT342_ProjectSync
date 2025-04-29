@@ -1,0 +1,28 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:padding="4dp">
+
+    <TextView
+        android:id="@+id/assignee_initials"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:background="@drawable/circle_gray"
+        android:gravity="center"
+        android:text="AJ"
+        android:textColor="@color/gray"
+        android:textSize="12sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/assignee_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Alex Johnson"
+        android:textColor="@color/black"
+        android:textSize="12sp" />
+</LinearLayout>

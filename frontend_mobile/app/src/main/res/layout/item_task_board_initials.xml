@@ -1,0 +1,19 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:padding="4dp">
+
+    <TextView
+        android:id="@+id/board_assignee_initials"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:background="@drawable/circle_gray"
+        android:gravity="center"
+        android:text="AJ"
+        android:textColor="@color/gray"
+        android:textSize="7sp"
+        android:textStyle="bold" />
+</LinearLayout>

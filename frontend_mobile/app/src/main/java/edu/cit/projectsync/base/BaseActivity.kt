@@ -1,10 +1,12 @@
 package edu.cit.projectsync.activities
 
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
@@ -56,12 +58,6 @@ open class BaseActivity : AppCompatActivity() {
                 finish()
             }
         }
-        findViewById<LinearLayout>(R.id.nav_calendar)?.setOnClickListener {
-            if (selectedItemId != R.id.nav_calendar) {
-                // Add intent for CalendarActivity if needed
-                // If implemented, add applyCustomTransition() after startActivity()
-            }
-        }
         findViewById<LinearLayout>(R.id.nav_tasks)?.setOnClickListener {
             if (selectedItemId != R.id.nav_tasks) {
                 val intent = Intent(this, TasksActivity::class.java)
@@ -79,18 +75,51 @@ open class BaseActivity : AppCompatActivity() {
 
     private fun highlightCurrentPage(selectedItemId: Int) {
         val navigationItems = listOf(
-            R.id.nav_home,
-            R.id.nav_projects,
-            R.id.nav_calendar,
-            R.id.nav_tasks,
+            R.id.nav_home to Pair(R.id.nav_home_icon, R.id.nav_home_text),
+            R.id.nav_projects to Pair(R.id.nav_projects_icon, R.id.nav_projects_text),
+            R.id.nav_tasks to Pair(R.id.nav_tasks_icon, R.id.nav_tasks_text)
         )
-        for (itemId in navigationItems) {
-            val view = findViewById<View>(itemId)
-            view?.isSelected = false // Only set isSelected if the view exists
+
+        for ((itemId, views) in navigationItems) {
+            val container = findViewById<LinearLayout>(itemId)
+            val icon = findViewById<ImageView>(views.first)
+            val text = findViewById<TextView>(views.second)
+
+            if (itemId == selectedItemId) {
+                // Apply unique highlight effect to selected item
+                container?.setBackgroundResource(R.drawable.nav_highlight_effect)
+                text?.setTextColor(getColor(R.color.white))
+                icon?.setColorFilter(getColor(R.color.white))
+
+                // Scale up the icon slightly for emphasis
+                icon?.scaleX = 1.2f
+                icon?.scaleY = 1.2f
+
+                // Make text bold
+                text?.setTypeface(text.typeface, Typeface.BOLD)
+            } else {
+                // Reset other items
+                container?.setBackgroundResource(android.R.color.transparent)
+                text?.setTextColor(getColor(R.color.gray_dark))
+                icon?.setColorFilter(getColor(R.color.gray_dark))
+
+                // Reset icon scale
+                icon?.scaleX = 1.0f
+                icon?.scaleY = 1.0f
+
+                // Reset text style
+                text?.setTypeface(text.typeface, Typeface.NORMAL)
+            }
         }
-        findViewById<View>(selectedItemId)?.isSelected = true
     }
 
+    protected fun refreshActivity() {
+        val intent = intent
+        finish() // Finish the current activity
+        overridePendingTransition(0, 0) // Remove transition animation
+        startActivity(intent) // Restart the activity
+        overridePendingTransition(0, 0) // Remove transition animation
+    }
     private fun showCustomDropdown(anchorView: View) {
         // Inflate the dropdown layout
         val dropdownView = layoutInflater.inflate(R.layout.profile_dropdown, null)

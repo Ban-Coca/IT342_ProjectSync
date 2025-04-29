@@ -12,6 +12,7 @@
     <color name="textPrimary">#212121</color>
     <color name="textSecondary">#666666</color>
     <color name="divider">#E0E0E0</color>
+    <color name="drag_highlight">#FFDDDDDD</color>
     <color name="gray_dark">#424242</color>
     <color name="gray_light">#E0E0E0</color>
     <color name="text_primary">#1D1B20</color>

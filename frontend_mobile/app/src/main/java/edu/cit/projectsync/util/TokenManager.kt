@@ -3,7 +3,7 @@ package edu.cit.projectsync.util
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
-import edu.cit.projectsync.model.User
+import edu.cit.projectsync.models.User
 import java.util.UUID
 
 class TokenManager(context: Context) {

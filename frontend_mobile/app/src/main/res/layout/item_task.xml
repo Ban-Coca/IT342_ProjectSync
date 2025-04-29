@@ -1,117 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- res/layout/item_task.xml -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="12dp"
-    android:gravity="center_vertical"
-    android:background="@color/white">
+    android:orientation="vertical">
 
-    <!-- Task Name and Description -->
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="2.5"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/task_taskName"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Designing new landing page"
-            android:textColor="@color/black"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@color/white"
+            android:padding="12dp">
 
-        <TextView
-            android:id="@+id/task_taskDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Create wireframes and mockups for the new landing page"
-            android:textColor="@color/gray_medium"
-            android:textSize="12sp" />
-    </LinearLayout>
+            <!-- Task Name and Description -->
+            <LinearLayout
+                android:layout_width="260dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2.5"
+                android:orientation="vertical">
 
-    <!-- Status -->
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="0.9"
-        android:gravity="center">
+                <TextView
+                    android:id="@+id/task_taskName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Designing new landing page"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
-        <ImageView
-            android:id="@+id/task_taskStatus_icon"
-            android:layout_width="18dp"
-            android:layout_height="20dp"
-            android:layout_marginRight="5dp"
-            android:src="@drawable/ic_status_todo" />
-        <TextView
-            android:id="@+id/task_taskStatus_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:text="To-Do"/>
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/task_taskDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Create wireframes and mockups for the new landing page"
+                    android:textColor="@color/gray_medium"
+                    android:textSize="12sp"
+                    android:maxLines="2"
+                    android:ellipsize="end" />
+            </LinearLayout>
 
-    <!-- Due Date -->
-    <TextView
-        android:id="@+id/task_taskDueDate"
-        android:layout_width="0dp"
-        android:layout_height="80dp"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:text="April 10, 2025"
-        android:textColor="@color/black"
-        android:textSize="12sp" />
+            <!-- Status -->
+            <LinearLayout
+                android:layout_width="200dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.9"
+                android:gravity="center">
 
-    <!-- Priority -->
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="center">
+                <ImageView
+                    android:id="@+id/task_taskStatus_icon"
+                    android:layout_width="18dp"
+                    android:layout_height="20dp"
+                    android:layout_marginEnd="5dp"
+                    android:src="@drawable/ic_status_todo" />
 
-        <TextView
-            android:id="@+id/task_priority"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/rounded_priority_high"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="4dp"
-            android:text="High"
-            android:textColor="@color/priority_high_text"
-            android:textSize="12sp" />
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/task_taskStatus_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:text="To-Do" />
+            </LinearLayout>
 
-    <!-- Assignee -->
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1.5"
-        android:gravity="center"
-        android:orientation="horizontal">
+            <!-- Due Date -->
+            <TextView
+                android:id="@+id/task_taskDueDate"
+                android:layout_width="170dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="April 10, 2025"
+                android:textColor="@color/black"
+                android:textSize="12sp" />
 
-        <TextView
-            android:id="@+id/task_assignee_initials"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:background="@drawable/circle_gray"
-            android:gravity="center"
-            android:text="AJ"
-            android:textColor="@color/white"
-            android:textSize="12sp"
-            android:textStyle="bold" />
+            <!-- Priority -->
+            <LinearLayout
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center">
 
-        <TextView
-            android:id="@+id/task_assignee_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="Alex Johnson"
-            android:textColor="@color/black"
-            android:textSize="12sp" />
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/task_priority"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded_priority_high"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="6dp"
+                    android:text="High"
+                    android:textColor="@color/priority_high_text"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <!-- Assignees Container -->
+            <LinearLayout
+                android:id="@+id/task_assignees_container"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.5"
+                android:gravity="center"
+                android:orientation="vertical" />
+        </LinearLayout>
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray_light" />
 </LinearLayout>

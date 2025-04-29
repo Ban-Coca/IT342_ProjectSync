@@ -10,7 +10,7 @@ import com.google.android.material.button.MaterialButton
 import edu.cit.projectsync.R
 import edu.cit.projectsync.api.UserRetrofitClient
 import edu.cit.projectsync.api.UserApi
-import edu.cit.projectsync.model.User
+import edu.cit.projectsync.models.User
 import edu.cit.projectsync.util.TokenManager
 import retrofit2.Call
 import retrofit2.Callback
@@ -88,8 +88,6 @@ class LoginActivity : Activity() {
                         // Save the token and user object
                         tokenManager.saveToken(token)
                         tokenManager.saveUser(userObject)
-
-                        Toast.makeText(this@LoginActivity, "Welcome, ${userObject.getFullName()}!", Toast.LENGTH_SHORT).show()
 
                         // Navigate to HomeActivity
                         val intent = Intent(this@LoginActivity, HomeActivity::class.java)
